@@ -27,17 +27,17 @@ export default function TravelPage() {
 
 Friday, June 13
 - Welcome Drinks: 6:00 PM - 9:00 PM
-  The Rooftop at Hotel Luna
+	The Rooftop at Hotel Luna
 
 Saturday, June 14
 - Ceremony: 4:30 PM
 - Cocktail Hour: 5:30 PM
 - Reception & Dinner: 6:30 PM - 11:00 PM
-  Villa Rosa, Napa Valley
+	Villa Rosa, Napa Valley
 
 Sunday, June 15
 - Farewell Brunch: 10:00 AM - 1:00 PM
-  Hotel Luna Restaurant`;
+	Hotel Luna Restaurant`;
 
 	const copyItinerary = () => {
 		navigator.clipboard.writeText(itinerary);
@@ -118,7 +118,7 @@ Sunday, June 15
 					title: "Option 1: Train (Recommended)",
 					steps: [
 						"Take the Leonardo Express from FCO to Roma Termini (~30 minutes).",
-						"Tak a high-speed train from Roma Termini to Firenze SMN (~1h30).",
+						"Take a high-speed train from Roma Termini to Firenze SMN (~1h30).",
 						"From Firenze SMN take a regional train to Siena (~1 hour).",
 						"Taxi from Siena station to hotel/venue (10–20 minutes).",
 					],
@@ -188,6 +188,7 @@ Sunday, June 15
 							{airportDetails[airport.code as keyof typeof airportDetails]
 								?.summary || "Directions and options for this airport."}
 						</p>
+
 						{(
 							airportDetails[airport.code as keyof typeof airportDetails]
 								?.options || []
@@ -240,7 +241,6 @@ Sunday, June 15
 				<div className="mb-12">
 					<h3 className="text-xl font-semibold text-fg mb-4">Airports</h3>
 					<div className="grid gap-3">
-						{/** Expandable airport cards: click a card to reveal step-by-step directions */}
 						{travelInfo.airports.map((airport) => (
 							<AirportCard key={airport.code} airport={airport} />
 						))}
