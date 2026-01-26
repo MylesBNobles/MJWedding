@@ -126,7 +126,7 @@ export default function StoryScroller({ slides }: StoryScrollerProps) {
           <div
             ref={listRef}
             onScroll={handleScroll}
-            className="h-full snap-y snap-mandatory overflow-y-auto scroll-smooth"
+            className="no-scrollbar h-full snap-y snap-mandatory overflow-y-auto scroll-smooth"
           >
             <div style={{ height: spacerHeight }} />
             {slides.map((slide, index) => {
@@ -151,29 +151,25 @@ export default function StoryScroller({ slides }: StoryScrollerProps) {
             <div style={{ height: spacerHeight }} />
           </div>
 
-          <div className="pointer-events-none absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-black/45 to-transparent" />
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/45 to-transparent" />
-
-          <div className="pointer-events-none absolute left-0 right-0 top-1/2 h-px -translate-y-1/2 bg-white/20" />
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-12 bg-gradient-to-b from-transparent to-transparent" />
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-transparent to-transparent" />
         </div>
       </section>
 
       <section className="flex items-center justify-center">
         <div key={activeIndex} className="fade-slide-in w-full max-w-3xl">
-          <div className="rounded-[28px] border border-white/30 bg-white/10 p-4 shadow-2xl backdrop-blur-sm">
-            {activeSlide?.imageUrl ? (
-              <img
-                src={activeSlide.imageUrl}
-                alt={activeSlide.headline}
-                className="h-[380px] w-full rounded-[24px] object-contain sm:h-[480px] md:h-[520px]"
-                style={{ objectPosition: activeSlide.imagePosition ?? 'center' }}
-              />
-            ) : (
-              <div className="flex h-[380px] items-center justify-center rounded-[24px] border border-dashed border-white/40 text-sm uppercase tracking-[0.3em] text-white/60 sm:h-[480px] md:h-[520px]">
-                Photo coming soon
-              </div>
-            )}
-          </div>
+          {activeSlide?.imageUrl ? (
+            <img
+              src={activeSlide.imageUrl}
+              alt={activeSlide.headline}
+              className="h-[380px] w-full rounded-[28px] object-cover sm:h-[480px] md:h-[520px]"
+              style={{ objectPosition: activeSlide.imagePosition ?? 'center' }}
+            />
+          ) : (
+            <div className="flex h-[380px] items-center justify-center border border-dashed border-white/40 text-sm uppercase tracking-[0.3em] text-white/60 sm:h-[480px] md:h-[520px]">
+              Photo coming soon
+            </div>
+          )}
         </div>
       </section>
     </div>

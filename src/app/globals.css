@@ -93,3 +93,12 @@ body {
 .fade-slide-in {
   animation: fade-slide-in 280ms ease-out;
 }
+
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
