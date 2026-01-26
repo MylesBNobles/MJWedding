@@ -126,7 +126,7 @@ export default function StoryScroller({ slides }: StoryScrollerProps) {
 	return (
 		<div
 			ref={rootRef}
-			className="grid h-screen w-full grid-cols-1 gap-8 overflow-hidden px-6 py-8 lg:grid-cols-[1fr_1.1fr_1fr]"
+			className="grid h-screen w-full place-content-center grid-cols-1 gap-8 overflow-hidden px-6 pb-6 pt-4 lg:grid-cols-[1fr_1.1fr_1fr]"
 			style={{
 				backgroundImage:
 					activeSlide?.background ??
@@ -135,6 +135,9 @@ export default function StoryScroller({ slides }: StoryScrollerProps) {
 				backgroundPosition: "center",
 			}}
 		>
+			<h1 className="col-span-full text-center text-xl uppercase tracking-[0.35em] text-white/80 sm:text-2xl lg:col-span-3">
+				Our Story
+			</h1>
 			<section className="flex items-center justify-center">
 				<div
 					key={activeIndex}
@@ -143,7 +146,7 @@ export default function StoryScroller({ slides }: StoryScrollerProps) {
 					<p className="text-sm uppercase tracking-[0.3em] text-white/60">
 						Story
 					</p>
-					<p className="mt-6 text-lg leading-relaxed text-white/90">
+					<p className="mt-6 whitespace-pre-line text-lg leading-relaxed text-white/90">
 						{activeSlide?.shortText ?? ""}
 					</p>
 				</div>
