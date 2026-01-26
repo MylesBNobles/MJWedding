@@ -3,6 +3,8 @@ export type StorySlide = {
   headline: string;
   shortText: string;
   imageUrl: string;
+  imagePosition?: string;
+  background?: string;
   theme?: "light" | "dark";
 };
 

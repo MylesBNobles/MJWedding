@@ -12,7 +12,9 @@ export const storySlides: StorySlide[] = [
 		id: "1",
 		headline: "Where We First Met",
 		shortText: "We first met in high school in the same AP U.S. History class.",
-		imageUrl: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+		imageUrl: "/images/APPhysics1.jpeg",
+		imagePosition: "center 25%",
+		background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
 		theme: "dark",
 	},
 	{
@@ -20,7 +22,9 @@ export const storySlides: StorySlide[] = [
 		headline: "Finding Our Way Back",
 		shortText:
 			"Years later, we reconnected in a very unexpected way. Jeslin slid up on an Instagram photo Myles reposted, which he definitely thought was about him. It turns out she was actually complimenting his mom. Either way, it worked.",
-		imageUrl: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
+		imageUrl: "/images/MomInstagram.jpeg",
+		imagePosition: "center 30%",
+		background: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
 		theme: "dark",
 	},
 	{
@@ -28,7 +32,8 @@ export const storySlides: StorySlide[] = [
 		headline: "Getting to Know Each Other",
 		shortText:
 			"What started casually quickly turned into many long phone calls. We got to know each other naturally through conversations about life, family, and everything in between.",
-		imageUrl: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
+		imageUrl: "",
+		background: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
 		theme: "dark",
 	},
 	{
@@ -36,7 +41,8 @@ export const storySlides: StorySlide[] = [
 		headline: "The First Date",
 		shortText:
 			"When we finally spent quality time together in person, there was an instant connection. It felt easy, intentional, and exciting in all the right ways.",
-		imageUrl: "linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)",
+		imageUrl: "",
+		background: "linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)",
 		theme: "dark",
 	},
 	{
@@ -44,7 +50,8 @@ export const storySlides: StorySlide[] = [
 		headline: "Growing Together",
 		shortText:
 			"Over the next year and a half, we dated, traveled, shared experiences, and learned how to show up for each other. What started as a connection turned into a partnership.",
-		imageUrl: "linear-gradient(135deg, #fa709a 0%, #fee140 100%)",
+		imageUrl: "",
+		background: "linear-gradient(135deg, #fa709a 0%, #fee140 100%)",
 		theme: "dark",
 	},
 	{
@@ -52,7 +59,8 @@ export const storySlides: StorySlide[] = [
 		headline: "The Proposal",
 		shortText:
 			"On a trip to Lake Como, the question was asked at Villa del Balbianello. A complete surprise and a moment we will never forget.",
-		imageUrl: "linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)",
+		imageUrl: "",
+		background: "linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)",
 		theme: "dark",
 	},
 	{
@@ -60,7 +68,8 @@ export const storySlides: StorySlide[] = [
 		headline: "What's Next",
 		shortText:
 			"We're excited to celebrate this next chapter with the people we love most and continue building a life together.",
-		imageUrl: "linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%)",
+		imageUrl: "",
+		background: "linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%)",
 		theme: "dark",
 	},
 ];
