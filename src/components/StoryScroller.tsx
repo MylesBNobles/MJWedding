@@ -10,6 +10,7 @@ type StoryScrollerProps = {
 const ITEM_HEIGHT = 56;
 
 export default function StoryScroller({ slides }: StoryScrollerProps) {
+  const rootRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<Array<HTMLDivElement | null>>([]);
   const scrollRaf = useRef<number | null>(null);
@@ -44,6 +45,22 @@ export default function StoryScroller({ slides }: StoryScrollerProps) {
       target.offsetTop - (el.clientHeight / 2 - target.clientHeight / 2);
     el.scrollTo({ top, behavior: 'auto' });
   }, [slides.length]);
+
+  useEffect(() => {
+    const root = rootRef.current;
+    const list = listRef.current;
+    if (!root || !list) return;
+
+    const handleWheel = (event: WheelEvent) => {
+      if (event.deltaY === 0) return;
+      event.preventDefault();
+      list.scrollBy({ top: event.deltaY, behavior: 'auto' });
+    };
+
+    root.addEventListener('wheel', handleWheel, { passive: false });
+
+    return () => root.removeEventListener('wheel', handleWheel);
+  }, []);
 
   const getClosestIndex = () => {
     const el = listRef.current;
@@ -103,6 +120,7 @@ export default function StoryScroller({ slides }: StoryScrollerProps) {
 
   return (
     <div
+      ref={rootRef}
       className="grid h-screen w-full grid-cols-1 gap-8 overflow-hidden px-6 py-8 lg:grid-cols-[1fr_1.1fr_1fr]"
       style={{
         backgroundImage:
