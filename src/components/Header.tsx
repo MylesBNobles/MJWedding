@@ -30,7 +30,7 @@ export function Header() {
             href="/"
             className="text-lg font-semibold text-fg hover:opacity-80 transition-opacity"
           >
-            Myles & Jeslin
+            Jeslin & Myles
           </Link>
 
           {/* Desktop Navigation */}

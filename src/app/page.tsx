@@ -16,16 +16,23 @@ export default function HomePage() {
   return (
     <>
       {/* Hero Section */}
-      <section className="py-20 sm:py-32">
-        <Container size="md">
+      <section className="relative py-20 sm:py-32 overflow-hidden">
+        {/* Background Image */}
+        <div
+          className="absolute inset-0 bg-cover bg-bottom bg-no-repeat"
+          style={{ backgroundImage: 'url(/images/MJWeddingPic1.jpeg)' }}
+        />
+        <div className="absolute inset-0 bg-black/40" />
+
+        <Container size="md" className="relative z-10">
           <div className="text-center">
-            <h1 className="text-4xl sm:text-6xl font-bold tracking-tight text-fg mb-6">
+            <h1 className="text-4xl sm:text-6xl font-bold tracking-tight text-white mb-6">
               {weddingDetails.couple}
             </h1>
-            <p className="text-xl sm:text-2xl text-muted mb-2">
+            <p className="text-xl sm:text-2xl text-white/90 mb-2">
               {weddingDetails.date}
             </p>
-            <p className="text-lg text-muted mb-10">
+            <p className="text-lg text-white/80 mb-10">
               {weddingDetails.location}
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">

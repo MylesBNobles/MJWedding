@@ -285,7 +285,7 @@ export const travelInfo: TravelSection = {
 };
 
 export const weddingDetails = {
-  couple: 'Myles & Jeslin',
+  couple: 'Jeslin & Myles',
   date: 'June 12, 2027',
   location: 'Tuscany, Italy',
   venue: 'Villa Di Geggiano',
