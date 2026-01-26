@@ -52,7 +52,7 @@ export default function HomePage() {
             </div>
             <div>
               <p className="text-sm text-muted mb-1">Arrive By</p>
-              <p className="font-medium text-fg">Fri, Jun 13</p>
+              <p className="font-medium text-fg">Thu, Jun 10</p>
             </div>
             <div>
               <p className="text-sm text-muted mb-1">Dress Code</p>
