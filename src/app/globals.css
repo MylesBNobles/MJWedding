@@ -8,22 +8,27 @@
      an external <link> in app/layout.tsx. Updating --font-header changes all
      headers in one place. */
 	--font-header: "Mirador", Georgia, "Times New Roman", serif;
-	--bg: #fafafa;
-	--fg: #171717;
-	--muted: #737373;
-	--card: #ffffff;
-	--border: #e5e5e5;
-	--accent: #a16207;
+
+	/* Warm, bright neutral palette */
+	--bg: #FAF7F2;           /* Warm Ivory - main background */
+	--fg: #3F3A36;           /* Warm Charcoal - primary text */
+	--muted: #C9BFB2;        /* Stone Taupe - secondary text */
+	--card: #FFFFFF;         /* Pure white cards */
+	--border: #EDE6D8;       /* Soft Sand - subtle borders */
+	--accent: #B7A6C9;       /* Dusty Lavender - accent pops */
+	--accent-warm: #D4A574;  /* Warm terracotta - secondary accent */
 }
 
+/* Dark mode - keeping bright warm palette for wedding site */
 @media (prefers-color-scheme: dark) {
 	:root {
-		--bg: #0a0a0a;
-		--fg: #fafafa;
-		--muted: #a3a3a3;
-		--card: #171717;
-		--border: #262626;
-		--accent: #fbbf24;
+		--bg: #FAF7F2;           /* Keep Warm Ivory */
+		--fg: #3F3A36;           /* Keep Warm Charcoal */
+		--muted: #C9BFB2;        /* Keep Stone Taupe */
+		--card: #FFFFFF;         /* Keep white cards */
+		--border: #EDE6D8;       /* Keep Soft Sand */
+		--accent: #B7A6C9;       /* Keep Dusty Lavender */
+		--accent-warm: #D4A574;  /* Keep Warm terracotta */
 	}
 }
 

@@ -15,6 +15,7 @@ const config: Config = {
         card: 'var(--card)',
         border: 'var(--border)',
         accent: 'var(--accent)',
+        'accent-warm': 'var(--accent-warm)',
       },
       fontFamily: {
         sans: [

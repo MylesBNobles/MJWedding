@@ -11,10 +11,10 @@ type BadgeProps = {
 };
 
 const variantClasses: Record<BadgeVariant, string> = {
-  default: 'bg-border text-fg',
-  accent: 'bg-accent/20 text-accent',
+  default: 'bg-accent/15 text-accent',
+  accent: 'bg-accent/25 text-accent',
   success: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
-  warning: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400',
+  warning: 'bg-[#D4A574]/20 text-[#8B6B47] dark:bg-[#D4A574]/30 dark:text-[#E5B889]',
 };
 
 export function Badge({ children, variant = 'default', className = '' }: BadgeProps) {

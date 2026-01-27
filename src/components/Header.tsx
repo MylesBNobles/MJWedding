@@ -22,7 +22,7 @@ export function Header() {
 	const isActive = (href: string) => pathname === href;
 
 	return (
-		<header className="sticky top-0 z-40 bg-bg/80 backdrop-blur-sm border-b border-border">
+		<header className="sticky top-0 z-40 bg-[#FAF7F2] backdrop-blur-sm border-b border-[#EDE6D8]">
 			<Container>
 				<div className="flex items-center justify-between h-16">
 					{/* Logo */}
@@ -43,8 +43,8 @@ export function Header() {
                   px-3 py-2 text-sm rounded-md transition-colors
                   ${
 										isActive(link.href)
-											? "text-fg font-medium"
-											: "text-muted hover:text-fg hover:bg-border/50"
+											? "text-accent font-medium bg-accent/10"
+											: "text-muted hover:text-fg hover:bg-accent/5"
 									}
                 `}
 							>
@@ -118,8 +118,8 @@ export function Header() {
                     px-3 py-2 text-sm rounded-md transition-colors
                     ${
 											isActive(link.href)
-												? "text-fg font-medium bg-border/50"
-												: "text-muted hover:text-fg hover:bg-border/50"
+												? "text-accent font-medium bg-accent/10"
+												: "text-muted hover:text-fg hover:bg-accent/5"
 										}
                   `}
 								>

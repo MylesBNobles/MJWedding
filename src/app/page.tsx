@@ -22,17 +22,18 @@ export default function HomePage() {
           className="absolute inset-0 bg-cover bg-bottom bg-no-repeat"
           style={{ backgroundImage: 'url(/images/MJWeddingPic1.jpeg)' }}
         />
-        <div className="absolute inset-0 bg-black/40" />
+        {/* Warm overlay for text readability */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#3F3A36]/30 via-[#3F3A36]/20 to-[#FAF7F2]/30" />
 
         <Container size="md" className="relative z-10">
           <div className="text-center">
-            <h1 className="text-4xl sm:text-6xl font-bold tracking-tight text-white mb-6">
+            <h1 className="text-4xl sm:text-6xl font-bold tracking-tight text-white drop-shadow-lg mb-6">
               {weddingDetails.couple}
             </h1>
-            <p className="text-xl sm:text-2xl text-white/90 mb-2">
+            <p className="text-xl sm:text-2xl text-white drop-shadow-md mb-2">
               {weddingDetails.date}
             </p>
-            <p className="text-lg text-white/80 mb-10">
+            <p className="text-lg text-white/90 drop-shadow-md mb-10">
               {weddingDetails.location}
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -48,25 +49,25 @@ export default function HomePage() {
       </section>
 
       {/* Key Facts */}
-      <section className="py-12 border-y border-border bg-card">
+      <section className="py-12 border-y border-[#C9BFB2]/30 bg-[#EDE6D8]">
         <Container>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             <div>
-              <p className="text-sm text-muted mb-1">Nearest Airports</p>
+              <p className="text-sm text-accent mb-1">Nearest Airports</p>
               <p className="font-medium text-fg">
                 {travelInfo.airports.filter(a => a.recommended).map(a => a.code).join(', ')}
               </p>
             </div>
             <div>
-              <p className="text-sm text-muted mb-1">Arrive By</p>
+              <p className="text-sm text-accent mb-1">Arrive By</p>
               <p className="font-medium text-fg">Thu, Jun 10</p>
             </div>
             <div>
-              <p className="text-sm text-muted mb-1">Dress Code</p>
+              <p className="text-sm text-accent mb-1">Dress Code</p>
               <p className="font-medium text-fg">{weddingDetails.dressCode}</p>
             </div>
             <div>
-              <p className="text-sm text-muted mb-1">Timezone</p>
+              <p className="text-sm text-accent mb-1">Timezone</p>
               <p className="font-medium text-fg">{weddingDetails.timezone}</p>
             </div>
           </div>
@@ -74,7 +75,7 @@ export default function HomePage() {
       </section>
 
       {/* What to do next */}
-      <section className="py-16">
+      <section className="py-16 bg-[#FAF7F2]">
         <Container size="md">
           <h2 className="text-2xl font-semibold text-fg mb-6 text-center">
             What to do next
@@ -82,8 +83,8 @@ export default function HomePage() {
           <div className="space-y-3">
             {checklist.map((item, index) => (
               <Link key={index} href={item.href}>
-                <Card className="flex items-center gap-4 hover:border-accent transition-colors cursor-pointer">
-                  <div className="w-6 h-6 rounded-full border-2 border-border flex items-center justify-center flex-shrink-0">
+                <Card className="flex items-center gap-4 hover:border-accent hover:shadow-md transition-all cursor-pointer group">
+                  <div className="w-6 h-6 rounded-full border-2 border-accent/40 group-hover:border-accent group-hover:bg-accent/10 flex items-center justify-center flex-shrink-0 transition-colors">
                     {item.done && (
                       <svg className="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -93,7 +94,7 @@ export default function HomePage() {
                   <span className={`text-fg ${item.done ? 'line-through text-muted' : ''}`}>
                     {item.text}
                   </span>
-                  <svg className="w-5 h-5 text-muted ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5 text-accent/60 group-hover:text-accent ml-auto transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
                 </Card>
@@ -104,21 +105,21 @@ export default function HomePage() {
       </section>
 
       {/* Latest Update */}
-      <section className="py-16 bg-card border-y border-border">
+      <section className="py-16 bg-[#FAF7F2] border-y border-[#EDE6D8]">
         <Container size="md">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-semibold text-fg">Latest Update</h2>
-            <Link href="/updates" className="text-sm text-accent hover:underline">
-              View all
+            <Link href="/updates" className="text-sm text-accent hover:text-accent-warm transition-colors font-medium">
+              View all →
             </Link>
           </div>
-          <Card>
+          <Card className="border-l-4 border-l-accent">
             <div className="flex items-start justify-between gap-4 mb-3">
               <h3 className="text-lg font-medium text-fg">{latestUpdate.title}</h3>
               <Badge>{latestUpdate.category}</Badge>
             </div>
             <p className="text-muted mb-3">{latestUpdate.body}</p>
-            <p className="text-sm text-muted">
+            <p className="text-sm text-accent/70">
               {new Date(latestUpdate.publishedAt).toLocaleDateString('en-US', {
                 month: 'long',
                 day: 'numeric',

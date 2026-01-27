@@ -12,7 +12,7 @@ export const storySlides: StorySlide[] = [
 		id: "1",
 		headline: "Where We First Met",
 		shortText:
-			"We first met in high school in the same AP U.S. History class.\nP.S. Jeslin took this pic of me!",
+			"We first met in high school in the same AP U.S. History class.\nP.S. Jeslin took this pic of Myles!",
 		imageUrl: "/images/LightStringPic.jpeg",
 		imagePosition: "center 25%",
 		background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
