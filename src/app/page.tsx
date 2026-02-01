@@ -31,11 +31,8 @@ export default function HomePage() {
 						<h1 className="text-6xl sm:text-8xl font-cursive text-white drop-shadow-lg mb-6">
 							{weddingDetails.couple}
 						</h1>
-						<p className="text-2xl sm:text-3xl font-medium text-white drop-shadow-lg mb-3">
-							{weddingDetails.date}
-						</p>
-						<p className="text-xl sm:text-2xl font-light text-white drop-shadow-lg mb-10">
-							{weddingDetails.location}
+						<p className="text-xl sm:text-2xl font-medium text-white drop-shadow-lg mb-10 uppercase tracking-widest">
+							{weddingDetails.date} · {weddingDetails.location}
 						</p>
 					</div>
 				</Container>
