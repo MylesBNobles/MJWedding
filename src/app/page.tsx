@@ -17,7 +17,7 @@ export default function HomePage() {
 	return (
 		<>
 			{/* Hero Section */}
-			<section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+			<section className="relative min-h-screen flex items-center justify-center overflow-hidden pb-24">
 				{/* Background Image */}
 				<div
 					className="absolute inset-0 bg-cover bg-bottom bg-no-repeat"
@@ -28,8 +28,11 @@ export default function HomePage() {
 
 				<Container size="md" className="relative z-10">
 					<div className="text-center">
-						<h1 className="text-6xl sm:text-8xl font-cursive text-white drop-shadow-lg mb-6">
-							{weddingDetails.couple}
+						<p className="text-xl sm:text-2xl font-medium text-white drop-shadow-lg mb-4 uppercase tracking-widest">
+							The Wedding Of
+						</p>
+						<h1 className="text-7xl sm:text-9xl font-cursive text-white drop-shadow-lg mb-6">
+							Jeslin <span className="text-4xl sm:text-5xl">&amp;</span> Myles
 						</h1>
 						<p className="text-xl sm:text-2xl font-medium text-white drop-shadow-lg mb-10 uppercase tracking-widest">
 							{weddingDetails.date} · {weddingDetails.location}
