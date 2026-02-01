@@ -360,5 +360,5 @@ export const weddingDetails = {
 	location: "Tuscany, Italy",
 	venue: "Villa Di Geggiano",
 	timezone: "Central European Time (CET)",
-	dressCode: "Formal",
+	dressCode: "Indo-Western Black Tie",
 };

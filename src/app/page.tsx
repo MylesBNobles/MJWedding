@@ -54,7 +54,7 @@ export default function HomePage() {
 			{/* Key Facts */}
 			<section className="py-12 border-y border-[#C9BFB2]/30 bg-[#EDE6D8]">
 				<Container>
-					<div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+					<div className="flex flex-wrap justify-evenly gap-6 text-center">
 						<div>
 							<p className="text-sm text-accent mb-1">Nearest Airports</p>
 							<p className="font-medium text-fg">
@@ -71,10 +71,6 @@ export default function HomePage() {
 						<div>
 							<p className="text-sm text-accent mb-1">Dress Code</p>
 							<p className="font-medium text-fg">{weddingDetails.dressCode}</p>
-						</div>
-						<div>
-							<p className="text-sm text-accent mb-1">Timezone</p>
-							<p className="font-medium text-fg">{weddingDetails.timezone}</p>
 						</div>
 					</div>
 				</Container>
