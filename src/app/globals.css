@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Google Font - Alex Brush for couple names (connected cursive) */
+@import url('https://fonts.googleapis.com/css2?family=Alex+Brush&display=swap');
+
 :root {
 	/* Header font: set to 'Mirador' with sensible fallbacks. To enable Mirador,
      add an @font-face rule here (see example below) or include the font via
@@ -79,6 +82,10 @@ h6 {
 
 .font-header {
 	font-family: var(--font-header);
+}
+
+.font-cursive {
+	font-family: 'Alex Brush', cursive;
 }
 
 /* Example @font-face (uncomment and adjust paths if you host Mirador locally)

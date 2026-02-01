@@ -27,13 +27,13 @@ export default function HomePage() {
 
         <Container size="md" className="relative z-10">
           <div className="text-center">
-            <h1 className="text-4xl sm:text-6xl font-bold tracking-tight text-white drop-shadow-lg mb-6">
+            <h1 className="text-6xl sm:text-8xl font-cursive text-white drop-shadow-lg mb-6">
               {weddingDetails.couple}
             </h1>
-            <p className="text-xl sm:text-2xl text-white drop-shadow-md mb-2">
+            <p className="text-2xl sm:text-3xl font-medium text-white drop-shadow-lg mb-3">
               {weddingDetails.date}
             </p>
-            <p className="text-lg text-white/90 drop-shadow-md mb-10">
+            <p className="text-xl sm:text-2xl font-light text-white drop-shadow-lg mb-10">
               {weddingDetails.location}
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">

@@ -28,7 +28,7 @@ export function Header() {
 					{/* Logo */}
 					<Link
 						href="/"
-						className="text-lg font-semibold text-fg hover:opacity-80 transition-opacity font-header"
+						className="text-3xl text-fg hover:opacity-80 transition-opacity font-cursive"
 					>
 						Jeslin & Myles
 					</Link>
@@ -40,11 +40,11 @@ export function Header() {
 								key={link.href}
 								href={link.href}
 								className={`
-                  px-3 py-2 text-sm rounded-md transition-colors
+                  px-3 py-2 text-sm rounded-md transition-colors font-medium
                   ${
 										isActive(link.href)
-											? "text-accent font-medium bg-accent/10"
-											: "text-muted hover:text-fg hover:bg-accent/5"
+											? "text-[#7B6A94] font-semibold bg-accent/20"
+											: "text-[#8B7BA3] hover:text-[#6B5A84] hover:bg-accent/15"
 									}
                 `}
 							>
@@ -115,11 +115,11 @@ export function Header() {
 									href={link.href}
 									onClick={() => setIsMobileMenuOpen(false)}
 									className={`
-                    px-3 py-2 text-sm rounded-md transition-colors
+                    px-3 py-2 text-sm rounded-md transition-colors font-medium
                     ${
 											isActive(link.href)
-												? "text-accent font-medium bg-accent/10"
-												: "text-muted hover:text-fg hover:bg-accent/5"
+												? "text-[#7B6A94] font-semibold bg-accent/20"
+												: "text-[#8B7BA3] hover:text-[#6B5A84] hover:bg-accent/15"
 										}
                   `}
 								>
