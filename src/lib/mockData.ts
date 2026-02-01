@@ -290,12 +290,6 @@ export const travelInfo: TravelSection = {
 			driveTime: "2 hours 30 min",
 			recommended: false,
 		},
-		{
-			name: "Bologna Airport",
-			code: "BLQ",
-			driveTime: "2 hours",
-			recommended: false,
-		},
 	],
 	arrivalWindow: {
 		ideal: "Tuesday, June 8th or Wednesday, June 9th",
