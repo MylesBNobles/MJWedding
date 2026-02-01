@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Container, Card, Button, Badge } from "@/components";
+import { Container, Card, Badge } from "@/components";
 import { weddingDetails, updateItems, travelInfo } from "@/lib/mockData";
 
 export default function HomePage() {
@@ -17,7 +17,7 @@ export default function HomePage() {
 	return (
 		<>
 			{/* Hero Section */}
-			<section className="relative py-20 sm:py-32 overflow-hidden">
+			<section className="relative min-h-screen flex items-center justify-center overflow-hidden">
 				{/* Background Image */}
 				<div
 					className="absolute inset-0 bg-cover bg-bottom bg-no-repeat"
@@ -37,16 +37,6 @@ export default function HomePage() {
 						<p className="text-xl sm:text-2xl font-light text-white drop-shadow-lg mb-10">
 							{weddingDetails.location}
 						</p>
-						<div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-							<Link href="/plans">
-								<Button size="lg">Share Your Plans</Button>
-							</Link>
-							<Link href="/travel">
-								<Button variant="secondary" size="lg">
-									Travel Info
-								</Button>
-							</Link>
-						</div>
 					</div>
 				</Container>
 			</section>
