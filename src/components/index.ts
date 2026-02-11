@@ -9,3 +9,4 @@ export { Badge } from './Badge';
 export { TimelineItem } from './TimelineItem';
 export { Toast, useToast } from './Toast';
 export { Checkbox } from './Checkbox';
+export { ComingSoon } from './ComingSoon';
