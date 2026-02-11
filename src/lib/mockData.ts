@@ -196,7 +196,7 @@ export const faqItems: FAQItem[] = [
 	{
 		id: "3",
 		q: "What time should I arrive for the ceremony?",
-		a: "Please arrive by 4:00 PM. The ceremony begins promptly at 4:30 PM, and we want everyone settled and comfortable.",
+		a: "We're still finalizing the schedule. We'll share arrival times in an update closer to the date—sign up for updates so you don't miss it!",
 	},
 	{
 		id: "4",
@@ -216,7 +216,7 @@ export const faqItems: FAQItem[] = [
 	{
 		id: "7",
 		q: "Do you have a registry?",
-		a: "Your presence is the greatest gift. If you wish to honor us with a gift, we have a small registry linked in your invitation, or contributions to our honeymoon fund are welcome.",
+		a: "We're still putting together our registry and will share details soon. Keep an eye on the Updates section for an announcement!",
 	},
 	{
 		id: "8",
@@ -226,7 +226,7 @@ export const faqItems: FAQItem[] = [
 	{
 		id: "9",
 		q: "Where should I stay?",
-		a: "We recommend the Grand Hotel Continental Siena, which is close to the venue and where we'll host the farewell brunch. Details on the Travel page.",
+		a: "We're working on lodging recommendations and will share them soon. Sign up for updates and we'll let you know as soon as we have more details!",
 	},
 	{
 		id: "10",

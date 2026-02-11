@@ -9,8 +9,7 @@ export default function HomePage() {
 	)[0];
 
 	const checklist = [
-		{ text: "Share your travel plans", href: "/plans", done: false },
-		{ text: "Book accommodations", href: "/travel", done: false },
+		{ text: "Sign up to get updates", href: "/updates", done: false },
 		{ text: "Check the dress code", href: "/attire", done: false },
 	];
 

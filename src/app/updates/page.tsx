@@ -74,10 +74,20 @@ export default function UpdatesPage() {
                   d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
-              <h3 className="font-semibold text-fg mb-1">You're subscribed</h3>
-              <p className="text-sm text-muted">
+              <h3 className="font-semibold text-fg mb-1">You're signed up</h3>
+              <p className="text-sm text-muted mb-3">
                 Updates will be sent to {subscribedEmail}
               </p>
+              <button
+                type="button"
+                onClick={() => {
+                  setIsSubscribed(false);
+                  setEmail(subscribedEmail);
+                }}
+                className="text-sm text-accent hover:underline"
+              >
+                Change email
+              </button>
             </div>
           ) : (
             <form onSubmit={handleSubscribe}>
@@ -85,7 +95,7 @@ export default function UpdatesPage() {
               <p className="text-sm text-muted mb-4">
                 Sign up to receive updates about wedding details.
               </p>
-              <div className="flex gap-3">
+              <div className="flex items-center gap-3">
                 <TextField
                   type="email"
                   value={email}
@@ -94,7 +104,7 @@ export default function UpdatesPage() {
                   required
                   className="flex-1"
                 />
-                <Button type="submit">Sign Up</Button>
+                <Button type="submit" className="whitespace-nowrap">Sign Up</Button>
               </div>
             </form>
           )}

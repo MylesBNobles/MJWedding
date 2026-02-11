@@ -25,19 +25,15 @@ export default function TravelPage() {
 	const itinerary = `Wedding Weekend Itinerary
 ========================
 
-Friday, June 13
-- Welcome Drinks: 6:00 PM - 9:00 PM
-	The Rooftop at Hotel Luna
+Friday, June 11
+- Welcome Lunch (time TBD)
 
-Saturday, June 14
-- Ceremony: 4:30 PM
-- Cocktail Hour: 5:30 PM
-- Reception & Dinner: 6:30 PM - 11:00 PM
-	Villa Rosa, Napa Valley
+Saturday, June 12
+- Wedding Ceremony & Reception
+	Villa Di Geggiano
 
-Sunday, June 15
-- Farewell Brunch: 10:00 AM - 1:00 PM
-	Hotel Luna Restaurant`;
+Sunday, June 13
+- Details coming soon`;
 
 	const copyItinerary = () => {
 		navigator.clipboard.writeText(itinerary);
