@@ -126,15 +126,15 @@ export default function StoryScroller({ slides }: StoryScrollerProps) {
 	return (
 		<div
 			ref={rootRef}
-			className="grid h-screen w-full place-content-center grid-cols-1 gap-8 overflow-hidden px-6 pb-6 pt-4 lg:grid-cols-[1fr_1.1fr_1fr]"
-			style={{
-				backgroundImage:
-					activeSlide?.background ??
-					"linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-				backgroundSize: "cover",
-				backgroundPosition: "center",
-			}}
+			className="relative grid h-screen w-full place-content-center grid-cols-1 gap-8 overflow-hidden px-6 pb-6 pt-4 lg:grid-cols-[1fr_1.1fr_1fr]"
 		>
+			{/* Full-screen background image */}
+			<div
+				className="absolute inset-0 -z-10 bg-cover bg-center bg-no-repeat"
+				style={{ backgroundImage: "url('/images/ProposalBoatPic.jpg')" }}
+			/>
+			{/* Dark overlay for readability */}
+			<div className="absolute inset-0 -z-10 bg-black/40" />
 			<h1 className="col-span-full text-center text-xl uppercase tracking-[0.35em] text-white/80 sm:text-2xl lg:col-span-3">
 				Our Story
 			</h1>

@@ -20,6 +20,7 @@ export function Header() {
 	const [scrolled, setScrolled] = useState(false);
 	const pathname = usePathname();
 	const isHome = pathname === "/";
+	const hasTransparentHeader = isHome;
 
 	useEffect(() => {
 		const onScroll = () => setScrolled(window.scrollY > 50);
@@ -29,7 +30,7 @@ export function Header() {
 	}, []);
 
 	const isActive = (href: string) => pathname === href;
-	const isTransparent = isHome && !scrolled;
+	const isTransparent = hasTransparentHeader && !scrolled;
 
 	return (
 		<header
@@ -64,8 +65,8 @@ export function Header() {
                   ${
 										isActive(link.href)
 											? isTransparent
-												? "text-white font-semibold"
-												: "text-[#7B6A94] font-semibold bg-accent/20"
+												? "text-white font-semibold underline underline-offset-4"
+												: "text-[#7B6A94] font-semibold underline underline-offset-4"
 											: isTransparent
 												? "text-white/80 hover:text-white"
 												: "text-[#8B7BA3] hover:text-[#6B5A84] hover:bg-accent/15"
@@ -80,12 +81,20 @@ export function Header() {
 					{/* Desktop CTAs */}
 					<div className="hidden md:flex items-center gap-3">
 						<Link href="/updates">
-							<Button variant="ghost" size="sm">
+							<Button
+								variant="ghost"
+								size="sm"
+								className={isTransparent ? "text-white/90 hover:text-white hover:bg-white/10" : ""}
+							>
 								Subscribe
 							</Button>
 						</Link>
 						<Link href="/plans">
-							<Button variant="primary" size="sm">
+							<Button
+								variant={isTransparent ? "ghost" : "primary"}
+								size="sm"
+								className={isTransparent ? "border-white text-white hover:bg-white/15" : ""}
+							>
 								Share Your Plans
 							</Button>
 						</Link>
