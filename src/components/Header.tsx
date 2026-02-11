@@ -20,7 +20,8 @@ export function Header() {
 	const [scrolled, setScrolled] = useState(false);
 	const pathname = usePathname();
 	const isHome = pathname === "/";
-	const hasTransparentHeader = isHome;
+	const isStory = pathname === "/story";
+	const hasTransparentHeader = isHome || isStory;
 
 	useEffect(() => {
 		const onScroll = () => setScrolled(window.scrollY > 50);
