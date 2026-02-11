@@ -83,20 +83,11 @@ export function Header() {
 					<div className="hidden md:flex items-center gap-3">
 						<Link href="/updates">
 							<Button
-								variant="ghost"
-								size="sm"
-								className={isTransparent ? "text-white/90 hover:text-white hover:bg-white/10" : ""}
-							>
-								Subscribe
-							</Button>
-						</Link>
-						<Link href="/plans">
-							<Button
 								variant={isTransparent ? "ghost" : "primary"}
 								size="sm"
 								className={isTransparent ? "border-white text-white hover:bg-white/15" : ""}
 							>
-								Share Your Plans
+								Get Updates
 							</Button>
 						</Link>
 					</div>
@@ -167,13 +158,8 @@ export function Header() {
 						</nav>
 						<div className="flex flex-col gap-2 mt-4 pt-4 border-t border-border">
 							<Link href="/updates" onClick={() => setIsMobileMenuOpen(false)}>
-								<Button variant="secondary" fullWidth>
-									Subscribe
-								</Button>
-							</Link>
-							<Link href="/plans" onClick={() => setIsMobileMenuOpen(false)}>
 								<Button variant="primary" fullWidth>
-									Share Your Plans
+									Get Updates
 								</Button>
 							</Link>
 						</div>

@@ -35,7 +35,7 @@ export default function UpdatesPage() {
     saveUpdatesSubscription(email);
     setIsSubscribed(true);
     setSubscribedEmail(email);
-    showToast('Subscribed');
+    showToast('You\'re signed up!');
   };
 
   const sortedUpdates = [...updateItems].sort(
@@ -83,7 +83,7 @@ export default function UpdatesPage() {
             <form onSubmit={handleSubscribe}>
               <h3 className="font-semibold text-fg mb-2">Get notified</h3>
               <p className="text-sm text-muted mb-4">
-                Subscribe to receive updates about wedding details.
+                Sign up to receive updates about wedding details.
               </p>
               <div className="flex gap-3">
                 <TextField
@@ -94,7 +94,7 @@ export default function UpdatesPage() {
                   required
                   className="flex-1"
                 />
-                <Button type="submit">Subscribe</Button>
+                <Button type="submit">Sign Up</Button>
               </div>
             </form>
           )}

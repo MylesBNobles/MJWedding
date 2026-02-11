@@ -37,7 +37,7 @@ export function ComingSoon({ title, subtitle }: ComingSoonProps) {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link href="/updates">
               <Button variant="primary">
-                Subscribe for Updates
+                Get Updates
               </Button>
             </Link>
             <Link href="/updates">

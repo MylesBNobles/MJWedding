@@ -237,6 +237,28 @@ Sunday, June 15
 					</Button>
 				</div>
 
+				{/* Wedding Venue */}
+				<div className="mb-12">
+					<h3 className="text-xl font-semibold text-fg mb-4">Wedding Venue</h3>
+					<Card className="border-accent">
+						<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+							<div>
+								<h4 className="font-semibold text-fg">Villa Di Geggiano</h4>
+								<p className="text-sm text-muted mt-1">
+									Strada di Geggiano 1, 53010 Castelnuovo Berardenga, Siena, Italy
+								</p>
+							</div>
+							<a
+								href="https://maps.google.com/?q=Villa+Di+Geggiano+Siena+Italy"
+								target="_blank"
+								rel="noreferrer"
+							>
+								<Button variant="secondary">View on Map</Button>
+							</a>
+						</div>
+					</Card>
+				</div>
+
 				{/* Airports */}
 				<div className="mb-12">
 					<h3 className="text-xl font-semibold text-fg mb-4">Airports</h3>

@@ -248,27 +248,6 @@ export const faqItems: FAQItem[] = [
 export const updateItems: UpdateItem[] = [
 	{
 		id: "1",
-		title: "Hotel Recommendations Posted",
-		body: "We recommend staying at the Grand Hotel Continental Siena for easy access to the venue. Book early as June is peak season in Tuscany!",
-		category: "lodging",
-		publishedAt: "2027-01-15T10:00:00Z",
-	},
-	{
-		id: "2",
-		title: "Shuttle Service Confirmed",
-		body: "We've arranged shuttle service between Grand Hotel Continental Siena and Villa Di Geggiano for all wedding events.",
-		category: "travel",
-		publishedAt: "2027-02-01T14:00:00Z",
-	},
-	{
-		id: "3",
-		title: "Weekend Timeline Finalized",
-		body: "The full weekend schedule is now posted on the Timeline page. We can't wait to celebrate with you in Tuscany!",
-		category: "timeline",
-		publishedAt: "2027-02-20T09:00:00Z",
-	},
-	{
-		id: "4",
 		title: "Welcome to Our Wedding Website",
 		body: "We're so excited to share all the details for our Tuscan celebration. Check back here for updates as the big day approaches.",
 		category: "general",
