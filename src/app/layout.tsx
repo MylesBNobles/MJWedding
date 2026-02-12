@@ -12,7 +12,7 @@ const greatVibes = Great_Vibes({
 });
 
 export const metadata: Metadata = {
-	title: "Myles & Jeslin | Wedding",
+	title: "Jeslin & Myles | Wedding",
 	description:
 		"Join us for our wedding celebration in Napa Valley, California.",
 };
