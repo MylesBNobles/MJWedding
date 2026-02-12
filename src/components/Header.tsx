@@ -32,12 +32,13 @@ export function Header() {
 	}, []);
 
 	const isActive = (href: string) => pathname === href;
-	const isTransparent = hasTransparentHeader && !scrolled;
+	// On story page, keep header transparent regardless of scroll (mobile scrolls the page)
+	const isTransparent = hasTransparentHeader && (!scrolled || isStory);
 
 	return (
 		<header
 			className={`fixed top-0 left-0 right-0 z-40 transition-colors duration-300 ${
-				isTransparent
+				isTransparent && !isMobileMenuOpen
 					? "bg-transparent"
 					: "bg-[#FAF7F2] border-b border-[#EDE6D8]"
 			}`}

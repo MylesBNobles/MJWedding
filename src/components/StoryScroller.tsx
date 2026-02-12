@@ -9,7 +9,74 @@ type StoryScrollerProps = {
 
 const ITEM_HEIGHT = 56;
 
-export default function StoryScroller({ slides }: StoryScrollerProps) {
+// Mobile vertical swipe component
+function MobileStoryScroller({ slides }: StoryScrollerProps) {
+	return (
+		<div className="min-h-screen w-full">
+			{/* Fixed background */}
+			<div
+				className="fixed inset-0 -z-10 bg-cover bg-center bg-no-repeat"
+				style={{ backgroundImage: "url('/images/ProposalBoatPic.JPG')" }}
+			/>
+			<div className="fixed inset-0 -z-10 bg-black/50" />
+
+			{/* Header */}
+			<div className="py-6">
+				<h1 className="text-center text-xl uppercase tracking-[0.35em] text-white/80">
+					Our Story
+				</h1>
+			</div>
+
+			{/* Scrollable slides */}
+			<div className="px-4 pb-12">
+				{slides.map((slide, index) => (
+					<div
+						key={slide.id}
+						className="mb-16 last:mb-0"
+					>
+						{/* Image */}
+						{slide.imageUrl ? (
+							<img
+								src={slide.imageUrl}
+								alt={slide.headline}
+								className="w-full aspect-[4/5] rounded-2xl object-cover mb-6"
+								style={{ objectPosition: slide.imagePosition ?? "center" }}
+							/>
+						) : (
+							<div className="w-full aspect-[4/5] rounded-2xl bg-white/10 flex items-center justify-center mb-6">
+								<span className="text-sm uppercase tracking-[0.3em] text-white/60">
+									Photo coming soon
+								</span>
+							</div>
+						)}
+
+						{/* Headline */}
+						<h2 className="text-2xl font-semibold text-white mb-3">
+							{slide.headline}
+						</h2>
+
+						{/* Story text */}
+						<p className="text-base leading-relaxed text-white/80">
+							{slide.shortText}
+						</p>
+
+						{/* Divider for all but last */}
+						{index < slides.length - 1 && (
+							<div className="mt-12 flex items-center justify-center gap-3">
+								<div className="h-px w-12 bg-white/20" />
+								<div className="h-1.5 w-1.5 rotate-45 border border-white/30" />
+								<div className="h-px w-12 bg-white/20" />
+							</div>
+						)}
+					</div>
+				))}
+			</div>
+		</div>
+	);
+}
+
+// Desktop wheel-based scroller
+function DesktopStoryScroller({ slides }: StoryScrollerProps) {
 	const rootRef = useRef<HTMLDivElement>(null);
 	const listRef = useRef<HTMLDivElement>(null);
 	const itemRefs = useRef<Array<HTMLDivElement | null>>([]);
@@ -204,5 +271,22 @@ export default function StoryScroller({ slides }: StoryScrollerProps) {
 				</div>
 			</section>
 		</div>
+	);
+}
+
+// Main component that switches between mobile and desktop
+export default function StoryScroller({ slides }: StoryScrollerProps) {
+	return (
+		<>
+			{/* Mobile: vertical swipe story */}
+			<div className="lg:hidden">
+				<MobileStoryScroller slides={slides} />
+			</div>
+
+			{/* Desktop: wheel-based scroller */}
+			<div className="hidden lg:block">
+				<DesktopStoryScroller slides={slides} />
+			</div>
+		</>
 	);
 }
