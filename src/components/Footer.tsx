@@ -12,10 +12,10 @@ export function Footer() {
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-muted">
           <p>Last updated: {lastUpdated}</p>
           <a
-            href="mailto:hello@mylesandjeslin.com"
+            href="mailto:hello@jeslinandmyles.com"
             className="hover:text-accent transition-colors"
           >
-            hello@mylesandjeslin.com
+            hello@jeslinandmyles.com
           </a>
         </div>
       </Container>

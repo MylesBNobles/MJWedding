@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Container, Card, Badge } from "@/components";
-import { weddingDetails, updateItems, travelInfo } from "@/lib/mockData";
+import { weddingDetails, updateItems } from "@/lib/mockData";
 
 export default function HomePage() {
 	const latestUpdate = updateItems.sort(
@@ -9,8 +9,9 @@ export default function HomePage() {
 	)[0];
 
 	const checklist = [
-		{ text: "Sign up to get updates", href: "/updates", done: false },
-		{ text: "Check the dress code", href: "/attire", done: false },
+		{ text: "Sign up to get updates", href: "/updates" },
+		{ text: "Plan your travel", href: "/travel" },
+		{ text: "Read our story", href: "/story" },
 	];
 
 	return (
@@ -40,31 +41,6 @@ export default function HomePage() {
 				</Container>
 			</section>
 
-			{/* Key Facts */}
-			<section className="py-12 border-y border-[#C9BFB2]/30 bg-[#EDE6D8]">
-				<Container>
-					<div className="flex flex-wrap justify-evenly gap-6 text-center">
-						<div>
-							<p className="text-sm text-accent mb-1">Nearest Airports</p>
-							<p className="font-medium text-fg">
-								{travelInfo.airports
-									.filter((a) => a.recommended)
-									.map((a) => a.code)
-									.join(", ")}
-							</p>
-						</div>
-						<div>
-							<p className="text-sm text-accent mb-1">Arrive By</p>
-							<p className="font-medium text-fg">Thu, Jun 10</p>
-						</div>
-						<div>
-							<p className="text-sm text-accent mb-1">Dress Code</p>
-							<p className="font-medium text-fg">{weddingDetails.dressCode}</p>
-						</div>
-					</div>
-				</Container>
-			</section>
-
 			{/* What to do next */}
 			<section className="py-16 bg-[#FAF7F2]">
 				<Container size="md">
@@ -75,28 +51,7 @@ export default function HomePage() {
 						{checklist.map((item, index) => (
 							<Link key={index} href={item.href}>
 								<Card className="flex items-center gap-4 hover:border-accent hover:shadow-md transition-all cursor-pointer group">
-									<div className="w-6 h-6 rounded-full border-2 border-accent/40 group-hover:border-accent group-hover:bg-accent/10 flex items-center justify-center flex-shrink-0 transition-colors">
-										{item.done && (
-											<svg
-												className="w-4 h-4 text-accent"
-												fill="none"
-												stroke="currentColor"
-												viewBox="0 0 24 24"
-											>
-												<path
-													strokeLinecap="round"
-													strokeLinejoin="round"
-													strokeWidth={2}
-													d="M5 13l4 4L19 7"
-												/>
-											</svg>
-										)}
-									</div>
-									<span
-										className={`text-fg ${item.done ? "line-through text-muted" : ""}`}
-									>
-										{item.text}
-									</span>
+									<span className="text-fg">{item.text}</span>
 									<svg
 										className="w-5 h-5 text-accent/60 group-hover:text-accent ml-auto transition-colors"
 										fill="none"

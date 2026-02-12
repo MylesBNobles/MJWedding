@@ -19,6 +19,7 @@ const navLinks = [
 export function Header() {
 	const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 	const [scrolled, setScrolled] = useState(false);
+	const [isMobile, setIsMobile] = useState(false);
 	const pathname = usePathname();
 	const isHome = pathname === "/";
 	const isStory = pathname === "/story";
@@ -31,9 +32,19 @@ export function Header() {
 		return () => window.removeEventListener("scroll", onScroll);
 	}, []);
 
+	useEffect(() => {
+		const checkMobile = () => setIsMobile(window.innerWidth < 1024);
+		checkMobile();
+		window.addEventListener("resize", checkMobile);
+		return () => window.removeEventListener("resize", checkMobile);
+	}, []);
+
 	const isActive = (href: string) => pathname === href;
-	// On story page, keep header transparent regardless of scroll (mobile scrolls the page)
-	const isTransparent = hasTransparentHeader && (!scrolled || isStory);
+	// On story page or home page mobile, keep header transparent regardless of scroll
+	const isTransparent = hasTransparentHeader && (!scrolled || isStory || (isHome && isMobile));
+	// Use white content only when in the hero/dark area (not scrolled), or always on story page
+	// But use dark content when mobile menu is open (opaque background)
+	const useWhiteContent = hasTransparentHeader && (!scrolled || isStory) && !isMobileMenuOpen;
 
 	return (
 		<header
@@ -49,7 +60,7 @@ export function Header() {
 					<Link
 						href="/"
 						className={`text-3xl hover:opacity-80 transition-colors font-cursive ${
-							isTransparent
+							useWhiteContent
 								? "text-white drop-shadow-lg"
 								: "text-fg"
 						}`}
@@ -98,7 +109,7 @@ export function Header() {
 					<button
 						onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
 						className={`md:hidden p-2 rounded-md ${
-							isTransparent
+							useWhiteContent
 								? "text-white hover:bg-white/10"
 								: "text-fg hover:bg-border/50"
 						}`}

@@ -21,7 +21,7 @@ function MobileStoryScroller({ slides }: StoryScrollerProps) {
 			<div className="fixed inset-0 -z-10 bg-black/50" />
 
 			{/* Header */}
-			<div className="py-6">
+			<div className="pt-12 pb-6">
 				<h1 className="text-center text-xl uppercase tracking-[0.35em] text-white/80">
 					Our Story
 				</h1>

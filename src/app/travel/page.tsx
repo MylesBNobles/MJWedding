@@ -221,7 +221,7 @@ Sunday, June 13
 	}
 
 	return (
-		<section className="py-16">
+		<section className="pt-24 pb-16">
 			<Container size="md">
 				<div className="flex items-start justify-between gap-4 mb-8">
 					<SectionHeader

@@ -114,7 +114,7 @@ export default function UpdatesPage() {
   };
 
   return (
-    <section className="py-16">
+    <section className="pt-24 pb-16">
       <Container size="md">
         <SectionHeader
           title="Updates"

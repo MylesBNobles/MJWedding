@@ -11,7 +11,7 @@ type ComingSoonProps = {
 
 export function ComingSoon({ title, subtitle }: ComingSoonProps) {
   return (
-    <section className="min-h-[80vh] flex items-center justify-center py-16">
+    <section className="min-h-[80vh] flex items-center justify-center pt-24 pb-16">
       <Container size="sm">
         <div className="text-center">
           {/* Decorative element */}
@@ -32,6 +32,7 @@ export function ComingSoon({ title, subtitle }: ComingSoonProps) {
           <p className="text-base text-muted leading-relaxed max-w-md mx-auto mb-8">
             We're still working on finalizing the details for this page.
             We'll post updates in our Updates section as soon as we have more information to share.
+            Sign up to receive updates so you don't miss anything.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">

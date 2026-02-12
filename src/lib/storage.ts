@@ -2,7 +2,7 @@ import { GuestPlan } from './types';
 
 const PLANS_KEY = 'wedding-hq-plans';
 const SUBSCRIPTION_KEY = 'wedding-hq-subscription';
-const LAST_UPDATED = '2025-02-20';
+const LAST_UPDATED = '2026-02-12';
 
 export function getPlans(): GuestPlan[] {
   if (typeof window === 'undefined') return [];

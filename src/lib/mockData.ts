@@ -185,63 +185,48 @@ export const attireSections: AttireSection[] = [
 export const faqItems: FAQItem[] = [
 	{
 		id: "1",
-		q: "Can I bring a plus-one?",
-		a: "Your invitation will specify if you have a plus-one. Due to venue capacity, we can only accommodate guests who are specifically named. Please reach out if you have questions.",
+		q: "When will save the dates be sent out?",
+		a: "Save the dates go out June 12, about a year before the big day, so everyone has plenty of time to plan and budget for our destination celebration.",
 	},
 	{
 		id: "2",
-		q: "Are children welcome?",
-		a: "Yes! Children are welcome to join us for the celebration. Please include them in your party count when sharing your plans.",
+		q: "When will wedding invitations be sent out?",
+		a: "Formal invitations will be sent about four months before the wedding to confirm RSVPs. You'll also get an early heads-up around a year out when the save the dates go out.",
 	},
 	{
-		id: "3",
-		q: "What time should I arrive for the ceremony?",
-		a: "We're still finalizing the schedule. We'll share arrival times in an update closer to the date—sign up for updates so you don't miss it!",
-	},
-	{
-		id: "4",
-		q: "Is there parking at the venue?",
-		a: "Yes, parking is available at Villa Di Geggiano. We also encourage carpooling and will have shuttle service from the recommended hotels in Siena.",
-	},
-	{
-		id: "5",
-		q: "Will the ceremony be indoors or outdoors?",
-		a: "The ceremony will be outdoors in the villa gardens, weather permitting. We have a beautiful indoor backup space just in case.",
-	},
-	{
-		id: "6",
-		q: "Can I take photos during the ceremony?",
-		a: "We kindly ask for an unplugged ceremony—please keep phones and cameras away during the vows. Our photographer will capture everything. Feel free to snap away during the reception!",
-	},
-	{
-		id: "7",
-		q: "Do you have a registry?",
-		a: "We're still putting together our registry and will share details soon. Keep an eye on the Updates section for an announcement!",
-	},
-	{
-		id: "8",
-		q: "What if I have dietary restrictions?",
-		a: "Please note any dietary restrictions in your plans form. Our caterer can accommodate most requirements with advance notice.",
-	},
-	{
-		id: "9",
+		id: "11",
 		q: "Where should I stay?",
 		a: "We're working on lodging recommendations and will share them soon. Sign up for updates and we'll let you know as soon as we have more details!",
 	},
 	{
-		id: "10",
-		q: "What's the weather like in June?",
-		a: "Tuscany in June is warm and sunny, typically 25-30°C (77-86°F) during the day and pleasantly cool in the evening around 18-22°C (64-72°F). Bring a light layer for after sunset.",
+		id: "3",
+		q: "Can I bring a plus-one?",
+		a: "Your invitation will specify if you have a plus-one. Due to venue capacity, we can only accommodate guests who are specifically named. Please reach out if you have questions.",
 	},
 	{
-		id: "11",
-		q: "Do I need to speak Italian?",
-		a: "English is widely spoken in tourist areas and hotels. However, learning a few basic Italian phrases is always appreciated by locals!",
+		id: "4",
+		q: "Are children welcome?",
+		a: "Yes! Children are welcome to join us for the celebration. Please include them in your party count when sharing your plans.",
+	},
+	{
+		id: "5",
+		q: "What time should I arrive for the ceremony?",
+		a: "We're still finalizing the schedule. We'll share arrival times in an update closer to the date—sign up for updates so you don't miss it!",
+	},
+	{
+		id: "7",
+		q: "Will the ceremony be indoors or outdoors?",
+		a: "The ceremony will be outdoors in the villa gardens, weather permitting. We have a beautiful indoor backup space just in case.",
+	},
+	{
+		id: "9",
+		q: "Do you have a registry?",
+		a: "We're still putting together our registry and will share details soon. Keep an eye on the Updates section for an announcement!",
 	},
 	{
 		id: "12",
-		q: "What currency is used in Italy?",
-		a: "Italy uses the Euro (€). Credit cards are widely accepted, but it's good to have some cash for smaller establishments.",
+		q: "What's the weather like in June?",
+		a: "Tuscany in June is warm and sunny, typically 25-30°C (77-86°F) during the day and pleasantly cool in the evening around 18-22°C (64-72°F). Bring a light layer for after sunset.",
 	},
 ];
 
