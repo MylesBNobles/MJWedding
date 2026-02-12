@@ -31,7 +31,7 @@ export default function HomePage() {
 							The Wedding Of
 						</p>
 						<h1 className="text-7xl sm:text-9xl font-cursive text-white drop-shadow-lg mb-6">
-							Jeslin <span className="text-4xl sm:text-5xl">&amp;</span> Myles
+							Jeslins <span className="text-4xl sm:text-5xl">&amp;</span> Myles
 						</h1>
 						<p className="text-xl sm:text-2xl font-medium text-white drop-shadow-lg mb-10 uppercase tracking-widest">
 							{weddingDetails.date} · {weddingDetails.location}
