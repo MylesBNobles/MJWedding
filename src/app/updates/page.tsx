@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   Container,
   SectionHeader,
@@ -14,9 +14,16 @@ import {
 import { updateItems } from '@/lib/mockData';
 import { getUpdatesSubscription, saveUpdatesSubscription } from '@/lib/storage';
 
+// Mailchimp configuration
+const MAILCHIMP_URL = 'https://gmail.us14.list-manage.com/subscribe/post-json';
+const MAILCHIMP_U = '5f1f113d40fd804816ba4788a';
+const MAILCHIMP_ID = 'c16355d9fb';
+const MAILCHIMP_TAG = '7337904';
+
 export default function UpdatesPage() {
   const [email, setEmail] = useState('');
   const [isSubscribed, setIsSubscribed] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [subscribedEmail, setSubscribedEmail] = useState('');
   const { toast, showToast, hideToast } = useToast();
 
@@ -28,15 +35,72 @@ export default function UpdatesPage() {
     }
   }, []);
 
-  const handleSubscribe = (e: React.FormEvent) => {
+  const handleSubscribe = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) return;
+    if (!email || isSubmitting) return;
 
-    saveUpdatesSubscription(email);
-    setIsSubscribed(true);
-    setSubscribedEmail(email);
-    showToast('You\'re signed up!');
-  };
+    setIsSubmitting(true);
+
+    // Create JSONP callback
+    const callbackName = `mailchimpCallback_${Date.now()}`;
+    const url = `${MAILCHIMP_URL}?u=${MAILCHIMP_U}&id=${MAILCHIMP_ID}&EMAIL=${encodeURIComponent(email)}&tags=${MAILCHIMP_TAG}&c=${callbackName}`;
+
+    // Create promise to handle the JSONP response
+    const jsonpPromise = new Promise<{ result: string; msg: string }>((resolve, reject) => {
+      const timeout = setTimeout(() => {
+        cleanup();
+        reject(new Error('Request timed out'));
+      }, 10000);
+
+      // Define the callback function
+      (window as unknown as Record<string, unknown>)[callbackName] = (data: { result: string; msg: string }) => {
+        cleanup();
+        resolve(data);
+      };
+
+      function cleanup() {
+        clearTimeout(timeout);
+        delete (window as unknown as Record<string, unknown>)[callbackName];
+        const script = document.getElementById(callbackName);
+        if (script) script.remove();
+      }
+
+      // Create and append script tag
+      const script = document.createElement('script');
+      script.id = callbackName;
+      script.src = url;
+      script.onerror = () => {
+        cleanup();
+        reject(new Error('Network error'));
+      };
+      document.body.appendChild(script);
+    });
+
+    try {
+      const response = await jsonpPromise;
+
+      if (response.result === 'success') {
+        saveUpdatesSubscription(email);
+        setIsSubscribed(true);
+        setSubscribedEmail(email);
+        showToast("You're signed up!");
+      } else if (response.msg.includes('already subscribed')) {
+        // Already subscribed is still a success for our purposes
+        saveUpdatesSubscription(email);
+        setIsSubscribed(true);
+        setSubscribedEmail(email);
+        showToast("You're already subscribed!");
+      } else {
+        // Clean up error message from Mailchimp
+        const cleanMsg = response.msg.replace(/<[^>]*>/g, '').replace(/^\d+ - /, '');
+        showToast(cleanMsg || 'Something went wrong. Please try again.');
+      }
+    } catch {
+      showToast('Something went wrong. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  }, [email, isSubmitting, showToast]);
 
   const sortedUpdates = [...updateItems].sort(
     (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
@@ -102,9 +166,16 @@ export default function UpdatesPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="your@email.com"
                   required
+                  disabled={isSubmitting}
                   className="flex-1"
                 />
-                <Button type="submit" className="whitespace-nowrap">Sign Up</Button>
+                <Button
+                  type="submit"
+                  className="whitespace-nowrap"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? 'Signing up...' : 'Sign Up'}
+                </Button>
               </div>
             </form>
           )}
