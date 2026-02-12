@@ -186,7 +186,7 @@ export const faqItems: FAQItem[] = [
 	{
 		id: "1",
 		q: "When will save the dates be sent out?",
-		a: "Save the dates go out June 12, about a year before the big day, so everyone has plenty of time to plan and budget for our destination celebration.",
+		a: "Save the dates will go out ahead of June 12, about a year before the big day, so everyone has plenty of time to plan and budget for our destination celebration.",
 	},
 	{
 		id: "2",
@@ -228,6 +228,11 @@ export const faqItems: FAQItem[] = [
 		q: "What's the weather like in June?",
 		a: "Tuscany in June is warm and sunny, typically 25-30°C (77-86°F) during the day and pleasantly cool in the evening around 18-22°C (64-72°F). Bring a light layer for after sunset.",
 	},
+	{
+		id: "13",
+		q: "Have a question that isn't answered here?",
+		a: "We are happy to help. Please reach out to Jeslin or Myles, or email us anytime at hello@jeslinandmyles.com.",
+	},
 ];
 
 export const updateItems: UpdateItem[] = [
@@ -236,7 +241,7 @@ export const updateItems: UpdateItem[] = [
 		title: "Welcome to Our Wedding Website",
 		body: "We're so excited to share all the details for our Tuscan celebration. Check back here for updates as the big day approaches.",
 		category: "general",
-		publishedAt: "2027-01-01T12:00:00Z",
+		publishedAt: "2026-02-12T12:00:00Z",
 	},
 ];
 

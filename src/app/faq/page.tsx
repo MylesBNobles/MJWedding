@@ -6,9 +6,31 @@ import { faqItems } from '@/lib/mockData';
 
 export default function FAQPage() {
   const [openId, setOpenId] = useState<string | null>(null);
+  const email = 'hello@jeslinandmyles.com';
 
   const toggleItem = (id: string) => {
     setOpenId(openId === id ? null : id);
+  };
+
+  const renderAnswer = (answer: string) => {
+    if (!answer.includes(email)) {
+      return answer;
+    }
+
+    const [before, after] = answer.split(email);
+
+    return (
+      <>
+        {before}
+        <a
+          href={`mailto:${email}`}
+          className="text-accent underline underline-offset-4"
+        >
+          {email}
+        </a>
+        {after}
+      </>
+    );
   };
 
   return (
@@ -45,7 +67,7 @@ export default function FAQPage() {
               </button>
               {openId === item.id && (
                 <div className="pt-2 pb-2 border-t border-border mt-2">
-                  <p className="text-sm text-muted">{item.a}</p>
+                  <p className="text-sm text-muted">{renderAnswer(item.a)}</p>
                 </div>
               )}
             </Card>
