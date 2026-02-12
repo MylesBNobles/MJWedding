@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import {
 	Container,
 	SectionHeader,
@@ -295,50 +296,23 @@ Sunday, June 13
 					</Card>
 				</div>
 
-				{/* Hotel Block */}
+				{/* Where to Stay */}
 				<div className="mb-12">
-					<h3 className="text-xl font-semibold text-fg mb-4">Hotel Block</h3>
-					<Card className="border-accent">
-						<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-							<div>
-								<h4 className="font-semibold text-fg">
-									{travelInfo.hotelBlock.name}
-								</h4>
-								<p className="text-sm text-muted mt-1">
-									Use code{" "}
-									<span className="font-mono font-medium text-fg">
-										{travelInfo.hotelBlock.code}
-									</span>
-								</p>
-								<p className="text-sm text-muted">
-									Book by {travelInfo.hotelBlock.bookBy}
-								</p>
-							</div>
-							<Button variant="secondary">Book Now</Button>
-						</div>
+					<h3 className="text-xl font-semibold text-fg mb-4">Where to Stay</h3>
+					<Card>
+						<p className="text-muted mb-4">
+							We recommend staying in the Siena area to be close to the venue and fully enjoy the Tuscan experience. We're currently working to secure discounts at our recommended hotels for our guests.
+						</p>
+						<p className="text-muted mb-4">
+							We'll be coordinating shuttle service between our recommended hotels and the venue, so booking with one of our recommended hotels will make getting to and from events seamless.
+						</p>
+						<p className="text-muted mb-4">
+							We'll share hotel details and booking information soon—sign up for updates so you don't miss the announcement.
+						</p>
+						<Link href="/updates">
+							<Button variant="primary">Get Updates</Button>
+						</Link>
 					</Card>
-				</div>
-
-				{/* Lodging Areas */}
-				<div className="mb-12">
-					<h3 className="text-xl font-semibold text-fg mb-4">Lodging Areas</h3>
-					<div className="grid gap-3">
-						{travelInfo.lodgingAreas.map((area) => (
-							<Card key={area.name} padding="sm">
-								<div className="flex items-start justify-between gap-4">
-									<div>
-										<span className="font-medium text-fg">{area.name}</span>
-										<p className="text-sm text-muted mt-1">
-											{area.description}
-										</p>
-									</div>
-									<span className="text-sm text-muted flex-shrink-0">
-										{area.priceRange}
-									</span>
-								</div>
-							</Card>
-						))}
-					</div>
 				</div>
 
 				{/* Transportation */}

@@ -12,7 +12,7 @@ export const storySlides: StorySlide[] = [
 		id: "1",
 		headline: "Where We First Met",
 		shortText:
-			"We first met in high school in the same AP U.S. History class.\nP.S. Jeslin took this pic of Myles!",
+			"We first met in high school in the same AP U.S. History class — and yes, Jeslin is the one who took this photo of Myles.",
 		imageUrl: "/images/LightStringPic.jpeg",
 		imagePosition: "center 25%",
 		background: "linear-gradient(135deg, #FAF7F2 0%, #EDE6D8 100%)",
@@ -22,7 +22,7 @@ export const storySlides: StorySlide[] = [
 		id: "2",
 		headline: "Finding Our Way Back",
 		shortText:
-			"Years later, we reconnected in a very unexpected way. Jeslin slid up on an Instagram photo Myles reposted, which he definitely thought was about him. It turns out she was actually complimenting his mom. Either way, it worked.",
+			"Years later, we reconnected in the most unexpected way — Jeslin replied to an Instagram photo Myles had reposted with a compliment for his mom. What started as a small interaction quickly turned into something much bigger.",
 		imageUrl: "/images/MomInstagram.jpeg",
 		imagePosition: "center 30%",
 		background: "linear-gradient(135deg, #EDE6D8 0%, #D5DBCE 100%)",
@@ -32,7 +32,7 @@ export const storySlides: StorySlide[] = [
 		id: "3",
 		headline: "Getting to Know Each Other",
 		shortText:
-			"What started casually quickly turned into many long phone calls. We got to know each other naturally through conversations about life, family, and everything in between.",
+			"What started with a single conversation soon gave way to long phone calls and an easy rhythm between us. Through talks about life, family, and everything in between, our connection deepened in the most natural way.",
 		imageUrl: "/images/VideoCall.jpeg",
 		background: "linear-gradient(135deg, #D5DBCE 0%, #BCC9B5 100%)",
 		theme: "light",
@@ -41,7 +41,7 @@ export const storySlides: StorySlide[] = [
 		id: "4",
 		headline: "The First Date",
 		shortText:
-			"When we finally spent quality time together in person, there was an instant connection. It felt easy, intentional, and exciting in all the right ways.",
+			"When we finally spent time together in person, the connection was immediate. There was a natural comfort between us, along with an excitement that was impossible to miss.",
 		imageUrl: "/images/FirstDates.jpeg",
 		background: "linear-gradient(135deg, #BCC9B5 0%, #A3B79D 100%)",
 		theme: "light",
@@ -50,7 +50,7 @@ export const storySlides: StorySlide[] = [
 		id: "5",
 		headline: "Growing Together",
 		shortText:
-			"Over the next year and a half, we dated, traveled, shared experiences, and learned how to show up for each other. What started as a connection turned into a partnership.",
+			"Over the next year and a half, we traveled, built memories, and learned how to truly show up for one another. What began as a connection gradually grew into a steady partnership.",
 		imageUrl: "/images/SanFran.jpeg",
 		background: "linear-gradient(135deg, #A3B79D 0%, #8AA585 100%)",
 		theme: "dark",
@@ -59,7 +59,7 @@ export const storySlides: StorySlide[] = [
 		id: "6",
 		headline: "The Proposal",
 		shortText:
-			"On a trip to Lake Como, the question was asked at Villa del Balbianello. A complete surprise and a moment we will never forget.",
+			"While in Lake Como, Italy, Myles asked the question at Villa del Balbianello. Completely unexpected, it became one of the most unforgettable moments of our lives.",
 		imageUrl: "/images/ProposalPic.jpeg",
 		background: "linear-gradient(135deg, #8AA585 0%, #72936E 100%)",
 		theme: "dark",
