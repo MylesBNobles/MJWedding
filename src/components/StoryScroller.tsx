@@ -131,7 +131,7 @@ export default function StoryScroller({ slides }: StoryScrollerProps) {
 			{/* Full-screen background image */}
 			<div
 				className="absolute inset-0 -z-10 bg-cover bg-center bg-no-repeat"
-				style={{ backgroundImage: "url('/images/ProposalBoatPic.jpg')" }}
+				style={{ backgroundImage: "url('/images/ProposalBoatPic.JPG')" }}
 			/>
 			{/* Dark overlay for readability */}
 			<div className="absolute inset-0 -z-10 bg-black/40" />
