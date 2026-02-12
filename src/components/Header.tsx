@@ -7,6 +7,7 @@ import { Container } from "./Container";
 import { Button } from "./Button";
 
 const navLinks = [
+	{ href: "/", label: "Home" },
 	{ href: "/story", label: "Our Story" },
 	{ href: "/timeline", label: "Timeline" },
 	{ href: "/travel", label: "Travel" },
@@ -52,7 +53,7 @@ export function Header() {
 								: "text-fg"
 						}`}
 					>
-						Jeslin & Myles
+						J & M
 					</Link>
 
 					{/* Desktop Navigation */}
