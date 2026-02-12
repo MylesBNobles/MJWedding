@@ -262,7 +262,7 @@ export const travelInfo: TravelSection = {
 		{
 			name: "Rome Fiumicino Airport",
 			code: "FCO",
-			driveTime: "2 hours 30 min",
+			driveTime: "3 hours",
 			recommended: false,
 		},
 	],

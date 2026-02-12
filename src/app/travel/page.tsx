@@ -54,7 +54,7 @@ Sunday, June 13
 	> = {
 		FLR: {
 			summary:
-				"Florence is the closest and easiest airport for reaching Siena. Estimated total travel time: ~1 hour 15–30 minutes.",
+				"Florence is the closest and easiest airport for reaching the venue. Estimated travel time from the airport to the venue: ~1 hour 15–30 minutes.",
 			options: [
 				{
 					title: "Option 1: Train (Recommended)",
@@ -82,7 +82,7 @@ Sunday, June 13
 		},
 		PSA: {
 			summary:
-				"Pisa is a convenient alternative with more international flights. Estimated total travel time: ~1 hour 45–2 hours.",
+				"Pisa is a convenient alternative with more international flights. Estimated travel time from the airport to the venue: ~1 hour 45–2 hours.",
 			options: [
 				{
 					title: "Option 1: Train (Recommended)",
@@ -109,7 +109,7 @@ Sunday, June 13
 		},
 		FCO: {
 			summary:
-				"Rome Fiumicino is the furthest option but useful for long-haul flights. Estimated total travel time: ~3–3.5 hours.",
+				"Rome Fiumicino is the furthest option but useful for long-haul flights. Estimated travel time from the airport to the venue: ~3 hours.",
 			options: [
 				{
 					title: "Option 1: Train (Recommended)",
@@ -160,7 +160,22 @@ Sunday, June 13
 					</div>
 					<div className="flex items-center gap-3">
 						<span className="text-sm text-muted">{airport.driveTime}</span>
-						{airport.recommended && <Badge variant="accent">Recommended</Badge>}
+						<Badge className="gap-1">
+							<svg
+								className="h-3.5 w-3.5"
+								viewBox="0 0 20 20"
+								fill="currentColor"
+								aria-hidden
+							>
+								<path d="M18.5 10.5l-7.4 1.9-3.2 4.2c-.2.3-.6.4-.9.2l-1.4-.8c-.2-.1-.3-.4-.2-.6l1.6-3.6L3 10.5l-2.5.8c-.3.1-.6-.1-.6-.4V9.1c0-.2.1-.3.3-.4l2.8-1 3.5-4.7c.2-.2.5-.3.8-.2l1.6.5c.3.1.5.5.3.8L8 6.8l7.6 2.1c.3.1.5.4.4.8l-.3.8c-.1.2-.2.3-.4.3l-6.6.2 3.2 1.1 3.1-1.1c.3-.1.6 0 .7.2l.6.9c.2.2.1.6-.2.8l-2.5 1z" />
+							</svg>
+							To venue
+						</Badge>
+						{airport.recommended ? (
+							<Badge variant="accent">Recommended</Badge>
+						) : (
+							<span className="inline-flex h-[22px] w-[110px]" aria-hidden />
+						)}
 						<svg
 							className={`w-5 h-5 text-muted transition-transform ${isOpen ? "rotate-180" : ""}`}
 							viewBox="0 0 20 20"
@@ -232,6 +247,16 @@ Sunday, June 13
 					<Button variant="ghost" size="sm" onClick={copyLink}>
 						Copy link
 					</Button>
+				</div>
+
+				<div className="mb-10 p-4 sm:p-5 bg-accent/10 rounded-lg border border-accent/30">
+					<p className="text-sm sm:text-base text-muted">
+						Flights and many hotels typically release availability about a year in
+						advance. As we get closer to the wedding, we will share more detailed
+						travel guidance, plus recommended hotels and flight options. If you
+						are planning early, expect limited availability until the one-year
+						mark.
+					</p>
 				</div>
 
 				{/* Wedding Venue */}
