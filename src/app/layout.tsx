@@ -13,8 +13,29 @@ const greatVibes = Great_Vibes({
 
 export const metadata: Metadata = {
 	title: "Jeslin & Myles | Wedding",
-	description:
-		"Join us for our wedding celebration in Napa Valley, California.",
+	description: "Jeslin & Myles are getting married!",
+	metadataBase: new URL("https://jeslinandmyles.com"),
+	openGraph: {
+		title: "Jeslin & Myles | Wedding",
+		description: "Jeslin & Myles are getting married!",
+		url: "https://jeslinandmyles.com",
+		siteName: "Jeslin & Myles | Wedding",
+		images: [
+			{
+				url: "/MJWeddingPic1.jpeg",
+				width: 1200,
+				height: 630,
+				alt: "Jeslin and Myles",
+			},
+		],
+		type: "website",
+	},
+	twitter: {
+		card: "summary_large_image",
+		title: "Jeslin & Myles | Wedding",
+		description: "Jeslin & Myles are getting married!",
+		images: ["/MJWeddingPic1.jpeg"],
+	},
 };
 
 export default function RootLayout({
