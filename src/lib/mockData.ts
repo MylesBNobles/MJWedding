@@ -298,14 +298,14 @@ export const travelInfo: TravelSection = {
 		{
 			type: "Shuttle",
 			description:
-				"Complimentary shuttle between Grand Hotel Continental Siena and all wedding events.",
+				"Complimentary shuttle service will run between recommended hotels (or a designated central meeting point in Siena) and all wedding events.",
 			recommended: true,
 		},
 		{
 			type: "Rental Car",
 			description:
 				"Great for exploring Tuscany before or after the wedding. Book early for June!",
-			recommended: true,
+			recommended: false,
 		},
 		{
 			type: "Taxi/Transfer",
