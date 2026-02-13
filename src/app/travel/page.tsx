@@ -177,7 +177,7 @@ Sunday, June 13
 							<span className="inline-flex h-[22px] w-[110px]" aria-hidden />
 						)}
 						<svg
-							className={`w-5 h-5 text-muted transition-transform ${isOpen ? "rotate-180" : ""}`}
+							className={`w-5 h-5 flex-shrink-0 text-muted transition-transform ${isOpen ? "rotate-180" : ""}`}
 							viewBox="0 0 20 20"
 							fill="none"
 							xmlns="http://www.w3.org/2000/svg"

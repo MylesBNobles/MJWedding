@@ -142,10 +142,7 @@ export const attireSections: AttireSection[] = [
 		title: "Indo-Western Black Tie",
 		description:
 			"The ceremony and reception call for Indo-Western Black Tie attire. Think elegant, refined, and celebration-ready—whether in a stunning lehenga or a classic tuxedo. The venue is outdoors with indoor options, so plan for warm Tuscan summer evenings.",
-		images: [
-			"/images/DressDo.png",
-			"/images/DressDont.png",
-		],
+		images: ["/images/DressDo.png", "/images/DressDont.png"],
 		doList: [
 			"Elegant floor-length evening gowns",
 			"Refined sarees in elevated fabrics",
@@ -161,7 +158,6 @@ export const attireSections: AttireSection[] = [
 		],
 		avoidList: [
 			"Casual or club-style dresses",
-			"Short or overly revealing silhouettes",
 			"Denim or daytime fabrics",
 			"Sundresses or relaxed daywear",
 			"Athletic sneakers or flip flops",
