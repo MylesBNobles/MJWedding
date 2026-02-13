@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 		siteName: "Jeslin & Myles | Wedding",
 		images: [
 			{
-				url: "/MJWeddingPic1.jpeg",
+				url: "/images/MJWeddingPic1.jpeg",
 				width: 1200,
 				height: 630,
 				alt: "Jeslin and Myles",
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
 		card: "summary_large_image",
 		title: "Jeslin & Myles | Wedding",
 		description: "Jeslin & Myles are getting married!",
-		images: ["/MJWeddingPic1.jpeg"],
+		images: ["/images/MJWeddingPic1.jpeg"],
 	},
 };
 
