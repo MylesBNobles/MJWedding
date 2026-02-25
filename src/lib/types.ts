@@ -64,6 +64,24 @@ export type UpdateItem = {
   publishedAt: string; // ISO datetime
 };
 
+export type HotelRecommendation = {
+  id: string;
+  name: string;
+  priceLevel: "$" | "$$" | "$$$";
+  description: string;
+  distanceToVenue: string;
+  walkToShuttle: string;
+  bookingUrl: string;
+};
+
+export type ShuttleInfo = {
+  pickupLocation: string;
+  pickupAddress: string;
+  walkTime: string;
+  description: string;
+  mapLink: string;
+};
+
 export type TravelSection = {
   airports: { name: string; code: string; driveTime: string; recommended: boolean }[];
   arrivalWindow: { ideal: string; latest: string };
@@ -72,4 +90,6 @@ export type TravelSection = {
   hotelBlock: { name: string; bookBy: string; code: string };
   transport: { type: string; description: string; recommended: boolean }[];
   tips: string[];
+  hotelRecommendations: HotelRecommendation[];
+  shuttleInfo: ShuttleInfo;
 };

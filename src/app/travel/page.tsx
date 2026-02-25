@@ -324,19 +324,78 @@ Sunday, June 13
 				{/* Where to Stay */}
 				<div className="mb-12">
 					<h3 className="text-xl font-semibold text-fg mb-4">Where to Stay</h3>
-					<Card>
-						<p className="text-muted mb-4">
-							We recommend staying in the Siena area to be close to the venue and fully enjoy the Tuscan experience. We're currently working to secure discounts at our recommended hotels for our guests.
-						</p>
-						<p className="text-muted mb-4">
-							We'll be coordinating shuttle service between our recommended hotels and the venue, so booking with one of our recommended hotels will make getting to and from events seamless.
-						</p>
-						<p className="text-muted mb-4">
-							We'll share hotel details and booking information soon—sign up for updates so you don't miss the announcement.
-						</p>
-						<Link href="/updates">
-							<Button variant="primary">Get Updates</Button>
-						</Link>
+					<p className="text-muted mb-6">
+						You're welcome to stay wherever suits you best! That said, we recommend staying in Siena's city center to be close to restaurants, sights, and local charm. The hotels below are ones we love—and if you'd like to take advantage of our complimentary shuttle service, staying nearby the pickup point will make getting to and from events easy.
+					</p>
+					<div className="grid gap-4">
+						{travelInfo.hotelRecommendations.map((hotel) => (
+							<Card key={hotel.id} padding="sm">
+								<div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+									<div className="flex-1">
+										<div className="flex items-center gap-2 mb-2">
+											<span className="font-semibold text-fg">{hotel.name}</span>
+											<Badge>{hotel.priceLevel}</Badge>
+										</div>
+										<p className="text-sm text-muted mb-3">{hotel.description}</p>
+										<div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted">
+											<span className="flex items-center gap-1.5">
+												<svg className="w-4 h-4 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+													<path strokeLinecap="round" strokeLinejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" />
+												</svg>
+												{hotel.distanceToVenue} to venue
+											</span>
+											<span className="flex items-center gap-1.5">
+												<svg className="w-4 h-4 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+													<path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+												</svg>
+												{hotel.walkToShuttle} to shuttle
+											</span>
+										</div>
+									</div>
+									<a
+										href={hotel.bookingUrl}
+										target="_blank"
+										rel="noreferrer"
+										className="flex-shrink-0"
+									>
+										<Button variant="secondary" size="sm">
+											View on Expedia
+										</Button>
+									</a>
+								</div>
+							</Card>
+						))}
+					</div>
+				</div>
+
+				{/* Shuttle Pickup */}
+				<div className="mb-12">
+					<h3 className="text-xl font-semibold text-fg mb-4">Shuttle Pickup</h3>
+					<Card className="bg-accent/10 border-accent/30">
+						<div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+							<div className="flex items-start gap-3">
+								<div className="flex-shrink-0 mt-0.5">
+									<svg className="w-5 h-5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+										<path strokeLinecap="round" strokeLinejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" />
+									</svg>
+								</div>
+								<div>
+									<h4 className="font-semibold text-fg mb-1">{travelInfo.shuttleInfo.pickupLocation}</h4>
+									<p className="text-sm text-muted mb-2">{travelInfo.shuttleInfo.pickupAddress}</p>
+									<p className="text-sm text-muted">{travelInfo.shuttleInfo.description}</p>
+								</div>
+							</div>
+							<a
+								href={travelInfo.shuttleInfo.mapLink}
+								target="_blank"
+								rel="noreferrer"
+								className="flex-shrink-0"
+							>
+								<Button variant="secondary" size="sm">
+									View on Map
+								</Button>
+							</a>
+						</div>
 					</Card>
 				</div>
 

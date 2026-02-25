@@ -322,6 +322,49 @@ export const travelInfo: TravelSection = {
 		'Many shops close for "riposo" (afternoon rest) from 1-4 PM.',
 		"Italian dinner is typically served later (8 PM onwards)—adjust to local rhythm!",
 	],
+	hotelRecommendations: [
+		{
+			id: "1",
+			name: "Villa Elda Boutique Hotel",
+			priceLevel: "$",
+			description:
+				"Charming Art Nouveau villa with a rooftop terrace offering 360° views of Siena. Free breakfast included.",
+			distanceToVenue: "~17 min drive",
+			walkToShuttle: "~5 min walk",
+			bookingUrl:
+				"https://www.expedia.com/Siena-Hotels-Villa-Elda-Boutique-Hotel.h2524249.Hotel-Information",
+		},
+		{
+			id: "2",
+			name: "Relais degli Angeli",
+			priceLevel: "$",
+			description:
+				"Elegant boutique hotel steps from Piazza del Campo with frescoed ceilings and a rooftop terrace. Bike rentals available.",
+			distanceToVenue: "~17 min drive",
+			walkToShuttle: "~10 min walk",
+			bookingUrl:
+				"https://www.expedia.com/Siena-Hotels-Relais-Degli-Angeli.h17500586.Hotel-Information",
+		},
+		{
+			id: "3",
+			name: "Grand Hotel Continental Siena",
+			priceLevel: "$$",
+			description:
+				"The only 5-star hotel in Siena's historic center. A stunning 16th-century palazzo with on-site restaurant and wine cellar.",
+			distanceToVenue: "~20 min drive",
+			walkToShuttle: "~10 min walk",
+			bookingUrl:
+				"https://www.expedia.com/Siena-Hotels-Grand-Hotel-Continental-Siena-Starhotels-Collezione.h796662.Hotel-Information",
+		},
+	],
+	shuttleInfo: {
+		pickupLocation: "Parcheggio San Prospero – Il Campino",
+		pickupAddress: "Viale Vittorio Veneto, Siena",
+		walkTime: "5–10 min",
+		description:
+			"Shuttles will depart from Parcheggio San Prospero – Il Campino for all wedding events. This parking area is located near the Fortezza Medicea, just a short walk from hotels in the historic center. Exact pickup times will be shared closer to the wedding.",
+		mapLink: "https://maps.google.com/?q=Parcheggio+Il+Campino+Siena+Italy",
+	},
 };
 
 export const weddingDetails = {
