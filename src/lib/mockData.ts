@@ -197,7 +197,7 @@ export const faqItems: FAQItem[] = [
 	{
 		id: "3",
 		q: "Can I bring a plus-one?",
-		a: "Your invitation will specify if you have a plus-one. Due to venue capacity, we can only accommodate guests who are specifically named. Please reach out if you have questions.",
+		a: "Each guest we're able to welcome will be named on your invitation. Please reach out if you have any questions!",
 	},
 	{
 		id: "4",
