@@ -6,7 +6,7 @@ export { TextField } from './TextField';
 export { Select } from './Select';
 export { TextArea } from './TextArea';
 export { Badge } from './Badge';
-export { TimelineItem } from './TimelineItem';
+export { ItineraryItem } from './ItineraryItem';
 export { Toast, useToast } from './Toast';
 export { Checkbox } from './Checkbox';
 export { ComingSoon } from './ComingSoon';

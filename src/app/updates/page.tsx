@@ -107,7 +107,7 @@ export default function UpdatesPage() {
   );
 
   const categoryColors: Record<string, 'default' | 'accent' | 'success' | 'warning'> = {
-    timeline: 'accent',
+    itinerary: 'accent',
     travel: 'success',
     lodging: 'warning',
     general: 'default',

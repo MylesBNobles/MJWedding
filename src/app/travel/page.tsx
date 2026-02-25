@@ -54,14 +54,14 @@ Sunday, June 13
 	> = {
 		FLR: {
 			summary:
-				"Florence is the closest and easiest airport for reaching the venue. Estimated travel time from the airport to the venue: ~1 hour 15–30 minutes.",
+				"Florence is the closest and easiest airport for reaching the venue. Estimated travel time from the airport to the venue: ~1 hour 15 minutes.",
 			options: [
 				{
 					title: "Option 1: Train (Recommended)",
 					steps: [
 						"Take the T2 tram (Vespucci line) from Florence Airport to Firenze Santa Maria Novella Station (~20 minutes).",
 						"From Firenze SMN, take a regional train to Siena Station (~1 hour; trains roughly hourly).",
-						"From Siena station, take a taxi to your hotel or the venue (10–20 minutes).",
+						"From Siena station, take a taxi to your hotel or the venue (~15 minutes).",
 					],
 					links: [
 						{ label: "Tram info", href: "https://www.gestramvia.it/" },
@@ -71,7 +71,7 @@ Sunday, June 13
 				{
 					title: "Option 2: Taxi / Private Transfer",
 					steps: [
-						"Direct taxi or private car from Florence Airport to Siena (~1 hour 10–20 minutes).",
+						"Direct taxi or private car from Florence Airport to Siena (~1 hour 15 minutes).",
 						"Estimated cost: €150–€180 (book in advance for the best rates).",
 					],
 					links: [
@@ -82,7 +82,7 @@ Sunday, June 13
 		},
 		PSA: {
 			summary:
-				"Pisa is a convenient alternative with more international flights. Estimated travel time from the airport to the venue: ~1 hour 45–2 hours.",
+				"Pisa is a convenient alternative with more international flights. Estimated travel time from the airport to the venue: ~1 hour 45 minutes.",
 			options: [
 				{
 					title: "Option 1: Train (Recommended)",
@@ -90,7 +90,7 @@ Sunday, June 13
 						"Take the Pisamover shuttle from the airport to Pisa Centrale (~5 minutes).",
 						"Take a train from Pisa Centrale to Firenze Santa Maria Novella (~1 hour).",
 						"From Firenze SMN, take a regional train to Siena (~1 hour).",
-						"Taxi from Siena station to hotel/venue (10–20 minutes).",
+						"Taxi from Siena station to hotel/venue (~15 minutes).",
 					],
 					links: [
 						{ label: "Pisamover", href: "https://www.pisamover.com/" },
@@ -117,7 +117,7 @@ Sunday, June 13
 						"Take the Leonardo Express from FCO to Roma Termini (~30 minutes).",
 						"Take a high-speed train from Roma Termini to Firenze SMN (~1h30).",
 						"From Firenze SMN take a regional train to Siena (~1 hour).",
-						"Taxi from Siena station to hotel/venue (10–20 minutes).",
+						"Taxi from Siena station to hotel/venue (~15 minutes).",
 					],
 					links: [
 						{
@@ -131,7 +131,7 @@ Sunday, June 13
 				{
 					title: "Option 2: Taxi / Private Transfer",
 					steps: [
-						"Direct private transfer from Rome FCO to Siena (~2.5–3 hours).",
+						"Direct private transfer from Rome FCO to Siena (~3 hours).",
 						"Estimated cost: €300–€400.",
 					],
 					links: [{ label: "Rome taxi info", href: "https://www.3570.it/" }],
@@ -310,12 +310,12 @@ Sunday, June 13
 						<h4 className="font-semibold text-fg mb-3">Departure</h4>
 						<div className="space-y-2 text-sm">
 							<p className="text-muted">
-								<span className="font-medium text-fg">Earliest:</span>{" "}
-								{travelInfo.departureWindow.earliest}
-							</p>
-							<p className="text-muted">
 								<span className="font-medium text-fg">Ideal:</span>{" "}
 								{travelInfo.departureWindow.ideal}
+							</p>
+							<p className="text-muted">
+								<span className="font-medium text-fg">Earliest:</span>{" "}
+								{travelInfo.departureWindow.earliest}
 							</p>
 						</div>
 					</Card>

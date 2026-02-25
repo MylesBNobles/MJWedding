@@ -60,7 +60,7 @@ export type UpdateItem = {
   id: string;
   title: string;
   body: string;
-  category: "timeline" | "travel" | "lodging" | "general";
+  category: "itinerary" | "travel" | "lodging" | "general";
   publishedAt: string; // ISO datetime
 };
 

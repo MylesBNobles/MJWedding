@@ -5,12 +5,12 @@ import { EventItem } from '@/lib/types';
 import { Badge } from './Badge';
 import { Card } from './Card';
 
-type TimelineItemProps = {
+type ItineraryItemProps = {
   event: EventItem;
   isLast?: boolean;
 };
 
-export function TimelineItem({ event, isLast = false }: TimelineItemProps) {
+export function ItineraryItem({ event, isLast = false }: ItineraryItemProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const timeRange = event.endTime

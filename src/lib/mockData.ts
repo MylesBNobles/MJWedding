@@ -75,7 +75,7 @@ export const storySlides: StorySlide[] = [
 	},
 ];
 
-export const timelineEvents: EventItem[] = [
+export const itineraryEvents: EventItem[] = [
 	{
 		id: "1",
 		title: "Welcome Lunch",
@@ -141,7 +141,7 @@ export const attireSections: AttireSection[] = [
 		id: "1",
 		title: "Indo-Western Black Tie",
 		description:
-			"The ceremony and reception call for Indo-Western Black Tie attire. Think elegant, refined, and celebration-ready—whether in a stunning lehenga or a classic tuxedo. The venue is outdoors with indoor options, so plan for warm Tuscan summer evenings.",
+			"The ceremony and reception call for Indo-Western Black Tie attire. Think elegant, refined, and celebration-ready—whether in a stunning lehenga or a classic tuxedo. The celebration will be outdoors, so plan for a warm Tuscan summer evening.",
 		images: ["/images/DressDo.png", "/images/DressDont.png"],
 		doList: [
 			"Elegant floor-length evening gowns",
@@ -202,7 +202,7 @@ export const faqItems: FAQItem[] = [
 	{
 		id: "4",
 		q: "Are children welcome?",
-		a: "Yes! Children are welcome to join us for the celebration. Please include them in your party count when sharing your plans.",
+		a: "We would love to celebrate with your little ones! To help with planning, invited children will be named directly on your invitation.",
 	},
 	{
 		id: "5",
@@ -310,7 +310,7 @@ export const travelInfo: TravelSection = {
 		{
 			type: "Taxi/Transfer",
 			description:
-				"Private transfers can be arranged from airports. We can provide recommendations.",
+				"Private transfers can be arranged from airports. Taxis are less common than in major cities—booking ahead is recommended.",
 			recommended: false,
 		},
 	],
@@ -319,7 +319,6 @@ export const travelInfo: TravelSection = {
 		"Tipping in Italy is appreciated but not mandatory (round up or 5-10% for excellent service).",
 		"June is peak tourist season—book accommodations and rental cars well in advance.",
 		"Don't miss the chance to explore Siena, Florence, and the Chianti wine region!",
-		"Sunscreen and a hat are essential for daytime outdoor activities.",
 		'Many shops close for "riposo" (afternoon rest) from 1-4 PM.',
 		"Italian dinner is typically served later (8 PM onwards)—adjust to local rhythm!",
 	],

@@ -9,7 +9,7 @@ import { Button } from "./Button";
 const navLinks = [
 	{ href: "/", label: "Home" },
 	{ href: "/story", label: "Our Story" },
-	{ href: "/timeline", label: "Timeline" },
+	{ href: "/itinerary", label: "Itinerary" },
 	{ href: "/travel", label: "Travel" },
 	{ href: "/attire", label: "Attire" },
 	{ href: "/faq", label: "FAQ" },
