@@ -1,253 +1,146 @@
-'use client';
+export const dynamic = 'force-dynamic';
 
-import { useState, useEffect } from 'react';
-import {
-  Container,
-  SectionHeader,
-  Card,
-  Button,
-  Select,
-  Badge,
-  Toast,
-  useToast,
-} from '@/components';
-import { GuestPlan } from '@/lib/types';
-import { getPlans, getUpdatesSubscription, exportPlansToCSV, downloadCSV } from '@/lib/storage';
-import { travelInfo } from '@/lib/mockData';
+import Link from 'next/link';
+import { createServerClient } from '@/lib/supabase';
+import { Container, SectionHeader, Card } from '@/components';
+import { GuestTable } from './components/GuestTable';
+import { AddHouseholdButton } from './components/AddHouseholdButton';
+import type { Guest, Event, GuestEventInvitation } from '@/lib/database.types';
 
-export default function AdminPage() {
-  const [plans, setPlans] = useState<GuestPlan[]>([]);
-  const [subscriberEmail, setSubscriberEmail] = useState<string | null>(null);
-  const [filters, setFilters] = useState({
-    attendingStatus: '',
-    arrivalAirport: '',
-    lodgingArea: '',
-  });
-  const { toast, showToast, hideToast } = useToast();
+type GuestRow = Guest & {
+  household: { household_name: string; side: string | null } | null;
+  invitations: (GuestEventInvitation & { event: Event })[];
+};
 
-  useEffect(() => {
-    setPlans(getPlans());
-    const subscription = getUpdatesSubscription();
-    setSubscriberEmail(subscription?.email || null);
-  }, []);
+async function getAdminData() {
+  const supabase = createServerClient();
 
-  const filteredPlans = plans.filter((plan) => {
-    if (filters.attendingStatus && plan.attendingStatus !== filters.attendingStatus) {
-      return false;
-    }
-    if (filters.arrivalAirport && plan.arrivalAirport !== filters.arrivalAirport) {
-      return false;
-    }
-    if (filters.lodgingArea && plan.lodgingArea !== filters.lodgingArea) {
-      return false;
-    }
-    return true;
-  });
+  const [{ data: guestsData, error: guestsError }, { data: eventsData }] = await Promise.all([
+    supabase
+      .from('guests')
+      .select('*, household:households!household_id(household_name, side)')
+      .eq('is_named', true)
+      .neq('invite_status', 'not_invited')
+      .order('last_name'),
+    supabase
+      .from('events')
+      .select('*')
+      .order('event_date'),
+  ]);
 
-  const handleExportCSV = () => {
-    const csv = exportPlansToCSV();
-    if (!csv) {
-      showToast('No data to export');
-      return;
-    }
-    downloadCSV('wedding-guest-plans.csv', csv);
-    showToast('CSV exported');
-  };
+  if (guestsError) console.error('Admin guests query error:', guestsError);
 
-  const statusOptions = [
-    { value: '', label: 'All Statuses' },
-    { value: 'yes', label: 'Attending' },
-    { value: 'maybe', label: 'Maybe' },
-    { value: 'no', label: 'Not Attending' },
-  ];
+  const guests = (guestsData ?? []) as GuestRow[];
+  const events = (eventsData ?? []) as Event[];
 
-  const airportOptions = [
-    { value: '', label: 'All Airports' },
-    ...travelInfo.airports.map((a) => ({
-      value: a.code,
-      label: a.code,
-    })),
-  ];
+  const guestIds = guests.map(g => g.id);
 
-  const lodgingOptions = [
-    { value: '', label: 'All Areas' },
-    ...travelInfo.lodgingAreas.map((a) => ({
-      value: a.name,
-      label: a.name,
-    })),
-  ];
+  const { data: invitationsData } = guestIds.length > 0
+    ? await supabase
+        .from('guest_event_invitations')
+        .select('*, event:events(*)')
+        .in('guest_id', guestIds)
+    : { data: [] };
+
+  const invitations = (invitationsData ?? []) as (GuestEventInvitation & { event: Event })[];
+
+  const guestsWithInvitations: GuestRow[] = guests.map(g => ({
+    ...g,
+    invitations: invitations.filter(inv => inv.guest_id === g.id),
+  }));
+
+  return { guests: guestsWithInvitations, events };
+}
+
+
+export default async function AdminPage() {
+  const { guests, events } = await getAdminData();
 
   const stats = {
-    total: plans.length,
-    attending: plans.filter((p) => p.attendingStatus === 'yes').length,
-    maybe: plans.filter((p) => p.attendingStatus === 'maybe').length,
-    notAttending: plans.filter((p) => p.attendingStatus === 'no').length,
-    totalPartySize: plans
-      .filter((p) => p.attendingStatus === 'yes')
-      .reduce((acc, p) => acc + (p.partySize || 1), 0),
+    total: guests.length,
+    accepted: guests.filter(g => g.overall_rsvp_status === 'accepted').length,
+    declined: guests.filter(g => g.overall_rsvp_status === 'declined').length,
+    pending: guests.filter(g => g.overall_rsvp_status === 'pending').length,
   };
 
+  const eventStats = events.map(event => {
+    const eventInvitations = guests.flatMap(g => g.invitations).filter(inv => inv.event_id === event.id);
+    return {
+      event,
+      accepted: eventInvitations.filter(inv => inv.rsvp_status === 'accepted').length,
+      declined: eventInvitations.filter(inv => inv.rsvp_status === 'declined').length,
+      pending: eventInvitations.filter(inv => inv.rsvp_status === 'pending').length,
+      total: eventInvitations.filter(inv => inv.invited).length,
+    };
+  });
+
   return (
-    <section className="py-16">
+    <section className="pt-28 pb-16 bg-[#FAF7F2] min-h-screen">
       <Container>
         <div className="flex items-center justify-between mb-8">
           <SectionHeader
             title="Admin Dashboard"
-            subtitle="View and manage guest plans (dev mode)"
+            subtitle="Jeslin & Myles · Guest Management"
             className="mb-0"
           />
-          <Badge variant="warning">Dev Only</Badge>
+          <div className="flex items-center gap-4">
+            <AddHouseholdButton />
+            <Link href="/admin/messages" className="text-sm text-accent hover:underline font-medium">
+              Messages
+            </Link>
+            <form action="/api/admin/logout" method="POST">
+              <button type="submit" className="text-sm text-muted hover:text-fg transition-colors">
+                Sign out
+              </button>
+            </form>
+          </div>
         </div>
 
-        {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+        {/* Overall stats */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           <Card padding="sm">
-            <p className="text-sm text-muted">Total Responses</p>
+            <p className="text-sm text-muted">Total Guests</p>
             <p className="text-2xl font-semibold text-fg">{stats.total}</p>
           </Card>
           <Card padding="sm">
-            <p className="text-sm text-muted">Attending</p>
-            <p className="text-2xl font-semibold text-green-600">{stats.attending}</p>
+            <p className="text-sm text-muted">Accepted</p>
+            <p className="text-2xl font-semibold text-green-600">{stats.accepted}</p>
           </Card>
           <Card padding="sm">
-            <p className="text-sm text-muted">Maybe</p>
-            <p className="text-2xl font-semibold text-yellow-600">{stats.maybe}</p>
+            <p className="text-sm text-muted">Declined</p>
+            <p className="text-2xl font-semibold text-muted">{stats.declined}</p>
           </Card>
           <Card padding="sm">
-            <p className="text-sm text-muted">Not Attending</p>
-            <p className="text-2xl font-semibold text-muted">{stats.notAttending}</p>
-          </Card>
-          <Card padding="sm">
-            <p className="text-sm text-muted">Est. Guests</p>
-            <p className="text-2xl font-semibold text-fg">{stats.totalPartySize}</p>
+            <p className="text-sm text-muted">Pending</p>
+            <p className="text-2xl font-semibold text-yellow-600">{stats.pending}</p>
           </Card>
         </div>
 
-        {/* Subscriber */}
-        <Card className="mb-8" padding="sm">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-muted">Newsletter Subscriber</p>
-              <p className="font-medium text-fg">
-                {subscriberEmail || 'No subscriber yet'}
+        {/* Per-event stats */}
+        <h2 className="text-lg font-semibold text-fg mb-4">By Event</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
+          {eventStats.map(({ event, accepted, declined, pending, total }) => (
+            <Card key={event.id} padding="sm">
+              <p className="font-medium text-fg mb-1">{event.name}</p>
+              <p className="text-xs text-muted mb-3">
+                {event.event_date
+                  ? new Date(event.event_date + 'T00:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric' })
+                  : ''}
               </p>
-            </div>
-          </div>
-        </Card>
+              <div className="flex gap-4 text-sm">
+                <span className="text-green-600 font-medium">{accepted} yes</span>
+                <span className="text-muted">{declined} no</span>
+                <span className="text-yellow-600">{pending} pending</span>
+                <span className="text-muted ml-auto">/ {total} invited</span>
+              </div>
+            </Card>
+          ))}
+        </div>
 
-        {/* Filters */}
-        <Card className="mb-6">
-          <div className="flex flex-wrap gap-4 items-end">
-            <div className="w-full sm:w-auto">
-              <Select
-                label="Attending Status"
-                options={statusOptions}
-                value={filters.attendingStatus}
-                onChange={(e) =>
-                  setFilters((prev) => ({ ...prev, attendingStatus: e.target.value }))
-                }
-              />
-            </div>
-            <div className="w-full sm:w-auto">
-              <Select
-                label="Arrival Airport"
-                options={airportOptions}
-                value={filters.arrivalAirport}
-                onChange={(e) =>
-                  setFilters((prev) => ({ ...prev, arrivalAirport: e.target.value }))
-                }
-              />
-            </div>
-            <div className="w-full sm:w-auto">
-              <Select
-                label="Lodging Area"
-                options={lodgingOptions}
-                value={filters.lodgingArea}
-                onChange={(e) =>
-                  setFilters((prev) => ({ ...prev, lodgingArea: e.target.value }))
-                }
-              />
-            </div>
-            <div className="ml-auto">
-              <Button onClick={handleExportCSV}>Export CSV</Button>
-            </div>
-          </div>
-        </Card>
-
-        {/* Plans Table */}
-        {plans.length === 0 ? (
-          <Card className="text-center py-12">
-            <p className="text-muted">No guest plans submitted yet.</p>
-            <p className="text-sm text-muted mt-2">
-              Plans will appear here when guests submit them on the /plans page.
-            </p>
-          </Card>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="border-b border-border">
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted">Name</th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted">Email</th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted">Status</th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted">Party</th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted">Arrival</th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted">Lodging</th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted">Updated</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredPlans.map((plan) => (
-                  <tr key={plan.id} className="border-b border-border hover:bg-border/30">
-                    <td className="py-3 px-4 text-sm text-fg font-medium">{plan.name}</td>
-                    <td className="py-3 px-4 text-sm text-muted">{plan.email}</td>
-                    <td className="py-3 px-4">
-                      <Badge
-                        variant={
-                          plan.attendingStatus === 'yes'
-                            ? 'success'
-                            : plan.attendingStatus === 'maybe'
-                            ? 'warning'
-                            : 'default'
-                        }
-                      >
-                        {plan.attendingStatus}
-                      </Badge>
-                    </td>
-                    <td className="py-3 px-4 text-sm text-muted">{plan.partySize || 1}</td>
-                    <td className="py-3 px-4 text-sm text-muted">
-                      {plan.arrivalAirport || '-'}
-                      {plan.arrivalDateTime && (
-                        <span className="block text-xs">
-                          {new Date(plan.arrivalDateTime).toLocaleDateString()}
-                        </span>
-                      )}
-                    </td>
-                    <td className="py-3 px-4 text-sm text-muted">
-                      {plan.lodgingName || plan.lodgingArea || '-'}
-                    </td>
-                    <td className="py-3 px-4 text-sm text-muted">
-                      {new Date(plan.updatedAt).toLocaleDateString()}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-
-        {filteredPlans.length === 0 && plans.length > 0 && (
-          <Card className="text-center py-8 mt-4">
-            <p className="text-muted">No plans match the current filters.</p>
-          </Card>
-        )}
+        {/* Guest list */}
+        <h2 className="text-lg font-semibold text-fg mb-4">All Guests</h2>
+        <GuestTable guests={guests} events={events} />
       </Container>
-
-      <Toast
-        message={toast.message}
-        isVisible={toast.isVisible}
-        onClose={hideToast}
-      />
     </section>
   );
 }

@@ -23,6 +23,7 @@ export function Header() {
 	const pathname = usePathname();
 	const isHome = pathname === "/";
 	const isStory = pathname === "/story";
+	const isSaveTheDate = pathname === "/save-the-date";
 	const hasTransparentHeader = isHome || isStory;
 
 	useEffect(() => {
@@ -38,6 +39,8 @@ export function Header() {
 		window.addEventListener("resize", checkMobile);
 		return () => window.removeEventListener("resize", checkMobile);
 	}, []);
+
+	if (isSaveTheDate) return null;
 
 	const isActive = (href: string) => pathname === href;
 	// On story page or home page mobile, keep header transparent regardless of scroll

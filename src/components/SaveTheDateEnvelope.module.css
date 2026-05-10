@@ -1,0 +1,282 @@
+/* Stage — envelope is positioned absolutely inside.
+   --env-w drives proportional sizing for everything. */
+.stage {
+	position: relative;
+	z-index: 8; /* above black overlay (5), below fireworks (25) and hero (20) */
+	width: min(90vw, 750px);
+	--env-w: min(90vw, 750px);
+	--env-h: calc(var(--env-w) * 0.66);
+	height: var(--env-h);
+	margin: 0 auto;
+	perspective: calc(var(--env-w) * 3.5);
+	transform: scale(0.94);
+	transition: transform 1200ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.stage.isPlaying {
+	transform: scale(1);
+}
+
+/* ---------- Envelope ---------- */
+.envelope {
+	position: absolute;
+	left: 50%;
+	bottom: 0;
+	width: var(--env-w);
+	height: var(--env-h);
+	transform: translateX(-50%);
+	transform-style: preserve-3d;
+	filter: drop-shadow(0 20px 40px rgba(30, 50, 20, 0.28));
+}
+
+.envBody {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: fill;
+	display: block;
+	user-select: none;
+	pointer-events: none;
+}
+
+.envFlap {
+	position: absolute;
+	inset: 0;
+	clip-path: polygon(0 0, 100% 0, 50% 53%);
+	transform-origin: top center;
+	transform: rotateX(0deg);
+	transition: transform 1600ms cubic-bezier(0.55, 0, 0.2, 1);
+	backface-visibility: hidden;
+	-webkit-backface-visibility: hidden;
+	will-change: transform;
+	z-index: 4;
+	overflow: hidden;
+}
+.envFlap img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: fill;
+	user-select: none;
+	pointer-events: none;
+}
+
+.seal {
+	position: absolute;
+	left: 50%;
+	top: 65%;
+	width: calc(var(--env-w) * 0.24);
+	height: calc(var(--env-w) * 0.24);
+	transform: translate(-50%, -50%) scale(1) rotate(0deg);
+	transition:
+		transform 800ms cubic-bezier(0.4, 0, 0.6, 1),
+		opacity 800ms ease-out;
+	z-index: 6;
+}
+
+/* ---------- Playing sequence ----------
+   Timeline:
+   0.00s   click → stage zooms (1.2s), seal lifts (1.0s)
+   1.70s   flap rotates open (1.6s → done at 3.3s)
+   3.30s   black bg fades in (300ms) + fireworks burst
+   6.10s   hero photo begins slow 5.5s opacity fade-in
+   11.60s  hero fully visible, fireworks long gone */
+.stage.isPlaying .seal {
+	transform: translate(-50%, -90%) scale(0.86) rotate(8deg);
+	opacity: 0;
+	transition-delay: 1000ms;
+}
+.stage.isPlaying .envFlap {
+	transform: rotateX(-176deg);
+	transition-delay: 1700ms;
+}
+
+/* ---------- Reduced motion ---------- */
+.stage[data-reduced="true"] {
+	transform: scale(1);
+	transition: none;
+}
+.stage[data-reduced="true"] .seal {
+	opacity: 0;
+	transition: none;
+}
+.stage[data-reduced="true"] .envFlap {
+	transform: rotateX(-176deg);
+	transition: none;
+}
+
+/* ---------- Tap-to-open prompt ---------- */
+.prompt {
+	position: absolute;
+	top: calc(100% + 28px);
+	left: 50%;
+	transform: translateX(-50%);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 8px;
+	pointer-events: none;
+}
+.promptText {
+	font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+	font-size: 0.62rem;
+	letter-spacing: 0.42em;
+	text-transform: uppercase;
+	color: #8a7d6c;
+	white-space: nowrap;
+}
+.promptArrow {
+	animation: promptBounce 1.6s ease-in-out infinite;
+}
+@keyframes promptBounce {
+	0%, 100% { transform: translateY(0); }
+	50%       { transform: translateY(-5px); }
+}
+
+/* ---------- Black background (fades in on click) ---------- */
+.blackOverlay {
+	position: absolute;
+	inset: 0;
+	z-index: 5;
+	background: #000;
+	animation: blackFadeIn 300ms ease forwards;
+}
+
+@keyframes blackFadeIn {
+	from { opacity: 0; }
+	to   { opacity: 1; }
+}
+
+/* ---------- Full-screen hero overlay ---------- */
+.heroOverlay {
+	position: absolute;
+	inset: 0;
+	z-index: 20;
+	animation: heroFadeIn 5500ms ease forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.heroOverlay {
+		animation: none;
+		opacity: 1;
+	}
+}
+
+@keyframes heroFadeIn {
+	from { opacity: 0; }
+	to   { opacity: 1; }
+}
+
+.heroPhoto {
+	position: absolute;
+	inset: 0;
+	background-image: url('/images/MJWeddingPic1.jpeg');
+	background-size: cover;
+	background-position: bottom center;
+	background-repeat: no-repeat;
+}
+
+.heroGradient {
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(
+		to bottom,
+		rgba(63, 58, 54, 0.30) 0%,
+		rgba(63, 58, 54, 0.18) 50%,
+		rgba(63, 58, 54, 0.38) 100%
+	);
+}
+
+.heroContent {
+	position: relative;
+	z-index: 2;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	padding: 2rem;
+}
+
+.heroEyebrow {
+	font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+	font-size: 0.75rem;
+	letter-spacing: 0.42em;
+	text-transform: uppercase;
+	color: rgba(255, 255, 255, 0.95);
+	margin-bottom: 1.5rem;
+}
+
+.heroNames {
+	font-family: var(--font-cursive), cursive;
+	font-weight: 400;
+	font-size: clamp(4rem, 14vw, 8rem);
+	line-height: 1;
+	color: #fff;
+	text-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+	margin: 0 0 1.5rem;
+}
+
+.heroRule {
+	width: 60px;
+	height: 1px;
+	background: rgba(255, 255, 255, 0.6);
+	margin: 0 auto 1.5rem;
+}
+
+.heroDate {
+	font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+	font-size: clamp(0.85rem, 2.5vw, 1.05rem);
+	letter-spacing: 0.36em;
+	text-transform: uppercase;
+	color: rgba(255, 255, 255, 0.95);
+	margin-bottom: 0.5rem;
+}
+
+.heroVenue {
+	font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+	font-size: clamp(0.72rem, 2vw, 0.85rem);
+	letter-spacing: 0.24em;
+	text-transform: uppercase;
+	color: rgba(255, 255, 255, 0.8);
+}
+
+.heroScroll {
+	position: absolute;
+	bottom: 2rem;
+	left: 50%;
+	transform: translateX(-50%);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 6px;
+	pointer-events: none;
+	animation: scrollIndicatorFade 800ms 5000ms ease forwards;
+}
+.heroScrollText {
+	font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+	font-size: 0.58rem;
+	letter-spacing: 0.42em;
+	text-transform: uppercase;
+	color: rgba(255, 255, 255, 0.7);
+	white-space: nowrap;
+}
+.heroScrollArrow {
+	animation: scrollBounce 1.6s ease-in-out infinite;
+}
+@keyframes scrollBounce {
+	0%, 100% { transform: translateY(0); }
+	50%       { transform: translateY(6px); }
+}
+@keyframes scrollIndicatorFade {
+	to { opacity: 0; }
+}
+
+.heroFoot {
+	margin-top: 2rem;
+	font-family: var(--font-header);
+	font-style: italic;
+	font-size: clamp(0.8rem, 2.2vw, 0.95rem);
+	color: rgba(255, 255, 255, 0.7);
+}

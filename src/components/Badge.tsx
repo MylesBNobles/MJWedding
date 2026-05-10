@@ -2,7 +2,7 @@
 
 import { ReactNode } from 'react';
 
-type BadgeVariant = 'default' | 'accent' | 'success' | 'warning';
+type BadgeVariant = 'default' | 'accent' | 'success' | 'warning' | 'danger';
 
 type BadgeProps = {
   children: ReactNode;
@@ -13,8 +13,9 @@ type BadgeProps = {
 const variantClasses: Record<BadgeVariant, string> = {
   default: 'bg-accent/15 text-accent',
   accent: 'bg-accent/25 text-accent',
-  success: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
-  warning: 'bg-[#D4A574]/20 text-[#8B6B47] dark:bg-[#D4A574]/30 dark:text-[#E5B889]',
+  success: 'bg-green-100 text-green-800',
+  warning: 'bg-amber-100 text-amber-800',
+  danger: 'bg-red-100 text-red-700',
 };
 
 export function Badge({ children, variant = 'default', className = '' }: BadgeProps) {
