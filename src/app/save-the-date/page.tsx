@@ -1,7 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { SaveTheDateEnvelope } from "@/components/SaveTheDateEnvelope";
-import { Countdown } from "@/components/Countdown";
+import { FlipCountdown } from "@/components/FlipCountdown";
+import { ItalyMap } from "@/components/ItalyMap";
+import { RSVPButton } from "@/components/RSVPButton";
+import { FloatingBotanicals } from "@/components/FloatingBotanicals";
+import { AnimatedSignature } from "@/components/AnimatedSignature";
+import { MusicPlayer } from "@/components/MusicPlayer";
+import { ScrollHint } from "@/components/ScrollHint";
+import { ScrollLock } from "@/components/ScrollLock";
 import { FadeUp } from "@/components/FadeUp";
 import { weddingDetails, itineraryEvents, travelInfo, attireSections } from "@/lib/mockData";
 
@@ -114,6 +122,7 @@ function formatTime(t: string) {
 
 export default function SaveTheDatePage() {
 	return (
+		<>
 		<div className="bg-[#FAF7F2]">
 			<SaveTheDateEnvelope
 				coupleNames="Jeslin & Myles"
@@ -132,11 +141,12 @@ export default function SaveTheDatePage() {
 					/>
 				</svg>
 
-				<div className="bg-[#FBF7EE]">
+				<div className="bg-[#FBF7EE] relative">
+					<FloatingBotanicals />
 					<div className="max-w-[720px] mx-auto px-6 sm:px-10">
 
-						{/* Countdown — she loves this, leave it alone */}
-						<Countdown />
+						{/* Flip-board countdown — Jeslin loves this section */}
+						<FlipCountdown />
 
 						<BotanicalRule />
 
@@ -158,9 +168,41 @@ export default function SaveTheDatePage() {
 								<p className="font-header italic text-[#8a7d6c] text-base mb-1">
 									With so much love,
 								</p>
-								<p className="font-cursive text-4xl text-[#C9A684]">
-									Jeslin &amp; Myles
-								</p>
+								<AnimatedSignature />
+
+								{/* Polaroid photo */}
+								<div className="mt-10 flex justify-center">
+									<div
+										style={{
+											background: "white",
+											padding: "10px 10px 32px",
+											boxShadow: "0 8px 32px rgba(0,0,0,0.13), 0 2px 8px rgba(0,0,0,0.07)",
+											transform: "rotate(-2.5deg)",
+											display: "inline-block",
+											maxWidth: 220,
+										}}
+									>
+										<Image
+											src="/images/ProposalBoatPic.JPG"
+											alt="Jeslin & Myles proposal"
+											width={200}
+											height={200}
+											style={{ display: "block", width: "100%", height: "auto", objectFit: "cover", aspectRatio: "1/1" }}
+										/>
+										<p
+											style={{
+												fontFamily: "var(--font-cursive)",
+												fontSize: "1.1rem",
+												color: "#8a7d6c",
+												textAlign: "center",
+												marginTop: "6px",
+												lineHeight: 1.2,
+											}}
+										>
+											the beginning ♡
+										</p>
+									</div>
+								</div>
 							</div>
 						</FadeUp>
 
@@ -197,17 +239,29 @@ export default function SaveTheDatePage() {
 								<p className="text-sm text-[#5a5048] leading-relaxed mb-7 max-w-[400px] mx-auto">
 									As a destination celebration, we&rsquo;d love to know you&rsquo;re coming as early as possible — it helps us plan the most magical weekend for everyone who travels to be with us.
 								</p>
-								<Link
-									href="/rsvp"
-									target="_blank"
-									rel="noopener noreferrer"
-									className="inline-block bg-[#C9A684] text-white text-xs uppercase tracking-[0.28em] px-8 py-3.5 rounded-full hover:bg-[#a8865e] transition-colors shadow-sm"
-								>
-									RSVP Now →
-								</Link>
+								<RSVPButton />
 								<p className="text-[0.65rem] text-[#8a7d6c] mt-4 italic">
 									Formal invitations to follow — RSVP early secures your spot.
 								</p>
+
+								{/* Tuscan rolling hills at card bottom */}
+								<svg
+									viewBox="0 0 480 60"
+									preserveAspectRatio="none"
+									className="absolute bottom-0 inset-x-0 w-full"
+									aria-hidden
+								>
+									<path
+										d="M0,60 L0,40 C40,28 80,44 120,36 C160,28 200,16 240,22 C280,28 320,42 360,36 C400,30 440,18 480,26 L480,60 Z"
+										fill="#4A5E3A"
+										fillOpacity="0.07"
+									/>
+									<path
+										d="M0,60 L0,50 C50,38 100,52 150,46 C200,40 250,30 300,38 C350,46 400,36 480,42 L480,60 Z"
+										fill="#C9A684"
+										fillOpacity="0.09"
+									/>
+								</svg>
 							</div>
 						</FadeUp>
 
@@ -271,11 +325,13 @@ export default function SaveTheDatePage() {
 							<div>
 								<SectionLabel>Getting There</SectionLabel>
 								<LetterHeading>Flying to Tuscany</LetterHeading>
-								<p className="text-sm sm:text-base text-[#5a5048] leading-relaxed mb-8">
+								<p className="text-sm sm:text-base text-[#5a5048] leading-relaxed mb-6">
 									We recommend flying into Florence or Pisa for the most convenient journey to Villa Di Geggiano.
 								</p>
 
-								<div className="grid sm:grid-cols-2 gap-4 mb-8">
+								<ItalyMap />
+
+								<div className="grid sm:grid-cols-2 gap-4 mb-8 mt-6">
 									{travelInfo.airports.filter(a => a.recommended).map((airport) => (
 										<div key={airport.code} className="bg-[#FAF7F2] rounded-lg p-5 border border-[#C9A684]/20">
 											<div className="flex items-center justify-between mb-1">
@@ -318,8 +374,26 @@ export default function SaveTheDatePage() {
 								<SectionLabel>Where to Stay</SectionLabel>
 								<LetterHeading>Accommodations</LetterHeading>
 
-								<div className="bg-[#C9A684]/10 border border-[#C9A684]/30 rounded-lg p-6 mb-8">
-									<p className="text-xs uppercase tracking-[0.3em] text-[#C9A684] mb-2">Room Block</p>
+								<div className="relative bg-[#C9A684]/10 border border-[#C9A684]/30 rounded-lg p-6 mb-8 overflow-hidden">
+									{/* Rolling hills watermark */}
+									<svg
+										viewBox="0 0 480 80"
+										preserveAspectRatio="none"
+										className="absolute bottom-0 inset-x-0 w-full pointer-events-none"
+										aria-hidden
+									>
+										<path
+											d="M0,80 L0,55 C60,40 120,60 180,50 C240,40 300,25 360,38 C420,51 450,38 480,44 L480,80 Z"
+											fill="#4A5E3A"
+											fillOpacity="0.06"
+										/>
+										<path
+											d="M0,80 L0,65 C80,52 160,68 240,60 C320,52 400,42 480,54 L480,80 Z"
+											fill="#C9A684"
+											fillOpacity="0.07"
+										/>
+									</svg>
+									<p className="relative text-xs uppercase tracking-[0.3em] text-[#C9A684] mb-2">Room Block</p>
 									<p className="font-header text-[#3F3A36] text-lg mb-1">{travelInfo.hotelBlock.name}</p>
 									<p className="text-sm text-[#5a5048] mb-3">
 										We&rsquo;ve reserved a room block at a discounted rate. Use code{" "}
@@ -501,14 +575,63 @@ export default function SaveTheDatePage() {
 					</div>
 
 					{/* Footer */}
-					<footer className="border-t border-[#C9A684]/20 py-12 text-center">
-						<p className="font-cursive text-4xl text-[#C9A684] mb-3">J & M</p>
-						<p className="text-xs uppercase tracking-[0.36em] text-[#8a7d6c]">
+					<footer className="border-t border-[#C9A684]/20 py-14 text-center">
+						{/* Botanical heart wreath around J & M */}
+						<div className="relative inline-flex flex-col items-center">
+							<svg
+								viewBox="0 0 200 200"
+								width="160"
+								height="160"
+								aria-hidden
+								style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}
+							>
+								{/* Wreath ring made of leaves and small flowers */}
+								{Array.from({ length: 18 }, (_, i) => {
+									const angle = (360 / 18) * i;
+									const rad = (angle * Math.PI) / 180;
+									const r = 72;
+									const cx = 100 + r * Math.cos(rad);
+									const cy = 100 + r * Math.sin(rad);
+									const isFlower = i % 3 === 0;
+									return isFlower ? (
+										<g key={i} transform={`translate(${cx},${cy})`}>
+											<circle cx={0} cy={0} r={5.5} fill="#F7D6C1" fillOpacity={0.8} />
+											<circle cx={5} cy={0} r={4}   fill="#F7D6C1" fillOpacity={0.6} />
+											<circle cx={-5} cy={0} r={4}  fill="#F7D6C1" fillOpacity={0.6} />
+											<circle cx={0} cy={5}  r={4}  fill="#F7D6C1" fillOpacity={0.6} />
+											<circle cx={0} cy={-5} r={4}  fill="#F7D6C1" fillOpacity={0.6} />
+											<circle cx={0} cy={0} r={2.5} fill="#C9A684" />
+										</g>
+									) : (
+										<ellipse
+											key={i}
+											cx={cx} cy={cy}
+											rx={8} ry={3.5}
+											fill={i % 2 === 0 ? "#4A5E3A" : "#BFCBB2"}
+											fillOpacity={0.55}
+											transform={`rotate(${angle + 90} ${cx} ${cy})`}
+										/>
+									);
+								})}
+								{/* Heart in center */}
+								<path
+									d="M100,112 C100,112 82,98 82,88 C82,82 87,78 93,80 C96,81 99,84 100,87 C101,84 104,81 107,80 C113,78 118,82 118,88 C118,98 100,112 100,112Z"
+									fill="#C4614A"
+									fillOpacity={0.5}
+								/>
+							</svg>
+							<p className="font-cursive text-5xl text-[#C9A684] relative z-10">J &amp; M</p>
+						</div>
+						<p className="text-xs uppercase tracking-[0.36em] text-[#8a7d6c] mt-6">
 							{weddingDetails.date} · {weddingDetails.venue} · {weddingDetails.location}
 						</p>
 					</footer>
 				</div>
 			</div>
 		</div>
+		<MusicPlayer />
+		<ScrollHint />
+		<ScrollLock />
+		</>
 	);
 }
