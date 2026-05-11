@@ -23,7 +23,7 @@ export default function AttirePage() {
             <div>
               <h3 className="text-lg font-semibold text-fg mb-2">Celebrating Our Cultures</h3>
               <p className="text-muted">
-                Our wedding brings together family and friends from so many backgrounds—and we'd love to see that reflected. If traditional attire is part of yours, we encourage you to wear it. This takes priority over any color suggestions.
+                This celebration brings together many cultures, and that means the world to us. We highly encourage traditional or cultural attire from any background — it&apos;s part of what will make this day so special.
               </p>
             </div>
           </div>

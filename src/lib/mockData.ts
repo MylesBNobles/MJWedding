@@ -99,7 +99,7 @@ export const itineraryEvents: EventItem[] = [
 		address: "Strada di Geggiano 1, 53010 Castelnuovo Berardenga, Siena, Italy",
 		mapLink: "https://maps.google.com/?q=Villa+Di+Geggiano+Siena+Italy",
 		dressCode: "Formal",
-		notes: "Please arrive by 4:00 PM. Ceremony begins promptly at 4:30 PM.",
+		notes: "",
 	},
 	{
 		id: "3",
@@ -362,7 +362,7 @@ export const travelInfo: TravelSection = {
 		pickupAddress: "Viale Vittorio Veneto, Siena",
 		walkTime: "5–10 min",
 		description:
-			"Shuttles will depart from Parcheggio San Prospero – Il Campino for all wedding events. This parking area is located near the Fortezza Medicea, just a short walk from hotels in the historic center. Exact pickup times will be shared closer to the wedding.",
+			"We will have a complimentary shuttle running on the wedding day itself, departing from Parcheggio San Prospero – Il Campino, located near the Fortezza Medicea and just a short walk from hotels in the historic center. We are working on arrangements for other events and will share full details closer to the date.",
 		mapLink: "https://maps.google.com/?q=Parcheggio+Il+Campino+Siena+Italy",
 	},
 };

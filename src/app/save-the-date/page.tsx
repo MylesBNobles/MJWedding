@@ -8,7 +8,6 @@ import { RSVPButton } from "@/components/RSVPButton";
 import { FloatingBotanicals } from "@/components/FloatingBotanicals";
 import { AnimatedSignature } from "@/components/AnimatedSignature";
 import { MusicPlayer } from "@/components/MusicPlayer";
-import { ScrollHint } from "@/components/ScrollHint";
 import { ScrollLock } from "@/components/ScrollLock";
 import { FadeUp } from "@/components/FadeUp";
 import { weddingDetails, itineraryEvents, travelInfo, attireSections } from "@/lib/mockData";
@@ -19,7 +18,7 @@ export const metadata: Metadata = {
 	openGraph: {
 		title: "Save the Date — Jeslin & Myles",
 		description: `${weddingDetails.date} · ${weddingDetails.venue} · ${weddingDetails.location}`,
-		images: [{ url: "/images/MJWeddingPic1.jpeg", width: 1200, height: 630, alt: "Jeslin & Myles" }],
+		images: [{ url: "/images/envelope_four.png", alt: "Save the Date — Jeslin & Myles" }],
 		type: "website",
 	},
 };
@@ -113,12 +112,6 @@ const days = [
 	{ date: "2027-06-13", label: "Sunday, June 13" },
 ];
 
-function formatTime(t: string) {
-	const [h, m] = t.split(":").map(Number);
-	const ampm = h >= 12 ? "PM" : "AM";
-	const hour = h % 12 || 12;
-	return `${hour}:${String(m).padStart(2, "0")} ${ampm}`;
-}
 
 export default function SaveTheDatePage() {
 	return (
@@ -288,19 +281,8 @@ export default function SaveTheDatePage() {
 													{events.map((event) => (
 														<div key={event.id} className="flex gap-5 items-start border-l-2 border-[#C9A684]/30 pl-5">
 															<div className="flex-1">
-																<div className="flex flex-wrap items-baseline gap-2 mb-1">
-																	<span className="font-header text-[#3F3A36] text-base sm:text-lg">{event.title}</span>
-																	{event.dressCode && (
-																		<span className="text-[0.6rem] uppercase tracking-[0.3em] text-[#8a7d6c] border border-[#C9A684]/40 rounded-full px-2 py-0.5">
-																			{event.dressCode}
-																		</span>
-																	)}
-																</div>
-																<p className="text-xs text-[#8a7d6c] mb-1">
-																	{formatTime(event.startTime)}
-																	{event.endTime && ` – ${formatTime(event.endTime)}`}
-																	{event.venueName && ` · ${event.venueName}`}
-																</p>
+																<p className="font-header text-[#3F3A36] text-base sm:text-lg mb-1">{event.title}</p>
+																<p className="text-xs text-[#8a7d6c] mb-1">{event.venueName}</p>
 																{event.notes && (
 																	<p className="text-sm text-[#5a5048] italic">{event.notes}</p>
 																)}
@@ -326,33 +308,40 @@ export default function SaveTheDatePage() {
 								<SectionLabel>Getting There</SectionLabel>
 								<LetterHeading>Flying to Tuscany</LetterHeading>
 								<p className="text-sm sm:text-base text-[#5a5048] leading-relaxed mb-6">
-									We recommend flying into Florence or Pisa for the most convenient journey to Villa Di Geggiano.
+									Florence and Pisa are the most convenient options, though Rome can offer cheaper long-haul flights for some travelers.
 								</p>
 
 								<ItalyMap />
 
-								<div className="grid sm:grid-cols-2 gap-4 mb-8 mt-6">
-									{travelInfo.airports.filter(a => a.recommended).map((airport) => (
+								<div className="grid sm:grid-cols-3 gap-4 mb-8 mt-6">
+									{travelInfo.airports.map((airport) => (
 										<div key={airport.code} className="bg-[#FAF7F2] rounded-lg p-5 border border-[#C9A684]/20">
 											<div className="flex items-center justify-between mb-1">
 												<span className="font-header text-[#3F3A36] text-base">{airport.name}</span>
 												<span className="text-xs font-medium text-[#C9A684] bg-[#C9A684]/10 px-2 py-0.5 rounded-full">{airport.code}</span>
 											</div>
 											<p className="text-sm text-[#8a7d6c]">{airport.driveTime} to venue</p>
+											{airport.recommended && (
+												<p className="text-xs text-[#C9A684] mt-1">Recommended</p>
+											)}
 										</div>
 									))}
 								</div>
 
 								<div className="grid sm:grid-cols-2 gap-6 mb-8 text-sm">
-									<div>
-										<p className="text-xs uppercase tracking-[0.3em] text-[#C9A684] mb-2">Ideal Arrival</p>
-										<p className="text-[#3F3A36] font-medium">{travelInfo.arrivalWindow.ideal}</p>
-										<p className="text-[#8a7d6c] mt-1">Latest: {travelInfo.arrivalWindow.latest}</p>
+									<div className="bg-[#FAF7F2] rounded-lg p-5 border border-[#C9A684]/20">
+										<p className="text-xs uppercase tracking-[0.3em] text-[#C9A684] mb-3">Arrival</p>
+										<p className="text-xs text-[#8a7d6c] mb-0.5">Ideal</p>
+										<p className="text-[#3F3A36] font-medium mb-3">{travelInfo.arrivalWindow.ideal}</p>
+										<p className="text-xs text-[#8a7d6c] mb-0.5">Latest</p>
+										<p className="text-[#3F3A36]">{travelInfo.arrivalWindow.latest}</p>
 									</div>
-									<div>
-										<p className="text-xs uppercase tracking-[0.3em] text-[#C9A684] mb-2">Departure</p>
-										<p className="text-[#3F3A36] font-medium">{travelInfo.departureWindow.ideal}</p>
-										<p className="text-[#8a7d6c] mt-1">Earliest: {travelInfo.departureWindow.earliest}</p>
+									<div className="bg-[#FAF7F2] rounded-lg p-5 border border-[#C9A684]/20">
+										<p className="text-xs uppercase tracking-[0.3em] text-[#C9A684] mb-3">Departure</p>
+										<p className="text-xs text-[#8a7d6c] mb-0.5">Ideal</p>
+										<p className="text-[#3F3A36] font-medium mb-3">{travelInfo.departureWindow.ideal}</p>
+										<p className="text-xs text-[#8a7d6c] mb-0.5">Earliest</p>
+										<p className="text-[#3F3A36]">{travelInfo.departureWindow.earliest}</p>
 									</div>
 								</div>
 
@@ -374,39 +363,8 @@ export default function SaveTheDatePage() {
 								<SectionLabel>Where to Stay</SectionLabel>
 								<LetterHeading>Accommodations</LetterHeading>
 
-								<div className="relative bg-[#C9A684]/10 border border-[#C9A684]/30 rounded-lg p-6 mb-8 overflow-hidden">
-									{/* Rolling hills watermark */}
-									<svg
-										viewBox="0 0 480 80"
-										preserveAspectRatio="none"
-										className="absolute bottom-0 inset-x-0 w-full pointer-events-none"
-										aria-hidden
-									>
-										<path
-											d="M0,80 L0,55 C60,40 120,60 180,50 C240,40 300,25 360,38 C420,51 450,38 480,44 L480,80 Z"
-											fill="#4A5E3A"
-											fillOpacity="0.06"
-										/>
-										<path
-											d="M0,80 L0,65 C80,52 160,68 240,60 C320,52 400,42 480,54 L480,80 Z"
-											fill="#C9A684"
-											fillOpacity="0.07"
-										/>
-									</svg>
-									<p className="relative text-xs uppercase tracking-[0.3em] text-[#C9A684] mb-2">Room Block</p>
-									<p className="font-header text-[#3F3A36] text-lg mb-1">{travelInfo.hotelBlock.name}</p>
-									<p className="text-sm text-[#5a5048] mb-3">
-										We&rsquo;ve reserved a room block at a discounted rate. Use code{" "}
-										<span className="font-medium text-[#3F3A36] bg-[#C9A684]/15 px-1.5 py-0.5 rounded font-mono text-xs">
-											{travelInfo.hotelBlock.code}
-										</span>{" "}
-										when booking.
-									</p>
-									<p className="text-xs text-[#8a7d6c]">Book by {travelInfo.hotelBlock.bookBy} to secure the group rate.</p>
-								</div>
-
 								<p className="text-sm text-[#5a5048] mb-6 leading-relaxed">
-									Beyond the hotel block, the Siena area and Chianti countryside offer a range of beautiful options — from historic city-center hotels to charming agriturismos.
+									We recommend staying in Siena&rsquo;s historic center — it puts you close to restaurants, sights, and the shuttle pickup. The hotels below are ones we love.
 								</p>
 
 								<div className="space-y-4">
@@ -463,8 +421,7 @@ export default function SaveTheDatePage() {
 								{/* Cultural note */}
 								<div className="bg-[#D6C6E1]/15 border border-[#D6C6E1]/40 rounded-lg p-5 mb-8">
 									<p className="text-sm text-[#5a5048] leading-relaxed">
-										<span className="font-medium text-[#3F3A36]">Celebrating our cultures —</span>{" "}
-										If traditional attire is part of your heritage, we warmly encourage you to wear it. This takes priority over any color suggestions.
+										This celebration brings together many cultures, and that means the world to us. We highly encourage traditional or cultural attire from any background — it&rsquo;s part of what will make this day so special.
 									</p>
 								</div>
 
@@ -630,7 +587,6 @@ export default function SaveTheDatePage() {
 			</div>
 		</div>
 		<MusicPlayer />
-		<ScrollHint />
 		<ScrollLock />
 		</>
 	);

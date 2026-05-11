@@ -4,9 +4,6 @@ import { useEffect, useRef, useState } from 'react';
 
 const YOUTUBE_ID = '23nLWChvfM8';
 
-// Trigger after scrolling ~35% of the viewport height past the top (well below the hero)
-const SCROLL_THRESHOLD = 0.35;
-
 export function MusicPlayer() {
   const [playing, setPlaying] = useState(false);
   const [loaded, setLoaded] = useState(false);
@@ -16,6 +13,7 @@ export function MusicPlayer() {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const triggeredRef = useRef(false);
   const toastTimerRef = useRef<ReturnType<typeof setTimeout>>();
+  const volumeTimerRef = useRef<ReturnType<typeof setTimeout>>();
 
   // Slide-in entrance animation
   useEffect(() => {
@@ -40,24 +38,28 @@ export function MusicPlayer() {
     setTimeout(() => setShowToast(false), 400);
   }
 
+  const MUSIC_VOLUME = 25; // 0–100; low for background ambience
+
   function startMusic() {
     if (triggeredRef.current) return;
     triggeredRef.current = true;
     setLoaded(true);
     setPlaying(true);
     showToastMessage();
+    // Send volume after player initialises (~800 ms after iframe mounts)
+    volumeTimerRef.current = setTimeout(() => {
+      iframeRef.current?.contentWindow?.postMessage(
+        `{"event":"command","func":"setVolume","args":[${MUSIC_VOLUME}]}`,
+        '*',
+      );
+    }, 800);
   }
 
-  // Auto-start on scroll past hero
+  // Auto-start when envelope is clicked (dispatches 'music-start' custom event)
   useEffect(() => {
-    function onScroll() {
-      if (window.scrollY > window.innerHeight * SCROLL_THRESHOLD) {
-        startMusic();
-        window.removeEventListener('scroll', onScroll);
-      }
-    }
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
+    function onMusicStart() { startMusic(); }
+    document.addEventListener('music-start', onMusicStart, { once: true });
+    return () => document.removeEventListener('music-start', onMusicStart);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -82,7 +84,10 @@ export function MusicPlayer() {
     }
   }
 
-  useEffect(() => () => clearTimeout(toastTimerRef.current), []);
+  useEffect(() => () => {
+    clearTimeout(toastTimerRef.current);
+    clearTimeout(volumeTimerRef.current);
+  }, []);
 
   return (
     <>

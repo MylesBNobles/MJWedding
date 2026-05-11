@@ -1,218 +1,361 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import styles from "./SaveTheDateEnvelope.module.css";
-import { Fireworks } from "./Fireworks";
 
 type Props = {
-	coupleNames: string;
-	dateLine: string;
-	venue: string;
-	location: string;
+  coupleNames: string;
+  dateLine: string;
+  venue: string;
+  location: string;
 };
 
-const ENVELOPE_OPEN_MS = 3300; // flap fully open: 1700ms delay + 1600ms duration
-const TOTAL_MS = ENVELOPE_OPEN_MS + 2800; // hero starts 2.8s after envelope is fully open
+const ENVELOPE_OPEN_MS   = 3300;
+const POLAROID_OFFSET_MS = 350;   // ms after flash fires before polaroid appears
+const DEVELOP_DELAY_MS   = 200;   // ms after polaroid mount before filter starts
+const DEVELOP_MS         = 7000;  // filter transition duration
 
-export function SaveTheDateEnvelope({
-	coupleNames,
-	dateLine,
-	venue,
-	location,
-}: Props) {
-	const [runKey, setRunKey] = useState(0);
-	const [playing, setPlaying] = useState(false);
-	const [launched, setLaunched] = useState(false); // black bg + fireworks, fires after envelope opens
-	const [revealed, setRevealed] = useState(false);
-	const [hasOpened, setHasOpened] = useState(false);
-	const [reducedMotion, setReducedMotion] = useState(false);
-	const finishTimer = useRef<number | null>(null);
-	const launchTimer = useRef<number | null>(null);
-	const startTimer = useRef<number | null>(null);
+function playShutterSound() {
+  try {
+    const audio = new Audio("/audio/shutter_wedding.mp3");
+    audio.play();
+  } catch {
+    // Audio unavailable — skip silently
+  }
+}
 
-	useEffect(() => {
-		const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-		if (mq.matches) {
-			setReducedMotion(true);
-			setHasOpened(true);
-			setRevealed(true);
-		}
-	}, []);
+// ── Polaroid print ────────────────────────────────────────────────────────────
+function PolaroidPrint({
+  coupleNames,
+  dateLine,
+  venue,
+  location,
+  onReset,
+  reducedMotion,
+}: {
+  coupleNames: string;
+  dateLine: string;
+  venue: string;
+  location: string;
+  onReset: () => void;
+  reducedMotion: boolean;
+}) {
+  const [developed, setDeveloped] = useState(reducedMotion);
 
-	// Fires when the user clicks to open (hasOpened flips true) or after reset (new runKey).
-	useEffect(() => {
-		if (reducedMotion || !hasOpened) return;
-		const raf1 = window.requestAnimationFrame(() => {
-			const raf2 = window.requestAnimationFrame(() => {
-				setPlaying(true);
-			});
-			startTimer.current = raf2;
-		});
-		// Black overlay + fireworks start once the envelope flap is fully open
-		launchTimer.current = window.setTimeout(() => {
-			setLaunched(true);
-		}, ENVELOPE_OPEN_MS);
-		finishTimer.current = window.setTimeout(() => {
-			setRevealed(true);
-		}, TOTAL_MS);
-		return () => {
-			window.cancelAnimationFrame(raf1);
-			if (startTimer.current) window.cancelAnimationFrame(startTimer.current);
-			if (launchTimer.current) window.clearTimeout(launchTimer.current);
-			if (finishTimer.current) window.clearTimeout(finishTimer.current);
-		};
-	}, [runKey, reducedMotion, hasOpened]);
+  useEffect(() => {
+    if (reducedMotion) return;
+    const t = setTimeout(() => setDeveloped(true), DEVELOP_DELAY_MS);
+    return () => clearTimeout(t);
+  }, [reducedMotion]);
 
-	const open = () => {
-		if (hasOpened || reducedMotion) return;
-		setHasOpened(true);
-	};
+  return (
+    <div
+      style={{
+        position: "absolute",
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+        zIndex: 25,
+      }}
+    >
+      <div style={{ animation: reducedMotion ? "none" : "polaroidDrop 1.5s cubic-bezier(0.34,1.25,0.64,1) forwards" }}>
+        {/* Polaroid frame */}
+        <div
+          style={{
+            background: "white",
+            padding: "13px 13px 68px",
+            boxShadow: "0 32px 80px rgba(0,0,0,0.30), 0 8px 24px rgba(0,0,0,0.14)",
+            transform: "rotate(-2.2deg)",
+            width: "clamp(300px, 72vw, 460px)",
+            position: "relative",
+          }}
+        >
+          {/* Photo — single-layer filter developing, slow and gradual */}
+          <div style={{ position: "relative", width: "100%", aspectRatio: "1/1", overflow: "hidden" }}>
+            <Image
+              src="/images/MJWeddingPic1.jpeg"
+              alt={`${coupleNames} — Save the Date`}
+              fill
+              sizes="(max-width: 640px) 72vw, 460px"
+              style={{
+                objectFit: "cover",
+                objectPosition: "center",
+                filter: developed
+                  ? "brightness(1) saturate(1) blur(0px)"
+                  : "brightness(5) saturate(0) blur(3px)",
+                transition: reducedMotion
+                  ? "none"
+                  : `filter ${DEVELOP_MS}ms cubic-bezier(0.18, 0.42, 0.36, 0.98)`,
+              }}
+              priority
+            />
+          </div>
 
-	const reset = () => {
-		if (reducedMotion) return;
-		setPlaying(false);
-		setLaunched(false);
-		setRevealed(false);
-		setHasOpened(false);
-		setRunKey((k) => k + 1);
-	};
+          {/* Caption */}
+          <div style={{ paddingTop: "13px", textAlign: "center" }}>
+            <p style={{
+              fontFamily: "Georgia, serif",
+              fontSize: "0.6rem",
+              letterSpacing: "0.38em",
+              textTransform: "uppercase",
+              color: "#C9A684",
+              margin: "0 0 6px",
+            }}>
+              Save the Date
+            </p>
+            <p style={{
+              fontFamily: "var(--font-cursive)",
+              fontSize: "clamp(1.45rem, 4.2vw, 2rem)",
+              color: "#3F3A36",
+              lineHeight: 1.1,
+              margin: "0 0 7px",
+            }}>
+              {coupleNames}
+            </p>
+            <p style={{
+              fontFamily: "Georgia, serif",
+              fontSize: "0.72rem",
+              letterSpacing: "0.26em",
+              textTransform: "uppercase",
+              color: "#8a7d6c",
+              margin: "0 0 4px",
+            }}>
+              {dateLine}
+            </p>
+            <p style={{
+              fontFamily: "Georgia, serif",
+              fontSize: "0.68rem",
+              letterSpacing: "0.15em",
+              color: "#C9A684",
+              fontStyle: "italic",
+              margin: 0,
+            }}>
+              {venue} · {location}
+            </p>
+          </div>
+        </div>
 
-	const stageClass = `${styles.stage} ${playing ? styles.isPlaying : ""}`;
+        {/* Replay button */}
+        {!reducedMotion && (
+          <div style={{ textAlign: "center", marginTop: "24px" }}>
+            <button
+              type="button"
+              onClick={onReset}
+              style={{
+                background: "rgba(255,255,255,0.18)",
+                backdropFilter: "blur(8px)",
+                WebkitBackdropFilter: "blur(8px)",
+                border: "1px solid rgba(201,166,132,0.35)",
+                borderRadius: "999px",
+                padding: "0.4rem 1.1rem",
+                fontSize: "0.58rem",
+                letterSpacing: "0.28em",
+                textTransform: "uppercase",
+                color: "rgba(63,58,54,0.75)",
+                cursor: "pointer",
+                fontFamily: "Georgia, serif",
+              }}
+            >
+              Open again ↺
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
 
-	return (
-		<section
-			className="relative flex h-[100svh] w-full items-center justify-center overflow-hidden bg-[#FAF7F2]"
-			aria-label={`Save the Date for ${coupleNames}, ${dateLine}, ${venue}, ${location}`}
-		>
-			{/* Soft radial glow — visible before click */}
-			{!hasOpened && (
-				<div
-					aria-hidden
-					className="pointer-events-none absolute inset-0"
-					style={{
-						background:
-							"radial-gradient(ellipse at center, rgba(212,165,116,0.12) 0%, rgba(250,247,242,0) 60%)",
-					}}
-				/>
-			)}
+// ── Main component ────────────────────────────────────────────────────────────
+export function SaveTheDateEnvelope({ coupleNames, dateLine, venue, location }: Props) {
+  const [runKey, setRunKey] = useState(0);
+  const [playing, setPlaying] = useState(false);
+  const [hasOpened, setHasOpened] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(false);
+  const [bloomOn, setBloomOn] = useState(false);
+  const [showPolaroid, setShowPolaroid] = useState(false);
 
-			{/* Black background — fades in after envelope flap is fully open */}
-			{launched && !reducedMotion && (
-				<div className={styles.blackOverlay} aria-hidden />
-			)}
+  const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const clearTimers = () => timers.current.forEach(clearTimeout);
 
-			{/* Fireworks — starts once envelope is open, floats above everything including hero */}
-			{launched && !reducedMotion && (
-				<Fireworks playing={launched} />
-			)}
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (mq.matches) {
+      setReducedMotion(true);
+      setHasOpened(true);
+      setShowPolaroid(true);
+    }
+  }, []);
 
-			{/* Envelope stage — clickable before opened */}
-			<div
-				key={runKey}
-				className={stageClass}
-				data-reduced={reducedMotion ? "true" : "false"}
-				onClick={!hasOpened ? open : undefined}
-				role={!hasOpened ? "button" : undefined}
-				tabIndex={!hasOpened ? 0 : undefined}
-				onKeyDown={
-					!hasOpened
-						? (e) => (e.key === "Enter" || e.key === " ") && open()
-						: undefined
-				}
-				aria-label={!hasOpened ? "Open envelope" : undefined}
-				style={!hasOpened ? { cursor: "pointer" } : undefined}
-			>
-				<div className={styles.envelope} aria-hidden="true">
-					{/* eslint-disable-next-line @next/next/no-img-element */}
-					<img
-						className={styles.envBody}
-						src="/images/envelope_four.png"
-						alt=""
-						draggable={false}
-					/>
+  useEffect(() => {
+    if (reducedMotion || !hasOpened) return;
 
-					<div className={styles.envFlap}>
-						{/* eslint-disable-next-line @next/next/no-img-element */}
-						<img
-							src="/images/envelope_four.png"
-							alt=""
-							draggable={false}
-						/>
-					</div>
+    const r1 = requestAnimationFrame(() => requestAnimationFrame(() => setPlaying(true)));
 
-					<div className={styles.seal}>
-						{/* eslint-disable-next-line @next/next/no-img-element */}
-						<img
-							src="/images/wax_seal_gold.png"
-							alt=""
-							draggable={false}
-							style={{ width: "100%", height: "100%", objectFit: "contain" }}
-						/>
-					</div>
-				</div>
+    const schedule = (fn: () => void, ms: number) => {
+      const id = setTimeout(fn, ms);
+      timers.current.push(id);
+    };
 
-				{/* Tap-to-open prompt — hidden once clicked */}
-				{!hasOpened && (
-					<div className={styles.prompt} aria-hidden>
-						<svg
-							className={styles.promptArrow}
-							width="16"
-							height="16"
-							viewBox="0 0 16 16"
-							fill="none"
-						>
-							<path
-								d="M8 13v-10M4 7l4-4 4 4"
-								stroke="#C9A684"
-								strokeWidth="1.5"
-								strokeLinecap="round"
-								strokeLinejoin="round"
-							/>
-						</svg>
-						<span className={styles.promptText}>Tap invitation to open</span>
-					</div>
-				)}
-			</div>
+    // Shutter fires + flash when envelope opens
+    schedule(() => { playShutterSound(); setBloomOn(true); }, ENVELOPE_OPEN_MS);
+    // Flash divs unmount once all animations have reached opacity 0
+    schedule(() => setBloomOn(false), ENVELOPE_OPEN_MS + 420);
+    // Polaroid materialises through the receding bloom
+    schedule(() => setShowPolaroid(true), ENVELOPE_OPEN_MS + POLAROID_OFFSET_MS);
 
-			{/* Full-screen hero — rises in after animation completes */}
-			{revealed && (
-				<div
-					className={styles.heroOverlay}
-					role="region"
-					aria-label="Save the Date"
-				>
-					<div className={styles.heroPhoto} />
-					<div className={styles.heroGradient} />
+    // Music starts only after the photo finishes developing
+    const musicAt = ENVELOPE_OPEN_MS + POLAROID_OFFSET_MS + DEVELOP_DELAY_MS + DEVELOP_MS + 150;
+    schedule(() => document.dispatchEvent(new CustomEvent("music-start")), musicAt);
 
-					<div className={styles.heroContent}>
-						<p className={styles.heroEyebrow}>Save the Date</p>
-						<h2 className={styles.heroNames}>{coupleNames}</h2>
-						<div className={styles.heroRule} aria-hidden />
-						<p className={styles.heroDate}>{dateLine}</p>
-						<p className={styles.heroVenue}>{venue} · {location}</p>
-						<p className={styles.heroFoot}>Formal invitation to follow</p>
-					</div>
+    // Gently scroll to reveal content below once everything has settled
+    schedule(() => {
+      window.scrollBy({ top: Math.round(window.innerHeight * 0.38), behavior: "smooth" });
+    }, musicAt + 450);
 
-					{/* Scroll indicator — fades out automatically after 5s */}
-					<div className={styles.heroScroll} aria-hidden>
-						<svg width="18" height="18" viewBox="0 0 18 18" fill="none" className={styles.heroScrollArrow}>
-							<path d="M9 3v12M4 10l5 5 5-5" stroke="rgba(255,255,255,0.7)" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
-						</svg>
-						<span className={styles.heroScrollText}>Scroll to explore</span>
-					</div>
+    return () => { cancelAnimationFrame(r1); clearTimers(); };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [runKey, reducedMotion, hasOpened]);
 
-					{!reducedMotion && (
-						<button
-							type="button"
-							onClick={reset}
-							className="absolute bottom-6 right-6 z-20 rounded-full border border-white/30 bg-white/15 px-4 py-2 text-xs uppercase tracking-[0.2em] text-white/90 shadow-sm backdrop-blur-sm transition hover:bg-white/25"
-							aria-label="Open envelope again"
-						>
-							Open envelope again
-						</button>
-					)}
-				</div>
-			)}
-		</section>
-	);
+  const open = () => {
+    if (!hasOpened && !reducedMotion) setHasOpened(true);
+  };
+
+  const reset = () => {
+    if (reducedMotion) return;
+    clearTimers();
+    setPlaying(false);
+    setBloomOn(false);
+    setShowPolaroid(false);
+    setHasOpened(false);
+    setRunKey(k => k + 1);
+  };
+
+  const stageClass = `${styles.stage} ${playing ? styles.isPlaying : ""}`;
+
+  return (
+    <section
+      className="relative flex h-[100svh] w-full items-center justify-center overflow-hidden bg-[#FAF7F2]"
+      aria-label={`Save the Date for ${coupleNames}, ${dateLine}, ${venue}, ${location}`}
+    >
+      {/* Soft radial glow before click */}
+      {!hasOpened && (
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(ellipse at center, rgba(212,165,116,0.12) 0%, rgba(250,247,242,0) 60%)",
+          }}
+        />
+      )}
+
+      {/* ── Flash transition: floods screen then compresses to centre ── */}
+      {bloomOn && (
+        <>
+          {/* Layer 1 — full-screen flood: entire viewport hits bright in ~28ms */}
+          <div
+            aria-hidden
+            style={{
+              position: "absolute",
+              inset: 0,
+              zIndex: 40,
+              pointerEvents: "none",
+              background: "rgba(255, 252, 235, 0.97)",
+              animation: "flashFlood 0.35s cubic-bezier(0.2, 0, 0.5, 1) forwards",
+            }}
+          />
+          {/* Layer 2 — diagonal light leak: organic film imperfection */}
+          <div
+            aria-hidden
+            style={{
+              position: "absolute",
+              inset: 0,
+              zIndex: 41,
+              pointerEvents: "none",
+              background:
+                "linear-gradient(148deg, rgba(255,242,205,0.36) 0%, rgba(255,248,220,0.14) 42%, transparent 65%)",
+              animation: "bloomLeak 0.38s cubic-bezier(0.15, 0, 0.4, 1) forwards",
+            }}
+          />
+          {/* Layer 3 — warm compress: starts huge (full screen via overflow clip)
+              then pulls inward to a centre point over 300ms */}
+          <div
+            aria-hidden
+            style={{
+              position: "absolute",
+              inset: 0,
+              zIndex: 42,
+              pointerEvents: "none",
+              background:
+                "radial-gradient(ellipse 55% 48% at 50% 50%, rgba(255,255,252,1) 0%, rgba(255,224,155,0.65) 10%, rgba(255,238,190,0.45) 26%, rgba(255,248,220,0.28) 48%, rgba(255,252,235,0.10) 66%, transparent 82%)",
+              animation: "flashCompress 0.30s cubic-bezier(0.5, 0, 0.85, 0.2) forwards",
+            }}
+          />
+        </>
+      )}
+
+      {/* Envelope stage — fades out once polaroid appears */}
+      <div
+        key={runKey}
+        className={stageClass}
+        data-reduced={reducedMotion ? "true" : "false"}
+        onClick={!hasOpened ? open : undefined}
+        role={!hasOpened ? "button" : undefined}
+        tabIndex={!hasOpened ? 0 : undefined}
+        onKeyDown={
+          !hasOpened
+            ? (e) => (e.key === "Enter" || e.key === " ") && open()
+            : undefined
+        }
+        aria-label={!hasOpened ? "Open envelope" : undefined}
+        style={
+          showPolaroid
+            ? { pointerEvents: "none" }
+            : !hasOpened
+            ? { cursor: "pointer" }
+            : undefined
+        }
+      >
+        <div className={styles.envelope} aria-hidden="true">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img className={styles.envBody} src="/images/envelope_four.png" alt="" draggable={false} />
+          <div className={styles.envFlap}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/images/envelope_four.png" alt="" draggable={false} />
+          </div>
+          <div className={styles.seal}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/images/wax_seal_gold.png"
+              alt=""
+              draggable={false}
+              style={{ width: "100%", height: "100%", objectFit: "contain" }}
+            />
+          </div>
+        </div>
+
+        {!hasOpened && (
+          <div className={styles.prompt} aria-hidden>
+            <svg className={styles.promptArrow} width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M8 13v-10M4 7l4-4 4 4" stroke="#C9A684" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            <span className={styles.promptText}>Tap to open</span>
+          </div>
+        )}
+      </div>
+
+      {/* Polaroid — materialises through the receding bloom */}
+      {showPolaroid && (
+        <PolaroidPrint
+          coupleNames={coupleNames}
+          dateLine={dateLine}
+          venue={venue}
+          location={location}
+          onReset={reset}
+          reducedMotion={reducedMotion}
+        />
+      )}
+    </section>
+  );
 }

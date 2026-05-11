@@ -3,9 +3,9 @@
 import { useEffect } from 'react';
 
 // How long after clicking the envelope before scrolling unlocks.
-// The animation sequence is: seal (1000ms) + flap (1700+1600ms) + hero fade (5500ms)
-// TOTAL_MS in SaveTheDateEnvelope = 6100ms, so 6700 is a safe buffer.
-const ANIMATION_MS = 6700;
+// Sequence: flap (3300ms) + bloom+polaroid (3750ms) + develop delay (200ms)
+// + develop (7000ms) ≈ 10950ms. Unlock just as developing completes.
+const ANIMATION_MS = 10800;
 
 export function ScrollLock() {
   useEffect(() => {
