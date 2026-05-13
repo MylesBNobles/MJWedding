@@ -3,19 +3,22 @@
 import { useEffect, useRef, useState } from 'react';
 
 const YOUTUBE_ID = '23nLWChvfM8';
+const MUSIC_VOLUME = 25;
 
 export function MusicPlayer() {
   const [playing, setPlaying] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [showToast, setShowToast] = useState(false);
-  const [toastVisible, setToastVisible] = useState(false); // controls CSS transition
+  const [toastVisible, setToastVisible] = useState(false);
   const [entered, setEntered] = useState(false);
+  const [musicReady, setMusicReady] = useState(false); // mobile: waiting for tap to start
+
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const triggeredRef = useRef(false);
+  const musicReadyRef = useRef(false); // sync ref for use inside closures
   const toastTimerRef = useRef<ReturnType<typeof setTimeout>>();
   const volumeTimerRef = useRef<ReturnType<typeof setTimeout>>();
 
-  // Slide-in entrance animation
   useEffect(() => {
     const t = setTimeout(() => setEntered(true), 500);
     return () => clearTimeout(t);
@@ -24,11 +27,10 @@ export function MusicPlayer() {
   function showToastMessage() {
     clearTimeout(toastTimerRef.current);
     setShowToast(true);
-    // Small delay so the mount triggers the CSS transition
     requestAnimationFrame(() => requestAnimationFrame(() => setToastVisible(true)));
     toastTimerRef.current = setTimeout(() => {
       setToastVisible(false);
-      setTimeout(() => setShowToast(false), 400); // unmount after fade-out
+      setTimeout(() => setShowToast(false), 400);
     }, 6000);
   }
 
@@ -38,15 +40,14 @@ export function MusicPlayer() {
     setTimeout(() => setShowToast(false), 400);
   }
 
-  const MUSIC_VOLUME = 25; // 0–100; low for background ambience
-
   function startMusic() {
     if (triggeredRef.current) return;
     triggeredRef.current = true;
+    musicReadyRef.current = false;
+    setMusicReady(false);
     setLoaded(true);
     setPlaying(true);
     showToastMessage();
-    // Send volume after player initialises (~800 ms after iframe mounts)
     volumeTimerRef.current = setTimeout(() => {
       iframeRef.current?.contentWindow?.postMessage(
         `{"event":"command","func":"setVolume","args":[${MUSIC_VOLUME}]}`,
@@ -55,15 +56,29 @@ export function MusicPlayer() {
     }, 800);
   }
 
-  // Auto-start when envelope is clicked (dispatches 'music-start' custom event)
   useEffect(() => {
-    function onMusicStart() { startMusic(); }
+    function onMusicStart() {
+      const isMobile = window.matchMedia('(pointer: coarse)').matches;
+      if (isMobile) {
+        // Can't autoplay on mobile — show a tap-to-play prompt instead
+        musicReadyRef.current = true;
+        setMusicReady(true);
+        showToastMessage();
+      } else {
+        startMusic();
+      }
+    }
     document.addEventListener('music-start', onMusicStart, { once: true });
     return () => document.removeEventListener('music-start', onMusicStart);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function toggle() {
+    if (musicReadyRef.current) {
+      // Mobile first tap — this is the user gesture we need to start audio
+      startMusic();
+      return;
+    }
     if (!loaded) {
       startMusic();
       return;
@@ -89,6 +104,9 @@ export function MusicPlayer() {
     clearTimeout(volumeTimerRef.current);
   }, []);
 
+  const toastLabel = musicReady ? 'Tap to play' : playing ? 'Now playing' : 'Paused';
+  const toastHint  = playing ? 'tap vinyl to pause' : 'tap vinyl to play';
+
   return (
     <>
       <style>{`
@@ -96,9 +114,9 @@ export function MusicPlayer() {
           from { transform: rotate(0deg); }
           to   { transform: rotate(360deg); }
         }
-        @keyframes playerIn {
-          from { opacity: 0; transform: translateY(18px); }
-          to   { opacity: 1; transform: translateY(0); }
+        @keyframes vinylPulse {
+          0%, 100% { filter: drop-shadow(0 4px 14px rgba(0,0,0,0.32)); }
+          50%       { filter: drop-shadow(0 4px 20px rgba(201,166,132,0.55)); }
         }
       `}</style>
 
@@ -151,7 +169,7 @@ export function MusicPlayer() {
               whiteSpace: 'nowrap',
             }}>
               <span style={{ fontSize: '0.8rem' }}>♪</span>
-              {playing ? 'Now playing' : 'Paused'}
+              {toastLabel}
             </span>
             <span style={{
               color: '#FBF7EE',
@@ -168,7 +186,7 @@ export function MusicPlayer() {
               whiteSpace: 'nowrap',
               marginTop: '0.1rem',
             }}>
-              {playing ? 'tap vinyl to pause' : 'tap vinyl to play'} · tap here to dismiss
+              {toastHint} · tap here to dismiss
             </span>
           </button>
         )}
@@ -196,7 +214,11 @@ export function MusicPlayer() {
             style={{
               display: 'block',
               borderRadius: '50%',
-              animation: playing ? 'vinylSpin 3s linear infinite' : 'none',
+              animation: playing
+                ? 'vinylSpin 3s linear infinite'
+                : musicReady
+                ? 'vinylPulse 2s ease-in-out infinite'
+                : 'none',
               filter: 'drop-shadow(0 4px 14px rgba(0,0,0,0.32))',
               transition: 'filter 0.3s ease',
             }}
@@ -213,8 +235,8 @@ export function MusicPlayer() {
             <circle cx="28" cy="28" r="2.5" fill="#1C1815" />
           </svg>
 
-          {/* Play triangle shown when not playing */}
-          {!playing && (
+          {/* Play triangle shown when not playing or ready to play */}
+          {(!playing || musicReady) && (
             <div style={{
               position: 'absolute',
               inset: 0,
