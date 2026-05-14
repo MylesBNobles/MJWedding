@@ -38,18 +38,21 @@ export function MusicPlayer() {
 
     const audio = new Audio('/audio/raindance.mp3');
     audio.loop = true;
-    audio.volume = 0;   // stays 0 until music-start — no audible blip possible
+    audio.volume = MUSIC_VOLUME / 100;
     audio.preload = 'auto';
     audioRef.current = audio;
 
     // audio-unlock is dispatched synchronously from inside the envelope's open()
     // handler, so audio.play() runs within iOS's user gesture context.
-    // We play silently at volume 0 — no mute race condition.
     function unlock() {
+      audio.muted = true;
       audio.play().then(() => {
+        audio.pause();
+        audio.currentTime = 0;
+        audio.muted = false;
         audioUnlockedRef.current = true;
-        // Playing silently in the background until music-start resets it.
       }).catch(() => {
+        audio.muted = false;
         // Unlock failed — will fall back to tap-to-play via the vinyl button.
       });
     }
@@ -108,10 +111,8 @@ export function MusicPlayer() {
         const audio = audioRef.current;
 
         if (audio && audioUnlockedRef.current) {
-          // Stop the silent unlock play, rewind, restore volume, then play for real.
-          audio.pause();
+          // Audio was unlocked by the envelope tap — autoplay without a gesture.
           audio.currentTime = 0;
-          audio.volume = MUSIC_VOLUME / 100;
           audio.play().then(() => {
             setPlaying(true);
             showToastMessage();
@@ -122,7 +123,7 @@ export function MusicPlayer() {
             showToastMessage();
           });
         } else {
-          // Unlock didn't happen — show tap prompt.
+          // Unlock didn't happen (e.g. user never touched the page) — show tap prompt.
           musicReadyRef.current = true;
           setMusicReady(true);
           showToastMessage();
@@ -148,7 +149,6 @@ export function MusicPlayer() {
         musicReadyRef.current = false;
         setMusicReady(false);
         audio.currentTime = 0;
-        audio.volume = MUSIC_VOLUME / 100;
         audio.play();
         setPlaying(true);
         showToastMessage();
