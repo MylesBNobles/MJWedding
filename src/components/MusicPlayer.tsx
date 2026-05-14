@@ -45,11 +45,14 @@ export function MusicPlayer() {
     // audio-unlock is dispatched synchronously from inside the envelope's open()
     // handler, so audio.play() runs within iOS's user gesture context.
     function unlock() {
+      audio.muted = true;
       audio.play().then(() => {
         audio.pause();
         audio.currentTime = 0;
+        audio.muted = false;
         audioUnlockedRef.current = true;
       }).catch(() => {
+        audio.muted = false;
         // Unlock failed — will fall back to tap-to-play via the vinyl button.
       });
     }
