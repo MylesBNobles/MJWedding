@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Container, SectionHeader, Card, Button, TextField } from '@/components';
+import { Container, TextField } from '@/components';
 import { lookupByPhone, submitRsvp } from './actions';
 import type { HouseholdLookupResult, RsvpSubmission } from './actions';
 
@@ -23,6 +23,77 @@ type PlusOneState = {
   };
 };
 
+const RED      = '#C8102E';
+const RED_DARK = '#A50D25';
+const GOLD     = '#C9A684';
+const CREAM    = '#FBF7EE';
+const PAPER    = '#EAD9B8'; // aged warm cream
+const INK      = '#1C0F08'; // dark brown-black ink
+
+// Perforated edge — cream circles at the ticket boundary create scalloped paper look
+function TicketPerforations({ side }: { side: 'left' | 'right' }) {
+  const count = 15;
+  return (
+    <>
+      {Array.from({ length: count }, (_, i) => (
+        <div
+          key={i}
+          style={{
+            position: 'absolute',
+            [side === 'left' ? 'left' : 'right']: -9,
+            top: `${(i + 0.5) * (100 / count)}%`,
+            width: 18,
+            height: 18,
+            borderRadius: '50%',
+            background: PAPER,
+            transform: 'translateY(-50%)',
+            zIndex: 3,
+            boxShadow: side === 'left'
+              ? 'inset 2px 0 4px rgba(0,0,0,0.08)'
+              : 'inset -2px 0 4px rgba(0,0,0,0.08)',
+          }}
+        />
+      ))}
+    </>
+  );
+}
+
+// Tear line with semicircle notches on both sides
+function TicketTear() {
+  return (
+    <div style={{
+      margin: '20px -34px',
+      position: 'relative',
+      height: 0,
+    }}>
+      <div style={{
+        position: 'absolute',
+        left: 12,
+        right: 12,
+        top: 0,
+        borderTop: '1.5px dashed rgba(28,15,8,0.18)',
+      }} />
+      <div style={{ position: 'absolute', left: -9, top: -9, width: 18, height: 18, borderRadius: '50%', background: PAPER, zIndex: 3, boxShadow: 'inset 2px 0 4px rgba(0,0,0,0.08)' }} />
+      <div style={{ position: 'absolute', right: -9, top: -9, width: 18, height: 18, borderRadius: '50%', background: PAPER, zIndex: 3, boxShadow: 'inset -2px 0 4px rgba(0,0,0,0.08)' }} />
+    </div>
+  );
+}
+
+function formatDate(dateStr: string | null) {
+  if (!dateStr) return '';
+  return new Date(dateStr + 'T00:00:00').toLocaleDateString('en-US', {
+    weekday: 'long', month: 'long', day: 'numeric', year: 'numeric',
+  });
+}
+
+function formatTime(timeStr: string | null) {
+  if (!timeStr) return '';
+  const [h, m] = timeStr.split(':');
+  const d = new Date();
+  d.setHours(parseInt(h), parseInt(m));
+  return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+}
+
 export default function RsvpPage() {
   const [step, setStep] = useState<Step>('lookup');
   const [phone, setPhone] = useState('');
@@ -38,11 +109,10 @@ export default function RsvpPage() {
     const result = await lookupByPhone(phone);
     setLoading(false);
     if (!result) {
-      setError("We couldn't find an invitation with that phone number. Please double-check or contact us.");
+      setError("We couldn't find an invitation with that number. Please double-check or contact us.");
       return;
     }
     setHousehold(result);
-    // Initialize RSVP state for all invitations
     const initial: RsvpState = {};
     for (const guest of result.guests) {
       for (const inv of guest.invitations) {
@@ -54,7 +124,6 @@ export default function RsvpPage() {
       }
     }
     setRsvpState(initial);
-
     const initialPlusOne: PlusOneState = {};
     for (const guest of result.guests) {
       if (guest.plus_one_allowed && !guest.plus_one_guest_id) {
@@ -73,7 +142,6 @@ export default function RsvpPage() {
     }
     setError('');
     setLoading(true);
-
     const submissions: RsvpSubmission = Object.entries(rsvpState).map(([invitationId, s]) => {
       const po = plusOneState[s.guestId];
       return {
@@ -85,7 +153,6 @@ export default function RsvpPage() {
         plusOneLastName: po?.bringing ? po.lastName : undefined,
       };
     });
-
     const result = await submitRsvp(submissions);
     setLoading(false);
     if (!result.success) {
@@ -95,177 +162,608 @@ export default function RsvpPage() {
     setStep('done');
   }
 
-  function formatDate(dateStr: string | null) {
-    if (!dateStr) return '';
-    return new Date(dateStr + 'T00:00:00').toLocaleDateString('en-US', {
-      weekday: 'long', month: 'long', day: 'numeric', year: 'numeric',
-    });
-  }
-
-  function formatTime(timeStr: string | null) {
-    if (!timeStr) return '';
-    const [h, m] = timeStr.split(':');
-    const d = new Date();
-    d.setHours(parseInt(h), parseInt(m));
-    return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
-  }
-
-  if (step === 'done') {
+  // ── Step 1: Movie poster + vintage ticket stub ────────────────────────────────
+  if (step === 'lookup') {
     return (
-      <section className="py-16 min-h-screen bg-[#FAF7F2]">
-        <Container size="sm">
-          <div className="text-center py-12">
-            <div className="text-5xl mb-6">🎉</div>
-            <h1 className="text-3xl font-cursive text-fg mb-4">Thank You!</h1>
-            <p className="text-muted text-lg mb-2">Your RSVP has been received.</p>
-            <p className="text-muted">We can't wait to celebrate with you in Tuscany.</p>
+      <>
+        <style>{`
+          @keyframes ticketFadeUp {
+            from { opacity: 0; transform: translateY(28px); }
+            to   { opacity: 1; transform: translateY(0); }
+          }
+          @keyframes posterFadeIn {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+          }
+          @keyframes lightSweep {
+            0%   { left: -70%; }
+            100% { left: 170%; }
+          }
+          .ticket-stub {
+            animation: ticketFadeUp 1s cubic-bezier(0.22, 0.61, 0.36, 1) 0.3s both;
+          }
+          .ticket-vintage {
+            transition: transform 0.5s cubic-bezier(0.22, 0.61, 0.36, 1), box-shadow 0.5s ease;
+          }
+          .ticket-vintage:hover {
+            transform: translateY(-9px) rotate(-0.9deg);
+            box-shadow: 0 36px 100px rgba(0,0,0,0.58), 0 8px 24px rgba(0,0,0,0.28) !important;
+          }
+          .ticket-vintage:hover .ticket-shine {
+            animation: lightSweep 0.7s ease forwards;
+          }
+          .poster-text {
+            animation: posterFadeIn 1.2s ease 0.1s both;
+          }
+        `}</style>
+
+        <div style={{ display: 'flex', minHeight: '100svh', flexDirection: 'row' }} className="flex-col sm:flex-row">
+
+          {/* LEFT — Tuscany movie poster */}
+          <div style={{
+            flex: '0 0 58%',
+            position: 'relative',
+            backgroundImage: 'url(/images/tuscany_pic.png)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            minHeight: '45svh',
+          }}>
+            <div style={{
+              position: 'absolute',
+              inset: 0,
+              background: `linear-gradient(to bottom, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.08) 40%, rgba(0,0,0,0.32) 100%)`,
+            }} />
+
+            <div className="poster-text" style={{
+              position: 'absolute',
+              inset: 0,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              textAlign: 'center',
+              padding: 'clamp(2rem, 6vw, 5rem)',
+            }}>
+              {/* Classic movie poster border frame */}
+              <div style={{
+                position: 'absolute',
+                inset: 'clamp(16px, 3vw, 32px)',
+                border: `2px solid rgba(255,255,255,0.7)`,
+                pointerEvents: 'none',
+              }}>
+                <div style={{ position: 'absolute', inset: 6, border: `1px solid rgba(255,255,255,0.4)` }} />
+                {[
+                  { top: -1, left: -1 },
+                  { top: -1, right: -1 },
+                  { bottom: -1, left: -1 },
+                  { bottom: -1, right: -1 },
+                ].map((pos, i) => (
+                  <div key={i} style={{ position: 'absolute', width: 18, height: 18, background: RED, ...pos }} />
+                ))}
+              </div>
+
+              <p style={{
+                fontFamily: 'Georgia, serif',
+                fontSize: '0.58rem',
+                letterSpacing: '0.55em',
+                textTransform: 'uppercase',
+                color: '#fff',
+                opacity: 0.9,
+                marginBottom: '1rem',
+                textShadow: '0 1px 6px rgba(0,0,0,0.5)',
+              }}>
+                A Jeslin &amp; Myles Production
+              </p>
+
+              <p style={{ color: GOLD, fontSize: '0.72rem', letterSpacing: '0.5em', marginBottom: '0.9rem' }}>
+                ★ ★ ★ ★ ★
+              </p>
+
+              <h1 style={{
+                fontFamily: 'var(--font-cursive)',
+                fontSize: 'clamp(2.4rem, 5.5vw, 4.2rem)',
+                color: '#FFFFFF',
+                lineHeight: 1.05,
+                margin: '0 0 1.2rem',
+                textShadow: '0 2px 12px rgba(0,0,0,0.25), 0 0 40px rgba(255,255,255,0.1)',
+              }}>
+                You, Me &amp; Tuscany?
+              </h1>
+
+              <div style={{ width: 60, height: 1.5, background: GOLD, margin: '0 auto 1.2rem' }} />
+
+              <p style={{
+                fontFamily: 'Georgia, serif',
+                fontSize: 'clamp(0.58rem, 1.1vw, 0.68rem)',
+                letterSpacing: '0.36em',
+                textTransform: 'uppercase',
+                color: 'rgba(255,255,255,0.88)',
+                marginBottom: '0.5rem',
+                textShadow: '0 1px 6px rgba(0,0,0,0.4)',
+              }}>
+                Villa Di Geggiano · Tuscany, Italy
+              </p>
+              <p style={{
+                fontFamily: 'Georgia, serif',
+                fontSize: 'clamp(0.58rem, 1.1vw, 0.68rem)',
+                letterSpacing: '0.36em',
+                textTransform: 'uppercase',
+                color: 'rgba(255,255,255,0.7)',
+                textShadow: '0 1px 6px rgba(0,0,0,0.4)',
+              }}>
+                June 12, 2027
+              </p>
+            </div>
           </div>
-        </Container>
-      </section>
+
+          {/* RIGHT — Red carpet velvet panel */}
+          <div style={{
+            flex: '0 0 42%',
+            background: `linear-gradient(160deg, ${RED_DARK} 0%, ${RED} 100%)`,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 'clamp(2rem, 4vw, 4rem) clamp(1.5rem, 3vw, 3rem)',
+            position: 'relative',
+            overflow: 'hidden',
+          }}>
+            {/* Velvet sheen overlay */}
+            <div style={{
+              position: 'absolute',
+              inset: 0,
+              backgroundImage: 'radial-gradient(ellipse at 30% 20%, rgba(255,255,255,0.04) 0%, transparent 60%)',
+              pointerEvents: 'none',
+            }} />
+
+            {/* Corner ornaments */}
+            <svg style={{ position: 'absolute', top: 24, left: 24, opacity: 0.3 }} width="40" height="40" viewBox="0 0 40 40" fill="none">
+              <path d="M2 38 L2 2 L38 2" stroke={GOLD} strokeWidth="1.5" fill="none" />
+              <circle cx="2" cy="2" r="2.5" fill={GOLD} />
+            </svg>
+            <svg style={{ position: 'absolute', top: 24, right: 24, opacity: 0.3 }} width="40" height="40" viewBox="0 0 40 40" fill="none">
+              <path d="M38 38 L38 2 L2 2" stroke={GOLD} strokeWidth="1.5" fill="none" />
+              <circle cx="38" cy="2" r="2.5" fill={GOLD} />
+            </svg>
+            <svg style={{ position: 'absolute', bottom: 24, left: 24, opacity: 0.3 }} width="40" height="40" viewBox="0 0 40 40" fill="none">
+              <path d="M2 2 L2 38 L38 38" stroke={GOLD} strokeWidth="1.5" fill="none" />
+              <circle cx="2" cy="38" r="2.5" fill={GOLD} />
+            </svg>
+            <svg style={{ position: 'absolute', bottom: 24, right: 24, opacity: 0.3 }} width="40" height="40" viewBox="0 0 40 40" fill="none">
+              <path d="M38 2 L38 38 L2 38" stroke={GOLD} strokeWidth="1.5" fill="none" />
+              <circle cx="38" cy="38" r="2.5" fill={GOLD} />
+            </svg>
+
+            {/* Vintage cinema ticket */}
+            <div
+              className="ticket-vintage ticket-stub"
+              style={{
+                background: PAPER,
+                width: '100%',
+                maxWidth: 350,
+                position: 'relative',
+                borderRadius: 3,
+                padding: '26px 34px 24px',
+                boxShadow: '0 22px 70px rgba(0,0,0,0.5), 0 4px 16px rgba(0,0,0,0.22)',
+              }}
+            >
+              {/* SVG paper grain texture */}
+              <svg
+                aria-hidden
+                style={{
+                  position: 'absolute', inset: 0,
+                  width: '100%', height: '100%',
+                  pointerEvents: 'none',
+                  opacity: 0.07,
+                  borderRadius: 3,
+                }}
+              >
+                <filter id="ticket-grain">
+                  <feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="4" stitchTiles="stitch" />
+                  <feColorMatrix type="saturate" values="0" />
+                </filter>
+                <rect width="100%" height="100%" filter="url(#ticket-grain)" />
+              </svg>
+
+              {/* Diagonal light sweep on hover */}
+              <div
+                className="ticket-shine"
+                aria-hidden
+                style={{
+                  position: 'absolute',
+                  top: '-20%',
+                  left: '-70%',
+                  width: '35%',
+                  height: '140%',
+                  background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.22), transparent)',
+                  transform: 'skewX(-18deg)',
+                  pointerEvents: 'none',
+                  zIndex: 10,
+                }}
+              />
+
+              {/* Perforations — both sides */}
+              <TicketPerforations side="left" />
+              <TicketPerforations side="right" />
+
+              {/* Outer decorative border */}
+              <div style={{
+                position: 'absolute',
+                inset: 8,
+                border: `1.5px solid rgba(28,15,8,0.13)`,
+                borderRadius: 1,
+                pointerEvents: 'none',
+                zIndex: 1,
+              }}>
+                {/* Inner border rule */}
+                <div style={{
+                  position: 'absolute',
+                  inset: 5,
+                  border: `0.5px solid rgba(28,15,8,0.08)`,
+                  borderRadius: 1,
+                }} />
+              </div>
+
+              {/* Serial number — top right */}
+              <div style={{ textAlign: 'right', marginBottom: 6, position: 'relative', zIndex: 2 }}>
+                <span style={{
+                  fontFamily: 'Georgia, serif',
+                  fontSize: '0.44rem',
+                  letterSpacing: '0.14em',
+                  color: INK,
+                  opacity: 0.3,
+                }}>
+                  No. 2027 · 001
+                </span>
+              </div>
+
+              {/* Top section — event info */}
+              <div style={{ textAlign: 'center', marginBottom: 0, position: 'relative', zIndex: 2 }}>
+                <p style={{
+                  fontFamily: 'Georgia, serif',
+                  fontSize: '0.58rem',
+                  letterSpacing: '0.5em',
+                  textTransform: 'uppercase',
+                  color: RED,
+                  marginBottom: 10,
+                  opacity: 0.8,
+                }}>
+                  ★ &nbsp; Admit One &nbsp; ★
+                </p>
+
+                <p style={{
+                  fontFamily: 'Georgia, serif',
+                  fontSize: '0.47rem',
+                  letterSpacing: '0.36em',
+                  textTransform: 'uppercase',
+                  color: INK,
+                  opacity: 0.45,
+                  marginBottom: 10,
+                }}>
+                  Jeslin &amp; Myles Present
+                </p>
+
+                {/* Top rule */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, margin: '0 0 12px' }}>
+                  <div style={{ flex: 1, height: '0.5px', background: `rgba(28,15,8,0.13)` }} />
+                  <span style={{ color: GOLD, fontSize: '0.55rem', opacity: 0.7 }}>✦</span>
+                  <div style={{ flex: 1, height: '0.5px', background: `rgba(28,15,8,0.13)` }} />
+                </div>
+
+                <h2 style={{
+                  fontFamily: 'var(--font-cursive)',
+                  fontSize: 'clamp(1.85rem, 4vw, 2.5rem)',
+                  color: INK,
+                  lineHeight: 1.1,
+                  margin: '0 0 10px',
+                  opacity: 0.87,
+                }}>
+                  You, Me &amp; Tuscany
+                </h2>
+
+                {/* Bottom rule */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, margin: '0 0 12px' }}>
+                  <div style={{ flex: 1, height: '0.5px', background: `rgba(28,15,8,0.13)` }} />
+                  <span style={{ color: GOLD, fontSize: '0.55rem', opacity: 0.7 }}>✦</span>
+                  <div style={{ flex: 1, height: '0.5px', background: `rgba(28,15,8,0.13)` }} />
+                </div>
+
+                <p style={{
+                  fontFamily: 'Georgia, serif',
+                  fontSize: '0.49rem',
+                  letterSpacing: '0.3em',
+                  textTransform: 'uppercase',
+                  color: INK,
+                  opacity: 0.52,
+                  lineHeight: 1.9,
+                }}>
+                  Villa Di Geggiano<br />
+                  Tuscany, Italy &nbsp;·&nbsp; June 12, 2027
+                </p>
+              </div>
+
+              <TicketTear />
+
+              {/* Bottom section — phone lookup */}
+              <div style={{ position: 'relative', zIndex: 2, paddingTop: 20 }}>
+                <p style={{
+                  fontFamily: 'Georgia, serif',
+                  fontSize: '0.45rem',
+                  letterSpacing: '0.46em',
+                  textTransform: 'uppercase',
+                  color: INK,
+                  opacity: 0.42,
+                  marginBottom: 10,
+                }}>
+                  Ticket Holder
+                </p>
+
+                <div style={{ marginBottom: 14 }}>
+                  <input
+                    type="tel"
+                    value={phone}
+                    onChange={e => setPhone(e.target.value)}
+                    onKeyDown={e => e.key === 'Enter' && handleLookup()}
+                    placeholder="Enter your phone number"
+                    style={{
+                      width: '100%',
+                      background: 'transparent',
+                      border: 'none',
+                      borderBottom: `1px solid rgba(28,15,8,0.2)`,
+                      borderRadius: 0,
+                      padding: '7px 0',
+                      fontFamily: 'Georgia, serif',
+                      fontSize: '0.84rem',
+                      color: INK,
+                      outline: 'none',
+                      boxSizing: 'border-box',
+                    }}
+                    onFocus={e => { e.target.style.borderBottomColor = RED; }}
+                    onBlur={e => { e.target.style.borderBottomColor = 'rgba(28,15,8,0.2)'; }}
+                  />
+                </div>
+
+                {error && (
+                  <p style={{
+                    fontFamily: 'Georgia, serif',
+                    fontSize: '0.66rem',
+                    color: '#9B2335',
+                    marginBottom: 10,
+                    fontStyle: 'italic',
+                  }}>
+                    {error}
+                  </p>
+                )}
+
+                <button
+                  onClick={handleLookup}
+                  disabled={loading || !phone.trim()}
+                  style={{
+                    width: '100%',
+                    background: loading || !phone.trim() ? 'rgba(200,16,46,0.28)' : RED,
+                    color: PAPER,
+                    border: 'none',
+                    padding: '10px 0',
+                    fontFamily: 'Georgia, serif',
+                    fontSize: '0.58rem',
+                    letterSpacing: '0.42em',
+                    textTransform: 'uppercase',
+                    cursor: loading || !phone.trim() ? 'not-allowed' : 'pointer',
+                    borderRadius: 1,
+                    transition: 'background 0.2s ease',
+                  }}
+                >
+                  {loading ? 'Searching…' : 'Claim Your Invitation'}
+                </button>
+
+                <p style={{
+                  fontFamily: 'Georgia, serif',
+                  fontSize: '0.44rem',
+                  color: INK,
+                  textAlign: 'center',
+                  marginTop: 10,
+                  letterSpacing: '0.1em',
+                  opacity: 0.37,
+                }}>
+                  Use the phone number on your invitation
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </>
     );
   }
 
-  return (
-    <section className="py-16 min-h-screen bg-[#FAF7F2]">
-      <Container size="sm">
-        <SectionHeader
-          title="RSVP"
-          subtitle="Jeslin & Myles · June 12, 2027 · Tuscany, Italy"
-          className="mb-10"
-        />
+  // ── Step 4: Done ──────────────────────────────────────────────────────────────
+  if (step === 'done') {
+    return (
+      <div style={{
+        minHeight: '100svh',
+        background: `linear-gradient(160deg, ${RED_DARK} 0%, ${RED} 100%)`,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '2rem',
+      }}>
+        <div style={{
+          background: PAPER,
+          maxWidth: 420,
+          width: '100%',
+          padding: '48px 44px',
+          textAlign: 'center',
+          borderRadius: 3,
+          boxShadow: '0 24px 80px rgba(0,0,0,0.4)',
+          position: 'relative',
+        }}>
+          {/* Grain */}
+          <svg aria-hidden style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', opacity: 0.07, borderRadius: 3 }}>
+            <filter id="done-grain">
+              <feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="4" stitchTiles="stitch" />
+              <feColorMatrix type="saturate" values="0" />
+            </filter>
+            <rect width="100%" height="100%" filter="url(#done-grain)" />
+          </svg>
 
-        {/* Step 1: Phone lookup */}
-        {step === 'lookup' && (
-          <Card>
-            <h2 className="text-lg font-semibold text-fg mb-2">Find your invitation</h2>
-            <p className="text-muted text-sm mb-6">
-              Enter the phone number associated with your invitation.
+          {/* Border frame */}
+          <div style={{ position: 'absolute', inset: 10, border: `1.5px solid rgba(28,15,8,0.12)`, borderRadius: 1, pointerEvents: 'none' }}>
+            <div style={{ position: 'absolute', inset: 5, border: `0.5px solid rgba(28,15,8,0.07)`, borderRadius: 1 }} />
+          </div>
+
+          <TicketPerforations side="left" />
+          <TicketPerforations side="right" />
+
+          <div style={{ position: 'relative', zIndex: 2 }}>
+            <p style={{ fontFamily: 'Georgia, serif', fontSize: '0.58rem', letterSpacing: '0.5em', textTransform: 'uppercase', color: GOLD, marginBottom: 14, opacity: 0.85 }}>
+              ★ &nbsp; You&rsquo;re in &nbsp; ★
             </p>
-            <TextField
-              label="Phone number"
-              type="tel"
-              value={phone}
-              onChange={e => setPhone(e.target.value)}
-              placeholder="e.g. 555-555-0001"
-              onKeyDown={e => e.key === 'Enter' && handleLookup()}
-            />
-            {error && <p className="text-red-600 text-sm mt-3">{error}</p>}
-            <div className="mt-6">
-              <Button onClick={handleLookup} disabled={loading || !phone.trim()}>
-                {loading ? 'Searching...' : 'Find my invitation'}
-              </Button>
-            </div>
-          </Card>
-        )}
+            <h1 style={{ fontFamily: 'var(--font-cursive)', fontSize: '2.8rem', color: INK, margin: '0 0 12px', opacity: 0.88 }}>
+              See you in Tuscany
+            </h1>
+            <div style={{ width: 48, height: '0.5px', background: `rgba(28,15,8,0.18)`, margin: '0 auto 20px' }} />
+            <p style={{ fontFamily: 'Georgia, serif', fontSize: '0.85rem', color: INK, opacity: 0.6, lineHeight: 1.7, marginBottom: 6 }}>
+              Your RSVP has been received.
+            </p>
+            <p style={{ fontFamily: 'Georgia, serif', fontSize: '0.85rem', color: INK, opacity: 0.45, fontStyle: 'italic' }}>
+              We can&rsquo;t wait to celebrate with you.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Steps 2 & 3: Confirm + Form ───────────────────────────────────────────────
+  return (
+    <div style={{ minHeight: '100svh', background: '#FAF7F2', paddingTop: '6rem', paddingBottom: '4rem' }}>
+      <Container size="sm">
+
+        {/* Header */}
+        <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
+          <p style={{ fontFamily: 'Georgia, serif', fontSize: '0.55rem', letterSpacing: '0.5em', textTransform: 'uppercase', color: GOLD, marginBottom: 8 }}>
+            ★ &nbsp; You&rsquo;re Invited &nbsp; ★
+          </p>
+          <h1 style={{ fontFamily: 'var(--font-cursive)', fontSize: 'clamp(2rem, 5vw, 3rem)', color: RED, margin: '0 0 6px' }}>
+            {step === 'confirm' ? 'Is this you?' : 'Your RSVP'}
+          </h1>
+          <p style={{ fontFamily: 'Georgia, serif', fontSize: '0.62rem', letterSpacing: '0.3em', textTransform: 'uppercase', color: '#8a7d6c' }}>
+            Jeslin &amp; Myles · June 12, 2027 · Tuscany
+          </p>
+        </div>
 
         {/* Step 2: Confirm household */}
         {step === 'confirm' && household && (
-          <Card>
-            <h2 className="text-lg font-semibold text-fg mb-2">Is this your invitation?</h2>
-            <p className="text-muted text-sm mb-6">
+          <div style={{
+            background: 'white',
+            borderRadius: 4,
+            padding: '32px',
+            boxShadow: '0 4px 24px rgba(0,0,0,0.07)',
+            border: '1px solid rgba(201,166,132,0.2)',
+          }}>
+            <p style={{ fontFamily: 'Georgia, serif', fontSize: '0.9rem', color: '#5a5048', marginBottom: 24, lineHeight: 1.6 }}>
               We found the following guests on this invitation:
             </p>
-            <ul className="space-y-2 mb-8">
+            <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 28px', display: 'flex', flexDirection: 'column', gap: 12 }}>
               {household.guests.map(g => (
-                <li key={g.id} className="flex items-start gap-3">
-                  <span className="w-2 h-2 rounded-full bg-accent inline-block mt-1.5 shrink-0" />
+                <li key={g.id} style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+                  <span style={{ width: 6, height: 6, borderRadius: '50%', background: GOLD, flexShrink: 0, marginTop: 6 }} />
                   <div>
-                    <span className="text-fg font-medium">
+                    <span style={{ fontFamily: 'Georgia, serif', fontSize: '0.95rem', color: '#3F3A36', fontWeight: 600 }}>
                       {g.first_name} {g.last_name ?? ''}
                     </span>
                     {g.invitedByName && (
-                      <p className="text-xs text-muted">Guest of {g.invitedByName}</p>
+                      <p style={{ fontSize: '0.72rem', color: '#8a7d6c', margin: '2px 0 0', fontFamily: 'Georgia, serif', fontStyle: 'italic' }}>Guest of {g.invitedByName}</p>
                     )}
                     {g.plus_one_allowed && !g.plus_one_guest_id && (
-                      <p className="text-xs text-muted italic">+ may bring a guest</p>
+                      <p style={{ fontSize: '0.72rem', color: '#8a7d6c', margin: '2px 0 0', fontFamily: 'Georgia, serif', fontStyle: 'italic' }}>+ may bring a guest</p>
                     )}
                   </div>
                 </li>
               ))}
             </ul>
-            <div className="flex gap-3 flex-wrap">
-              <Button onClick={() => setStep('form')}>
-                Yes, this is my invitation
-              </Button>
-              <Button
-                variant="secondary"
-                onClick={() => { setStep('lookup'); setPhone(''); setError(''); }}
+            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+              <button
+                onClick={() => setStep('form')}
+                style={{
+                  background: RED, color: CREAM, border: 'none',
+                  padding: '12px 28px', fontFamily: 'Georgia, serif',
+                  fontSize: '0.62rem', letterSpacing: '0.32em',
+                  textTransform: 'uppercase', cursor: 'pointer', borderRadius: 2,
+                }}
               >
-                That's not me
-              </Button>
+                Yes, that&rsquo;s me
+              </button>
+              <button
+                onClick={() => { setStep('lookup'); setPhone(''); setError(''); }}
+                style={{
+                  background: 'transparent', color: RED,
+                  border: `1px solid rgba(200,16,46,0.25)`,
+                  padding: '12px 28px', fontFamily: 'Georgia, serif',
+                  fontSize: '0.62rem', letterSpacing: '0.32em',
+                  textTransform: 'uppercase', cursor: 'pointer', borderRadius: 2,
+                }}
+              >
+                That&rsquo;s not me
+              </button>
             </div>
-          </Card>
+          </div>
         )}
 
         {/* Step 3: RSVP form */}
         {step === 'form' && household && (
-          <div className="space-y-8">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
             {household.guests.map(guest => (
-              <Card key={guest.id}>
-                <h2 className="text-lg font-semibold text-fg mb-0.5">
+              <div key={guest.id} style={{
+                background: 'white', borderRadius: 4, padding: '28px 32px',
+                boxShadow: '0 4px 24px rgba(0,0,0,0.07)',
+                border: '1px solid rgba(201,166,132,0.2)',
+              }}>
+                <h2 style={{ fontFamily: 'var(--font-cursive)', fontSize: '1.6rem', color: RED, margin: '0 0 4px' }}>
                   {guest.first_name} {guest.last_name ?? ''}
                 </h2>
                 {guest.invitedByName && (
-                  <p className="text-xs text-muted mb-1">Guest of {guest.invitedByName}</p>
+                  <p style={{ fontFamily: 'Georgia, serif', fontSize: '0.72rem', color: '#8a7d6c', fontStyle: 'italic', margin: '0 0 20px' }}>Guest of {guest.invitedByName}</p>
                 )}
+
                 {guest.invitations.length === 0 ? (
-                  <p className="text-muted text-sm">No events to RSVP for.</p>
+                  <p style={{ color: '#8a7d6c', fontSize: '0.85rem', fontFamily: 'Georgia, serif' }}>No events to RSVP for.</p>
                 ) : (
-                  <div className="space-y-6 mt-4">
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
                     {guest.invitations.map(inv => {
                       const state = rsvpState[inv.id];
                       return (
-                        <div key={inv.id} className="border-t border-border pt-4">
-                          <div className="mb-3">
-                            <p className="font-medium text-fg">{inv.event.name}</p>
-                            <p className="text-sm text-muted">
-                              {formatDate(inv.event.event_date)} · {formatTime(inv.event.start_time)}
-                              {inv.event.end_time ? ` – ${formatTime(inv.event.end_time)}` : ''}
-                            </p>
-                            {inv.event.location_name && (
-                              <p className="text-sm text-muted">{inv.event.location_name}</p>
-                            )}
+                        <div key={inv.id} style={{ borderTop: '1px solid rgba(201,166,132,0.2)', paddingTop: 20 }}>
+                          <p style={{ fontFamily: 'Georgia, serif', fontWeight: 600, color: '#3F3A36', fontSize: '0.95rem', margin: '0 0 4px' }}>{inv.event.name}</p>
+                          <p style={{ fontFamily: 'Georgia, serif', fontSize: '0.72rem', color: '#8a7d6c', margin: '0 0 16px', fontStyle: 'italic' }}>
+                            {formatDate(inv.event.event_date)}
+                            {inv.event.start_time ? ` · ${formatTime(inv.event.start_time)}` : ''}
+                            {inv.event.location_name ? ` · ${inv.event.location_name}` : ''}
+                          </p>
+
+                          <div style={{ display: 'flex', gap: 10, marginBottom: 16 }}>
+                            {(['accepted', 'declined'] as const).map(status => (
+                              <button
+                                key={status}
+                                onClick={() => setRsvpState(prev => ({ ...prev, [inv.id]: { ...prev[inv.id], rsvpStatus: status } }))}
+                                style={{
+                                  padding: '9px 20px', borderRadius: 2,
+                                  border: `1px solid ${state?.rsvpStatus === status ? (status === 'accepted' ? RED : '#3F3A36') : 'rgba(0,0,0,0.12)'}`,
+                                  background: state?.rsvpStatus === status ? (status === 'accepted' ? RED : '#3F3A36') : 'transparent',
+                                  color: state?.rsvpStatus === status ? CREAM : '#5a5048',
+                                  fontFamily: 'Georgia, serif', fontSize: '0.68rem',
+                                  letterSpacing: '0.22em', textTransform: 'uppercase',
+                                  cursor: 'pointer', transition: 'all 0.15s ease',
+                                }}
+                              >
+                                {status === 'accepted' ? 'Attending' : 'Not Attending'}
+                              </button>
+                            ))}
                           </div>
 
-                          {/* Accept / Decline */}
-                          <div className="flex gap-3 mb-4">
-                            <button
-                              onClick={() => setRsvpState(prev => ({
-                                ...prev,
-                                [inv.id]: { ...prev[inv.id], rsvpStatus: 'accepted' },
-                              }))}
-                              className={`px-4 py-2 rounded-lg border text-sm font-medium transition-all ${
-                                state?.rsvpStatus === 'accepted'
-                                  ? 'bg-accent text-white border-accent'
-                                  : 'border-border text-fg hover:border-accent'
-                              }`}
-                            >
-                              Attending
-                            </button>
-                            <button
-                              onClick={() => setRsvpState(prev => ({
-                                ...prev,
-                                [inv.id]: { ...prev[inv.id], rsvpStatus: 'declined' },
-                              }))}
-                              className={`px-4 py-2 rounded-lg border text-sm font-medium transition-all ${
-                                state?.rsvpStatus === 'declined'
-                                  ? 'bg-fg text-white border-fg'
-                                  : 'border-border text-fg hover:border-fg'
-                              }`}
-                            >
-                              Not attending
-                            </button>
-                          </div>
-
-                          {/* Dietary restrictions — only if attending */}
                           {state?.rsvpStatus === 'accepted' && (
                             <TextField
                               label="Dietary restrictions (optional)"
                               value={state.dietaryRestrictions}
-                              onChange={e => setRsvpState(prev => ({
-                                ...prev,
-                                [inv.id]: { ...prev[inv.id], dietaryRestrictions: e.target.value },
-                              }))}
+                              onChange={e => setRsvpState(prev => ({ ...prev, [inv.id]: { ...prev[inv.id], dietaryRestrictions: e.target.value } }))}
                               placeholder="e.g. vegetarian, nut allergy"
                             />
                           )}
@@ -275,36 +773,33 @@ export default function RsvpPage() {
                   </div>
                 )}
 
-                {/* Unnamed plus-one slot — only shown if guest accepted at least one event */}
+                {/* Plus-one */}
                 {plusOneState[guest.id] &&
                   Object.values(rsvpState).some(s => s.guestId === guest.id && s.rsvpStatus === 'accepted') && (
-                  <div className="mt-6 border-t border-border pt-5">
-                    <p className="text-sm font-medium text-fg mb-1">Are you bringing a plus-one?</p>
-                    <p className="text-xs text-muted mb-3">You're welcome to bring a guest — let us know who's joining you.</p>
-                    <div className="flex gap-3 mb-4">
-                      <button
-                        onClick={() => setPlusOneState(prev => ({ ...prev, [guest.id]: { ...prev[guest.id], bringing: true } }))}
-                        className={`px-4 py-2 rounded-lg border text-sm font-medium transition-all ${
-                          plusOneState[guest.id].bringing === true
-                            ? 'bg-accent text-white border-accent'
-                            : 'border-border text-fg hover:border-accent'
-                        }`}
-                      >
-                        Yes, bringing someone
-                      </button>
-                      <button
-                        onClick={() => setPlusOneState(prev => ({ ...prev, [guest.id]: { ...prev[guest.id], bringing: false } }))}
-                        className={`px-4 py-2 rounded-lg border text-sm font-medium transition-all ${
-                          plusOneState[guest.id].bringing === false
-                            ? 'bg-fg text-white border-fg'
-                            : 'border-border text-fg hover:border-fg'
-                        }`}
-                      >
-                        No, just me
-                      </button>
+                  <div style={{ marginTop: 24, borderTop: '1px solid rgba(201,166,132,0.2)', paddingTop: 20 }}>
+                    <p style={{ fontFamily: 'Georgia, serif', fontWeight: 600, color: '#3F3A36', fontSize: '0.9rem', margin: '0 0 4px' }}>Are you bringing a plus-one?</p>
+                    <p style={{ fontFamily: 'Georgia, serif', fontSize: '0.72rem', color: '#8a7d6c', fontStyle: 'italic', margin: '0 0 14px' }}>You&rsquo;re welcome to bring a guest.</p>
+                    <div style={{ display: 'flex', gap: 10, marginBottom: 16 }}>
+                      {[true, false].map(val => (
+                        <button
+                          key={String(val)}
+                          onClick={() => setPlusOneState(prev => ({ ...prev, [guest.id]: { ...prev[guest.id], bringing: val } }))}
+                          style={{
+                            padding: '9px 20px', borderRadius: 2,
+                            border: `1px solid ${plusOneState[guest.id].bringing === val ? (val ? RED : '#3F3A36') : 'rgba(0,0,0,0.12)'}`,
+                            background: plusOneState[guest.id].bringing === val ? (val ? RED : '#3F3A36') : 'transparent',
+                            color: plusOneState[guest.id].bringing === val ? CREAM : '#5a5048',
+                            fontFamily: 'Georgia, serif', fontSize: '0.68rem',
+                            letterSpacing: '0.22em', textTransform: 'uppercase',
+                            cursor: 'pointer', transition: 'all 0.15s ease',
+                          }}
+                        >
+                          {val ? 'Yes, bringing someone' : 'No, just me'}
+                        </button>
+                      ))}
                     </div>
                     {plusOneState[guest.id].bringing && (
-                      <div className="grid grid-cols-2 gap-3">
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                         <TextField
                           label="Their first name"
                           value={plusOneState[guest.id].firstName}
@@ -321,22 +816,42 @@ export default function RsvpPage() {
                     )}
                   </div>
                 )}
-              </Card>
+              </div>
             ))}
 
-            {error && <p className="text-red-600 text-sm">{error}</p>}
+            {error && (
+              <p style={{ fontFamily: 'Georgia, serif', fontSize: '0.8rem', color: '#9B2335', fontStyle: 'italic' }}>{error}</p>
+            )}
 
-            <div className="flex gap-3 flex-wrap">
-              <Button onClick={handleSubmit} disabled={loading}>
-                {loading ? 'Submitting...' : 'Submit RSVP'}
-              </Button>
-              <Button variant="secondary" onClick={() => setStep('confirm')}>
+            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+              <button
+                onClick={handleSubmit}
+                disabled={loading}
+                style={{
+                  background: loading ? 'rgba(200,16,46,0.4)' : RED, color: CREAM,
+                  border: 'none', padding: '13px 32px', fontFamily: 'Georgia, serif',
+                  fontSize: '0.62rem', letterSpacing: '0.38em', textTransform: 'uppercase',
+                  cursor: loading ? 'not-allowed' : 'pointer', borderRadius: 2,
+                }}
+              >
+                {loading ? 'Submitting…' : 'Submit RSVP'}
+              </button>
+              <button
+                onClick={() => setStep('confirm')}
+                style={{
+                  background: 'transparent', color: RED,
+                  border: `1px solid rgba(200,16,46,0.25)`,
+                  padding: '13px 32px', fontFamily: 'Georgia, serif',
+                  fontSize: '0.62rem', letterSpacing: '0.38em', textTransform: 'uppercase',
+                  cursor: 'pointer', borderRadius: 2,
+                }}
+              >
                 Back
-              </Button>
+              </button>
             </div>
           </div>
         )}
       </Container>
-    </section>
+    </div>
   );
 }

@@ -24,7 +24,8 @@ export function Header() {
 	const isHome = pathname === "/";
 	const isStory = pathname === "/story";
 	const isSaveTheDate = pathname === "/save-the-date";
-	const hasTransparentHeader = isHome || isStory;
+	const isRsvp = pathname === "/rsvp";
+	const hasTransparentHeader = isHome || isStory || isRsvp;
 
 	useEffect(() => {
 		const onScroll = () => setScrolled(window.scrollY > 50);
@@ -65,7 +66,9 @@ export function Header() {
 						className={`text-3xl hover:opacity-80 transition-colors font-cursive ${
 							useWhiteContent
 								? "text-white drop-shadow-lg"
-								: "text-fg"
+								: isRsvp
+									? "text-[#C8102E]"
+									: "text-fg"
 						}`}
 					>
 						J & M
@@ -83,10 +86,14 @@ export function Header() {
 										isActive(link.href)
 											? isTransparent
 												? "text-white font-semibold underline underline-offset-4"
-												: "text-[#7B6A94] font-semibold underline underline-offset-4"
+												: isRsvp
+													? "text-[#C8102E] font-semibold underline underline-offset-4"
+													: "text-[#7B6A94] font-semibold underline underline-offset-4"
 											: isTransparent
 												? "text-white/80 hover:text-white"
-												: "text-[#8B7BA3] hover:text-[#6B5A84] hover:bg-accent/15"
+												: isRsvp
+													? "text-[#8B6558] hover:text-[#C8102E] hover:bg-red-50"
+													: "text-[#8B7BA3] hover:text-[#6B5A84] hover:bg-accent/15"
 									}
                 `}
 							>
@@ -163,8 +170,12 @@ export function Header() {
                     px-3 py-2 text-sm rounded-md transition-colors font-medium
                     ${
 											isActive(link.href)
-												? "text-[#7B6A94] font-semibold bg-accent/20"
-												: "text-[#8B7BA3] hover:text-[#6B5A84] hover:bg-accent/15"
+												? isRsvp
+													? "text-[#C8102E] font-semibold bg-red-50"
+													: "text-[#7B6A94] font-semibold bg-accent/20"
+												: isRsvp
+													? "text-[#8B6558] hover:text-[#C8102E] hover:bg-red-50"
+													: "text-[#8B7BA3] hover:text-[#6B5A84] hover:bg-accent/15"
 										}
                   `}
 								>
