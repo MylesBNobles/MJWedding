@@ -39,13 +39,13 @@ export function MusicPlayer() {
     const audio = new Audio('/audio/raindance.mp3');
     audio.loop = true;
     audio.volume = MUSIC_VOLUME / 100;
+    audio.muted = true;   // muted from birth — no race between JS and audio pipeline
     audio.preload = 'auto';
     audioRef.current = audio;
 
     // audio-unlock is dispatched synchronously from inside the envelope's open()
     // handler, so audio.play() runs within iOS's user gesture context.
     function unlock() {
-      audio.muted = true;
       audio.play().then(() => {
         audio.pause();
         audio.currentTime = 0;
