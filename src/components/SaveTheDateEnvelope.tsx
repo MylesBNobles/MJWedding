@@ -14,7 +14,7 @@ type Props = {
 const ENVELOPE_OPEN_MS   = 3300;
 const POLAROID_OFFSET_MS = 350;   // ms after flash fires before polaroid appears
 const DEVELOP_DELAY_MS   = 200;   // ms after polaroid mount before filter starts
-const DEVELOP_MS         = 7000;  // filter transition duration
+const DEVELOP_MS         = 5000;  // filter transition duration
 
 function playShutterSound() {
   try {

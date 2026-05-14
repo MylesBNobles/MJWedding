@@ -16,6 +16,7 @@ export function MusicPlayer() {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const triggeredRef = useRef(false);
   const musicReadyRef = useRef(false); // sync ref for use inside closures
+  const mobileRef = useRef(false);    // true when we pre-loaded iframe without autoplay
   const toastTimerRef = useRef<ReturnType<typeof setTimeout>>();
   const volumeTimerRef = useRef<ReturnType<typeof setTimeout>>();
 
@@ -40,6 +41,17 @@ export function MusicPlayer() {
     setTimeout(() => setShowToast(false), 400);
   }
 
+  function sendCmd(cmd: string) {
+    iframeRef.current?.contentWindow?.postMessage(cmd, '*');
+  }
+
+  function setVolume() {
+    volumeTimerRef.current = setTimeout(() => {
+      sendCmd(`{"event":"command","func":"setVolume","args":[${MUSIC_VOLUME}]}`);
+    }, 600);
+  }
+
+  // Desktop path: mount iframe with autoplay=1
   function startMusic() {
     if (triggeredRef.current) return;
     triggeredRef.current = true;
@@ -48,19 +60,17 @@ export function MusicPlayer() {
     setLoaded(true);
     setPlaying(true);
     showToastMessage();
-    volumeTimerRef.current = setTimeout(() => {
-      iframeRef.current?.contentWindow?.postMessage(
-        `{"event":"command","func":"setVolume","args":[${MUSIC_VOLUME}]}`,
-        '*',
-      );
-    }, 800);
+    setVolume();
   }
 
   useEffect(() => {
     function onMusicStart() {
       const isMobile = window.matchMedia('(pointer: coarse)').matches;
       if (isMobile) {
-        // Can't autoplay on mobile — show a tap-to-play prompt instead
+        // Pre-load the iframe NOW (without autoplay) so it's ready when user taps.
+        // This avoids the "mount on tap → async re-render → autoplay blocked" problem.
+        mobileRef.current = true;
+        setLoaded(true);
         musicReadyRef.current = true;
         setMusicReady(true);
         showToastMessage();
@@ -75,21 +85,24 @@ export function MusicPlayer() {
 
   function toggle() {
     if (musicReadyRef.current) {
-      // Mobile first tap — this is the user gesture we need to start audio
-      startMusic();
+      // Mobile first tap — iframe is already loaded, send playVideo within this user gesture
+      triggeredRef.current = true;
+      musicReadyRef.current = false;
+      setMusicReady(false);
+      setPlaying(true);
+      showToastMessage();
+      sendCmd('{"event":"command","func":"playVideo","args":""}');
+      setVolume();
       return;
     }
     if (!loaded) {
       startMusic();
       return;
     }
-    const iframe = iframeRef.current;
-    if (iframe?.contentWindow) {
-      const cmd = playing
-        ? '{"event":"command","func":"pauseVideo","args":""}'
-        : '{"event":"command","func":"playVideo","args":""}';
-      iframe.contentWindow.postMessage(cmd, '*');
-    }
+    const cmd = playing
+      ? '{"event":"command","func":"pauseVideo","args":""}'
+      : '{"event":"command","func":"playVideo","args":""}';
+    sendCmd(cmd);
     const next = !playing;
     setPlaying(next);
     if (next) {
@@ -106,6 +119,10 @@ export function MusicPlayer() {
 
   const toastLabel = musicReady ? 'Tap to play' : playing ? 'Now playing' : 'Paused';
   const toastHint  = playing ? 'tap vinyl to pause' : 'tap vinyl to play';
+
+  // Mobile: autoplay=0 (we control play via postMessage on tap)
+  // Desktop: autoplay=1 (browser allows it, plays when iframe mounts)
+  const iframeSrc = `https://www.youtube-nocookie.com/embed/${YOUTUBE_ID}?autoplay=${mobileRef.current ? 0 : 1}&enablejsapi=1&loop=1&playlist=${YOUTUBE_ID}&controls=0`;
 
   return (
     <>
@@ -254,11 +271,11 @@ export function MusicPlayer() {
         </button>
       </div>
 
-      {/* Hidden YouTube iframe — mounts on first trigger */}
+      {/* Hidden YouTube iframe */}
       {loaded && (
         <iframe
           ref={iframeRef}
-          src={`https://www.youtube-nocookie.com/embed/${YOUTUBE_ID}?autoplay=1&enablejsapi=1&loop=1&playlist=${YOUTUBE_ID}&controls=0`}
+          src={iframeSrc}
           allow="autoplay"
           title="Raindance – Dave ft. Tems"
           style={{

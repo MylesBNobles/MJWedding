@@ -14,7 +14,7 @@ export type EventItem = {
   date: string; // ISO date
   startTime: string; // "17:00"
   endTime?: string;
-  venueName: string;
+  venueName?: string;
   address?: string;
   mapLink?: string;
   dressCode?: string;
