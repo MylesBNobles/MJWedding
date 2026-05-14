@@ -39,20 +39,25 @@ export function MusicPlayer() {
     const audio = new Audio('/audio/raindance.mp3');
     audio.loop = true;
     audio.volume = MUSIC_VOLUME / 100;
-    audio.muted = true;   // muted from birth — no race between JS and audio pipeline
     audio.preload = 'auto';
     audioRef.current = audio;
 
     // audio-unlock is dispatched synchronously from inside the envelope's open()
     // handler, so audio.play() runs within iOS's user gesture context.
+    // Both muted + volume=0 are set so if either fails to propagate in time the
+    // other still guarantees silence during the unlock play/pause.
     function unlock() {
+      audio.muted = true;
+      audio.volume = 0;
       audio.play().then(() => {
         audio.pause();
         audio.currentTime = 0;
         audio.muted = false;
+        audio.volume = MUSIC_VOLUME / 100;
         audioUnlockedRef.current = true;
       }).catch(() => {
         audio.muted = false;
+        audio.volume = MUSIC_VOLUME / 100;
         // Unlock failed — will fall back to tap-to-play via the vinyl button.
       });
     }
