@@ -52,48 +52,44 @@ function PlaneIcon({ x, y, angle }: { x: number; y: number; angle: number }) {
   return (
     <g transform={`translate(${x},${y}) rotate(${angle})`} filter="url(#plane-glow)">
       {/* Wings */}
-      <path d="M 2,-3 L -3,-18 L -8,-16 L -2,0" fill="white"/>
-      <path d="M 2,3 L -3,18 L -8,16 L -2,0" fill="white"/>
+      <path d="M 2,-3 L -3,-18 L -8,-16 L -2,0" fill="#D4AF37"/>
+      <path d="M 2,3 L -3,18 L -8,16 L -2,0" fill="#D4AF37"/>
       {/* Tail fins */}
-      <path d="M -6,-1.5 L -10,-8 L -13,-7 L -8,0" fill="white"/>
-      <path d="M -6,1.5 L -10,8 L -13,7 L -8,0" fill="white"/>
+      <path d="M -6,-1.5 L -10,-8 L -13,-7 L -8,0" fill="#D4AF37"/>
+      <path d="M -6,1.5 L -10,8 L -13,7 L -8,0" fill="#D4AF37"/>
       {/* Fuselage */}
-      <ellipse cx={0} cy={0} rx={11} ry={3} fill="white"/>
+      <ellipse cx={0} cy={0} rx={11} ry={3} fill="#D4AF37"/>
       {/* Nose cone */}
-      <ellipse cx={11} cy={0} rx={2.5} ry={1.6} fill="white"/>
+      <ellipse cx={11} cy={0} rx={2.5} ry={1.6} fill="#D4AF37"/>
     </g>
   );
 }
 
-function HeartPin({ x, y, visible }: { x: number; y: number; visible: boolean }) {
+function MapPin({ x, y, visible }: { x: number; y: number; visible: boolean }) {
+  const ballR = 7;
+  const ballY = y - 28;
   return (
     <g style={{ opacity: visible ? 1 : 0, transition: 'opacity 0.2s ease' }}>
-      {/* Pin stem */}
-      <line x1={x} y1={y} x2={x} y2={y - 7} stroke="#C4614A" strokeWidth={2.5} strokeLinecap="round"/>
-      {/* Heart — drops in with a bounce, then pulses */}
+      {/* Tiny ground shadow */}
+      <ellipse cx={x} cy={y + 1} rx={3} ry={1.2} fill="rgba(0,0,0,0.22)"/>
+      {/* Pin — bounces in from above */}
       <g style={{
         transformOrigin: `${x}px ${y}px`,
-        transform: visible ? 'translateY(0) scale(1)' : 'translateY(-22px) scale(0.3)',
+        transform: visible ? 'translateY(0) scale(1)' : 'translateY(-28px) scale(0.2)',
         transition: visible
-          ? 'transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) 0.05s'
+          ? 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.05s'
           : 'none',
       }}>
-        <path
-          d={`M${x},${y-10}
-              C${x},${y-10} ${x-14},${y-22} ${x-14},${y-30}
-              C${x-14},${y-39} ${x-7},${y-41} ${x},${y-37}
-              C${x+7},${y-41} ${x+14},${y-39} ${x+14},${y-30}
-              C${x+14},${y-22} ${x},${y-10} ${x},${y-10}Z`}
-          fill="#C4614A"
-        />
-        {/* White highlight */}
-        <circle cx={x - 4} cy={y - 32} r={3} fill="rgba(255,255,255,0.28)"/>
+        {/* Needle stem */}
+        <line x1={x} y1={y} x2={x} y2={ballY + ballR}
+          stroke="#C8C0B8" strokeWidth={1.8} strokeLinecap="round"/>
+        {/* Ball head */}
+        <circle cx={x} cy={ballY} r={ballR} fill="#C4614A"/>
+        {/* Highlight on ball */}
+        <circle cx={x - 2.5} cy={ballY - 2.5} r={2.2} fill="rgba(255,255,255,0.4)"/>
       </g>
-      {/* Label — white with dark outline so it pops on any background */}
-      <g style={{
-        opacity: visible ? 1 : 0,
-        transition: 'opacity 0.6s ease 0.55s',
-      }}>
+      {/* Label */}
+      <g style={{ opacity: visible ? 1 : 0, transition: 'opacity 0.6s ease 0.55s' }}>
         <text
           x={x} y={y + 18}
           fontSize={10} fontFamily="Georgia,serif" fontStyle="italic"
@@ -171,7 +167,7 @@ export function ItalyMap() {
       <div style={{ width: '100%', maxWidth: 560, position: 'relative' }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src="/images/vintage_travel_map.png"
+          src="/images/vintage_travel_map_2.png"
           alt="Vintage travel map showing our journey from the United States to Tuscany, Italy"
           style={{ width: '100%', height: 'auto', display: 'block', borderRadius: 8 }}
           draggable={false}
@@ -204,16 +200,16 @@ export function ItalyMap() {
             </filter>
           </defs>
 
-          {/* Contrail — glowing white dashed line tracing the path */}
+          {/* Contrail — glowing gold dashed line tracing the path */}
           {trail && (
             <>
               {/* Soft glow layer */}
               <path d={trail} fill="none"
-                stroke="rgba(255,255,255,0.35)" strokeWidth={5}
+                stroke="rgba(212,175,55,0.55)" strokeWidth={8}
                 strokeLinecap="round" filter="url(#trail-glow)"/>
               {/* Crisp dashed line */}
               <path d={trail} fill="none"
-                stroke="rgba(255,255,255,0.88)" strokeWidth={1.8}
+                stroke="rgba(212,175,55,1)" strokeWidth={2.5}
                 strokeDasharray="6 5" strokeLinecap="round"/>
             </>
           )}
@@ -222,7 +218,7 @@ export function ItalyMap() {
           {showPlane && <PlaneIcon x={x} y={y} angle={angle} />}
 
           {/* Heart pin drops in after landing */}
-          <HeartPin x={TU.x} y={TU.y} visible={pinShown}/>
+          <MapPin x={TU.x} y={TU.y} visible={pinShown}/>
         </svg>
       </div>
 
@@ -239,7 +235,7 @@ export function ItalyMap() {
             aria-label="Replay flight animation"
             style={{
               background: 'none', border: 'none', cursor: 'pointer', padding: 0,
-              fontFamily: 'Georgia,serif', fontSize: '0.6rem', color: '#C9A684',
+              fontFamily: 'Georgia,serif', fontSize: '0.6rem', color: '#D4AF37',
               letterSpacing: '0.12em', display: 'flex', alignItems: 'center', gap: '0.25rem',
               opacity: 0.8, transition: 'opacity 0.2s',
             }}

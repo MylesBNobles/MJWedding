@@ -218,7 +218,11 @@ export function SaveTheDateEnvelope({ coupleNames, dateLine, venue, location }: 
   }, [runKey, reducedMotion, hasOpened]);
 
   const open = () => {
-    if (!hasOpened && !reducedMotion) setHasOpened(true);
+    if (!hasOpened && !reducedMotion) {
+      setHasOpened(true);
+      // Dispatch synchronously so audio.play() in MusicPlayer runs within this gesture context.
+      document.dispatchEvent(new CustomEvent('audio-unlock'));
+    }
   };
 
   const reset = () => {

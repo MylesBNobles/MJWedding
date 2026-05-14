@@ -67,7 +67,7 @@ export function AnimatedSignature() {
           style={{
             display: 'block',
             whiteSpace: 'nowrap',
-            clipPath: `inset(0 ${clipRight} 0 0 round 2px)`,
+            clipPath: `inset(-12px ${clipRight} -16px -16px round 2px)`,
           }}
         >
           Jeslin &amp; Myles

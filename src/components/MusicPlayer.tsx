@@ -6,25 +6,62 @@ const YOUTUBE_ID = '23nLWChvfM8';
 const MUSIC_VOLUME = 25;
 
 export function MusicPlayer() {
-  const [playing, setPlaying] = useState(false);
-  const [loaded, setLoaded] = useState(false);
-  const [showToast, setShowToast] = useState(false);
+  const [playing,    setPlaying]    = useState(false);
+  const [loaded,     setLoaded]     = useState(false);   // desktop: iframe mounted
+  const [showToast,  setShowToast]  = useState(false);
   const [toastVisible, setToastVisible] = useState(false);
-  const [entered, setEntered] = useState(false);
-  const [musicReady, setMusicReady] = useState(false); // mobile: waiting for tap to start
+  const [entered,    setEntered]    = useState(false);
+  const [musicReady, setMusicReady] = useState(false);   // fallback tap-to-play
+  const [isMobile,   setIsMobile]   = useState(false);
 
-  const iframeRef = useRef<HTMLIFrameElement>(null);
-  const triggeredRef = useRef(false);
-  const musicReadyRef = useRef(false); // sync ref for use inside closures
-  const mobileRef = useRef(false);    // true when we pre-loaded iframe without autoplay
-  const toastTimerRef = useRef<ReturnType<typeof setTimeout>>();
-  const volumeTimerRef = useRef<ReturnType<typeof setTimeout>>();
+  const iframeRef       = useRef<HTMLIFrameElement>(null);
+  const audioRef        = useRef<HTMLAudioElement | null>(null);
+  const audioUnlockedRef = useRef(false);   // true once unlock play/pause succeeded
+  const isMobileRef     = useRef(false);    // sync copy for use in closures
+  const triggeredRef    = useRef(false);
+  const musicReadyRef   = useRef(false);
+  const toastTimerRef   = useRef<ReturnType<typeof setTimeout>>();
+  const volumeTimerRef  = useRef<ReturnType<typeof setTimeout>>();
 
+  // Entrance animation
   useEffect(() => {
     const t = setTimeout(() => setEntered(true), 500);
     return () => clearTimeout(t);
   }, []);
 
+  // Mobile setup: create HTMLAudioElement and unlock it on the first touch gesture
+  useEffect(() => {
+    const mobile = window.matchMedia('(pointer: coarse)').matches;
+    isMobileRef.current = mobile;
+    setIsMobile(mobile);
+    if (!mobile) return;
+
+    const audio = new Audio('/audio/raindance.mp3');
+    audio.loop = true;
+    audio.volume = MUSIC_VOLUME / 100;
+    audio.preload = 'auto';
+    audioRef.current = audio;
+
+    // audio-unlock is dispatched synchronously from inside the envelope's open()
+    // handler, so audio.play() runs within iOS's user gesture context.
+    function unlock() {
+      audio.play().then(() => {
+        audio.pause();
+        audio.currentTime = 0;
+        audioUnlockedRef.current = true;
+      }).catch(() => {
+        // Unlock failed — will fall back to tap-to-play via the vinyl button.
+      });
+    }
+
+    document.addEventListener('audio-unlock', unlock, { once: true });
+    return () => {
+      document.removeEventListener('audio-unlock', unlock);
+      audio.pause();
+    };
+  }, []);
+
+  // ── Toast helpers ──────────────────────────────────────────────────────────
   function showToastMessage() {
     clearTimeout(toastTimerRef.current);
     setShowToast(true);
@@ -41,6 +78,7 @@ export function MusicPlayer() {
     setTimeout(() => setShowToast(false), 400);
   }
 
+  // ── Desktop (YouTube iframe) helpers ───────────────────────────────────────
   function sendCmd(cmd: string) {
     iframeRef.current?.contentWindow?.postMessage(cmd, '*');
   }
@@ -51,67 +89,92 @@ export function MusicPlayer() {
     }, 600);
   }
 
-  // Desktop path: mount iframe with autoplay=1
-  function startMusic() {
+  function startDesktopMusic() {
     if (triggeredRef.current) return;
     triggeredRef.current = true;
-    musicReadyRef.current = false;
-    setMusicReady(false);
     setLoaded(true);
     setPlaying(true);
     showToastMessage();
     setVolume();
   }
 
+  // ── music-start event (fired from SaveTheDateEnvelope after polaroid) ──────
   useEffect(() => {
     function onMusicStart() {
-      const isMobile = window.matchMedia('(pointer: coarse)').matches;
-      if (isMobile) {
-        // Pre-load the iframe NOW (without autoplay) so it's ready when user taps.
-        // This avoids the "mount on tap → async re-render → autoplay blocked" problem.
-        mobileRef.current = true;
-        setLoaded(true);
-        musicReadyRef.current = true;
-        setMusicReady(true);
-        showToastMessage();
+      const mobile = isMobileRef.current;
+
+      if (mobile) {
+        triggeredRef.current = true;
+        const audio = audioRef.current;
+
+        if (audio && audioUnlockedRef.current) {
+          // Audio was unlocked by the envelope tap — autoplay without a gesture.
+          audio.currentTime = 0;
+          audio.play().then(() => {
+            setPlaying(true);
+            showToastMessage();
+          }).catch(() => {
+            // Shouldn't happen, but fall back gracefully.
+            musicReadyRef.current = true;
+            setMusicReady(true);
+            showToastMessage();
+          });
+        } else {
+          // Unlock didn't happen (e.g. user never touched the page) — show tap prompt.
+          musicReadyRef.current = true;
+          setMusicReady(true);
+          showToastMessage();
+        }
       } else {
-        startMusic();
+        startDesktopMusic();
       }
     }
+
     document.addEventListener('music-start', onMusicStart, { once: true });
     return () => document.removeEventListener('music-start', onMusicStart);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // ── Vinyl button toggle ────────────────────────────────────────────────────
   function toggle() {
-    if (musicReadyRef.current) {
-      // Mobile first tap — iframe is already loaded, send playVideo within this user gesture
-      triggeredRef.current = true;
-      musicReadyRef.current = false;
-      setMusicReady(false);
-      setPlaying(true);
-      showToastMessage();
-      sendCmd('{"event":"command","func":"playVideo","args":""}');
-      setVolume();
+    const mobile = isMobileRef.current;
+    const audio  = audioRef.current;
+
+    if (mobile && audio) {
+      if (musicReadyRef.current) {
+        // Fallback first tap — play within this gesture
+        musicReadyRef.current = false;
+        setMusicReady(false);
+        audio.currentTime = 0;
+        audio.play();
+        setPlaying(true);
+        showToastMessage();
+        return;
+      }
+      if (playing) {
+        audio.pause();
+        setPlaying(false);
+        dismissToast();
+      } else {
+        audio.play();
+        setPlaying(true);
+        showToastMessage();
+      }
       return;
     }
-    if (!loaded) {
-      startMusic();
-      return;
-    }
+
+    // Desktop: YouTube iframe
+    if (!loaded) { startDesktopMusic(); return; }
     const cmd = playing
       ? '{"event":"command","func":"pauseVideo","args":""}'
       : '{"event":"command","func":"playVideo","args":""}';
     sendCmd(cmd);
     const next = !playing;
     setPlaying(next);
-    if (next) {
-      showToastMessage();
-    } else {
-      dismissToast();
-    }
+    if (next) showToastMessage(); else dismissToast();
   }
 
+  // Cleanup timers on unmount
   useEffect(() => () => {
     clearTimeout(toastTimerRef.current);
     clearTimeout(volumeTimerRef.current);
@@ -120,9 +183,7 @@ export function MusicPlayer() {
   const toastLabel = musicReady ? 'Tap to play' : playing ? 'Now playing' : 'Paused';
   const toastHint  = playing ? 'tap vinyl to pause' : 'tap vinyl to play';
 
-  // Mobile: autoplay=0 (we control play via postMessage on tap)
-  // Desktop: autoplay=1 (browser allows it, plays when iframe mounts)
-  const iframeSrc = `https://www.youtube-nocookie.com/embed/${YOUTUBE_ID}?autoplay=${mobileRef.current ? 0 : 1}&enablejsapi=1&loop=1&playlist=${YOUTUBE_ID}&controls=0`;
+  const iframeSrc = `https://www.youtube-nocookie.com/embed/${YOUTUBE_ID}?autoplay=1&enablejsapi=1&loop=1&playlist=${YOUTUBE_ID}&controls=0`;
 
   return (
     <>
@@ -271,8 +332,8 @@ export function MusicPlayer() {
         </button>
       </div>
 
-      {/* Hidden YouTube iframe */}
-      {loaded && (
+      {/* Hidden YouTube iframe — desktop only */}
+      {loaded && !isMobile && (
         <iframe
           ref={iframeRef}
           src={iframeSrc}
