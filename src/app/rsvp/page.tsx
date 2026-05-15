@@ -195,6 +195,8 @@ export default function RsvpPage() {
           .poster-text {
             animation: posterFadeIn 1.2s ease 0.1s both;
           }
+          /* Hide footer on this step — fullscreen cinema layout */
+          footer { display: none; }
           /* ── Responsive split layout ── */
           .rsvp-layout {
             display: flex;
