@@ -177,6 +177,12 @@ export function SaveTheDateEnvelope({ coupleNames, dateLine, venue, location }: 
 
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
   const clearTimers = () => timers.current.forEach(clearTimeout);
+  const shutterRef = useRef<HTMLAudioElement | null>(null);
+
+  // Pre-create shutter audio so it can be unlocked within the tap gesture
+  useEffect(() => {
+    shutterRef.current = new Audio("/audio/shutter_wedding.mp3");
+  }, []);
 
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -198,7 +204,11 @@ export function SaveTheDateEnvelope({ coupleNames, dateLine, venue, location }: 
     };
 
     // Shutter fires + flash when envelope opens
-    schedule(() => { playShutterSound(); setBloomOn(true); }, ENVELOPE_OPEN_MS);
+    schedule(() => {
+      const shutter = shutterRef.current;
+      if (shutter) { shutter.currentTime = 0; shutter.play().catch(() => {}); }
+      setBloomOn(true);
+    }, ENVELOPE_OPEN_MS);
     // Flash divs unmount once all animations have reached opacity 0
     schedule(() => setBloomOn(false), ENVELOPE_OPEN_MS + 420);
     // Polaroid materialises through the receding bloom
@@ -220,6 +230,12 @@ export function SaveTheDateEnvelope({ coupleNames, dateLine, venue, location }: 
   const open = () => {
     if (!hasOpened && !reducedMotion) {
       setHasOpened(true);
+      // Unlock shutter audio within this gesture so Chrome allows it later from the timer.
+      const shutter = shutterRef.current;
+      if (shutter) {
+        shutter.muted = true;
+        shutter.play().then(() => { shutter.pause(); shutter.currentTime = 0; shutter.muted = false; }).catch(() => { shutter.muted = false; });
+      }
       // Dispatch synchronously so audio.play() in MusicPlayer runs within this gesture context.
       document.dispatchEvent(new CustomEvent('audio-unlock'));
     }
