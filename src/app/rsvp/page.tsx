@@ -197,6 +197,7 @@ export default function RsvpPage() {
           }
           /* Hide footer on this step — fullscreen cinema layout */
           footer { display: none; }
+          html, body { background: ${RED_DARK} !important; }
           /* ── Responsive split layout ── */
           .rsvp-layout {
             display: flex;
@@ -217,7 +218,6 @@ export default function RsvpPage() {
             justify-content: center;
             padding: 1rem clamp(0.75rem, 5vw, 2rem);
             position: relative;
-            overflow-y: auto;
           }
           .rsvp-ticket {
             padding: 14px 20px 14px;
@@ -235,7 +235,6 @@ export default function RsvpPage() {
             }
             .rsvp-ticket-panel {
               flex: 0 0 42%;
-              overflow-y: visible;
               padding: clamp(2rem, 4vw, 4rem) clamp(1.5rem, 3vw, 3rem);
             }
             .rsvp-ticket {

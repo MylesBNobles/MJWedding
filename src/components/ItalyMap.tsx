@@ -52,15 +52,15 @@ function PlaneIcon({ x, y, angle }: { x: number; y: number; angle: number }) {
   return (
     <g transform={`translate(${x},${y}) rotate(${angle})`} filter="url(#plane-glow)">
       {/* Wings */}
-      <path d="M 2,-3 L -3,-18 L -8,-16 L -2,0" fill="#D4AF37"/>
-      <path d="M 2,3 L -3,18 L -8,16 L -2,0" fill="#D4AF37"/>
+      <path d="M 2,-3 L -3,-18 L -8,-16 L -2,0" fill="#7FB08A"/>
+      <path d="M 2,3 L -3,18 L -8,16 L -2,0" fill="#7FB08A"/>
       {/* Tail fins */}
-      <path d="M -6,-1.5 L -10,-8 L -13,-7 L -8,0" fill="#D4AF37"/>
-      <path d="M -6,1.5 L -10,8 L -13,7 L -8,0" fill="#D4AF37"/>
+      <path d="M -6,-1.5 L -10,-8 L -13,-7 L -8,0" fill="#7FB08A"/>
+      <path d="M -6,1.5 L -10,8 L -13,7 L -8,0" fill="#7FB08A"/>
       {/* Fuselage */}
-      <ellipse cx={0} cy={0} rx={11} ry={3} fill="#D4AF37"/>
+      <ellipse cx={0} cy={0} rx={11} ry={3} fill="#7FB08A"/>
       {/* Nose cone */}
-      <ellipse cx={11} cy={0} rx={2.5} ry={1.6} fill="#D4AF37"/>
+      <ellipse cx={11} cy={0} rx={2.5} ry={1.6} fill="#7FB08A"/>
     </g>
   );
 }
@@ -200,16 +200,16 @@ export function ItalyMap() {
             </filter>
           </defs>
 
-          {/* Contrail — glowing gold dashed line tracing the path */}
+          {/* Contrail — glowing sage dashed line tracing the path */}
           {trail && (
             <>
               {/* Soft glow layer */}
               <path d={trail} fill="none"
-                stroke="rgba(212,175,55,0.55)" strokeWidth={8}
+                stroke="rgba(127,176,138,0.5)" strokeWidth={8}
                 strokeLinecap="round" filter="url(#trail-glow)"/>
               {/* Crisp dashed line */}
               <path d={trail} fill="none"
-                stroke="rgba(212,175,55,1)" strokeWidth={2.5}
+                stroke="rgba(127,176,138,1)" strokeWidth={2.5}
                 strokeDasharray="6 5" strokeLinecap="round"/>
             </>
           )}
