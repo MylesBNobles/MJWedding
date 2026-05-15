@@ -174,6 +174,7 @@ export function SaveTheDateEnvelope({ coupleNames, dateLine, venue, location }: 
   const [reducedMotion, setReducedMotion] = useState(false);
   const [bloomOn, setBloomOn] = useState(false);
   const [showPolaroid, setShowPolaroid] = useState(false);
+  const [showChevron, setShowChevron] = useState(false);
 
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
   const clearTimers = () => timers.current.forEach(clearTimeout);
@@ -218,10 +219,17 @@ export function SaveTheDateEnvelope({ coupleNames, dateLine, venue, location }: 
     const musicAt = ENVELOPE_OPEN_MS + POLAROID_OFFSET_MS + DEVELOP_DELAY_MS + DEVELOP_MS + 150;
     schedule(() => document.dispatchEvent(new CustomEvent("music-start")), musicAt);
 
-    // Gently scroll to reveal content below once everything has settled
+    // Scroll to peek the content below — 72% clears the FadeUp -32px rootMargin threshold
     schedule(() => {
-      window.scrollBy({ top: Math.round(window.innerHeight * 0.38), behavior: "smooth" });
+      window.scrollBy({ top: Math.round(window.innerHeight * 0.72), behavior: "smooth" });
     }, musicAt + 450);
+
+    // Chevron appears after scroll settles, dismissed on first user scroll
+    schedule(() => {
+      setShowChevron(true);
+      const hide = () => setShowChevron(false);
+      window.addEventListener("scroll", hide, { once: true });
+    }, musicAt + 1200);
 
     return () => { cancelAnimationFrame(r1); clearTimers(); };
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -247,6 +255,7 @@ export function SaveTheDateEnvelope({ coupleNames, dateLine, venue, location }: 
     setPlaying(false);
     setBloomOn(false);
     setShowPolaroid(false);
+    setShowChevron(false);
     setHasOpened(false);
     setRunKey(k => k + 1);
   };
@@ -375,6 +384,51 @@ export function SaveTheDateEnvelope({ coupleNames, dateLine, venue, location }: 
           onReset={reset}
           reducedMotion={reducedMotion}
         />
+      )}
+
+      {/* Scroll chevron — fixed at bottom, fades in after polaroid settles */}
+      {showChevron && (
+        <>
+          <style>{`
+            @keyframes chevronBounce {
+              0%, 100% { transform: translateX(-50%) translateY(0); }
+              50%       { transform: translateX(-50%) translateY(6px); }
+            }
+            @keyframes chevronFadeIn {
+              from { opacity: 0; transform: translateX(-50%) translateY(10px); }
+              to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+            }
+          `}</style>
+          <div
+            aria-hidden
+            style={{
+              position: 'fixed',
+              bottom: '5.5rem',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              zIndex: 50,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '4px',
+              animation: 'chevronFadeIn 0.6s ease forwards, chevronBounce 1.8s ease-in-out 0.6s infinite',
+              pointerEvents: 'none',
+            }}
+          >
+            <span style={{
+              fontFamily: 'Georgia, serif',
+              fontSize: '0.44rem',
+              letterSpacing: '0.36em',
+              textTransform: 'uppercase',
+              color: 'rgba(201,166,132,0.75)',
+            }}>
+              scroll
+            </span>
+            <svg width="18" height="10" viewBox="0 0 18 10" fill="none">
+              <path d="M1 1l8 8 8-8" stroke="rgba(201,166,132,0.75)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </div>
+        </>
       )}
     </section>
   );

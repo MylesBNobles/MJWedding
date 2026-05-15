@@ -23,10 +23,19 @@ export function MusicPlayer() {
   const toastTimerRef   = useRef<ReturnType<typeof setTimeout>>();
   const volumeTimerRef  = useRef<ReturnType<typeof setTimeout>>();
 
-  // Entrance animation
+  // Entrance: appear when music is ready (music-start event), or immediately for reduced-motion users
   useEffect(() => {
-    const t = setTimeout(() => setEntered(true), 500);
-    return () => clearTimeout(t);
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (mq.matches) {
+      const t = setTimeout(() => setEntered(true), 500);
+      return () => clearTimeout(t);
+    }
+    function onReady() {
+      // Small delay so the vinyl slides in just as the toast appears
+      setTimeout(() => setEntered(true), 200);
+    }
+    document.addEventListener('music-start', onReady, { once: true });
+    return () => document.removeEventListener('music-start', onReady);
   }, []);
 
   // Mobile setup: create HTMLAudioElement and unlock it on the first touch gesture
@@ -219,6 +228,7 @@ export function MusicPlayer() {
           opacity: entered ? 1 : 0,
           transform: entered ? 'translateY(0)' : 'translateY(18px)',
           transition: 'opacity 0.6s ease, transform 0.6s ease',
+          pointerEvents: entered ? 'auto' : 'none',
         }}
       >
         {/* Toast notification */}
