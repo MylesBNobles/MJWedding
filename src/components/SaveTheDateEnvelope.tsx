@@ -417,15 +417,15 @@ export function SaveTheDateEnvelope({ coupleNames, dateLine, venue, location }: 
           >
             <span style={{
               fontFamily: 'Georgia, serif',
-              fontSize: '0.44rem',
-              letterSpacing: '0.36em',
+              fontSize: '0.55rem',
+              letterSpacing: '0.38em',
               textTransform: 'uppercase',
-              color: 'rgba(201,166,132,0.75)',
+              color: 'rgba(201,166,132,0.92)',
             }}>
               scroll
             </span>
-            <svg width="18" height="10" viewBox="0 0 18 10" fill="none">
-              <path d="M1 1l8 8 8-8" stroke="rgba(201,166,132,0.75)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            <svg width="26" height="14" viewBox="0 0 26 14" fill="none">
+              <path d="M1 1l12 12 12-12" stroke="rgba(201,166,132,0.92)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </div>
         </>
