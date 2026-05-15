@@ -195,19 +195,59 @@ export default function RsvpPage() {
           .poster-text {
             animation: posterFadeIn 1.2s ease 0.1s both;
           }
+          /* ── Responsive split layout ── */
+          .rsvp-layout {
+            display: flex;
+            height: 100svh;
+            flex-direction: column;
+          }
+          .rsvp-poster {
+            flex: 0 0 40%;
+            position: relative;
+            background-image: url(/images/tuscany_pic.png);
+            background-size: cover;
+            background-position: center;
+          }
+          .rsvp-ticket-panel {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem clamp(0.75rem, 5vw, 2rem);
+            position: relative;
+            overflow-y: auto;
+          }
+          .rsvp-ticket {
+            padding: 14px 20px 14px;
+          }
+          .rsvp-stars { display: none; }
+          .rsvp-corner { display: none; }
+          @media (min-width: 640px) {
+            .rsvp-layout {
+              flex-direction: row;
+              height: auto;
+              min-height: 100svh;
+            }
+            .rsvp-poster {
+              flex: 0 0 58%;
+            }
+            .rsvp-ticket-panel {
+              flex: 0 0 42%;
+              overflow-y: visible;
+              padding: clamp(2rem, 4vw, 4rem) clamp(1.5rem, 3vw, 3rem);
+            }
+            .rsvp-ticket {
+              padding: 26px 34px 24px;
+            }
+            .rsvp-stars { display: block; }
+            .rsvp-corner { display: block; }
+          }
         `}</style>
 
-        <div style={{ display: 'flex', minHeight: '100svh', flexDirection: 'row' }} className="flex-col sm:flex-row">
+        <div className="rsvp-layout">
 
           {/* LEFT — Tuscany movie poster */}
-          <div style={{
-            flex: '0 0 58%',
-            position: 'relative',
-            backgroundImage: 'url(/images/tuscany_pic.png)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            minHeight: '45svh',
-          }}>
+          <div className="rsvp-poster">
             <div style={{
               position: 'absolute',
               inset: 0,
@@ -232,14 +272,6 @@ export default function RsvpPage() {
                 pointerEvents: 'none',
               }}>
                 <div style={{ position: 'absolute', inset: 6, border: `1px solid rgba(255,255,255,0.4)` }} />
-                {[
-                  { top: -1, left: -1 },
-                  { top: -1, right: -1 },
-                  { bottom: -1, left: -1 },
-                  { bottom: -1, right: -1 },
-                ].map((pos, i) => (
-                  <div key={i} style={{ position: 'absolute', width: 18, height: 18, background: RED, ...pos }} />
-                ))}
               </div>
 
               <p style={{
@@ -255,7 +287,7 @@ export default function RsvpPage() {
                 A Jeslin &amp; Myles Production
               </p>
 
-              <p style={{ color: GOLD, fontSize: '0.72rem', letterSpacing: '0.5em', marginBottom: '0.9rem' }}>
+              <p className="rsvp-stars" style={{ color: GOLD, fontSize: '0.72rem', letterSpacing: '0.5em', marginBottom: '0.9rem' }}>
                 ★ ★ ★ ★ ★
               </p>
 
@@ -297,15 +329,9 @@ export default function RsvpPage() {
           </div>
 
           {/* RIGHT — Red carpet velvet panel */}
-          <div style={{
-            flex: '0 0 42%',
+          <div className="rsvp-ticket-panel" style={{
             background: `linear-gradient(160deg, ${RED_DARK} 0%, ${RED} 100%)`,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: 'clamp(2rem, 4vw, 4rem) clamp(1.5rem, 3vw, 3rem)',
             position: 'relative',
-            overflow: 'hidden',
           }}>
             {/* Velvet sheen overlay */}
             <div style={{
@@ -316,33 +342,32 @@ export default function RsvpPage() {
             }} />
 
             {/* Corner ornaments */}
-            <svg style={{ position: 'absolute', top: 24, left: 24, opacity: 0.3 }} width="40" height="40" viewBox="0 0 40 40" fill="none">
+            <svg className="rsvp-corner" style={{ position: 'absolute', top: 24, left: 24, opacity: 0.3 }} width="40" height="40" viewBox="0 0 40 40" fill="none">
               <path d="M2 38 L2 2 L38 2" stroke={GOLD} strokeWidth="1.5" fill="none" />
               <circle cx="2" cy="2" r="2.5" fill={GOLD} />
             </svg>
-            <svg style={{ position: 'absolute', top: 24, right: 24, opacity: 0.3 }} width="40" height="40" viewBox="0 0 40 40" fill="none">
+            <svg className="rsvp-corner" style={{ position: 'absolute', top: 24, right: 24, opacity: 0.3 }} width="40" height="40" viewBox="0 0 40 40" fill="none">
               <path d="M38 38 L38 2 L2 2" stroke={GOLD} strokeWidth="1.5" fill="none" />
               <circle cx="38" cy="2" r="2.5" fill={GOLD} />
             </svg>
-            <svg style={{ position: 'absolute', bottom: 24, left: 24, opacity: 0.3 }} width="40" height="40" viewBox="0 0 40 40" fill="none">
+            <svg className="rsvp-corner" style={{ position: 'absolute', bottom: 24, left: 24, opacity: 0.3 }} width="40" height="40" viewBox="0 0 40 40" fill="none">
               <path d="M2 2 L2 38 L38 38" stroke={GOLD} strokeWidth="1.5" fill="none" />
               <circle cx="2" cy="38" r="2.5" fill={GOLD} />
             </svg>
-            <svg style={{ position: 'absolute', bottom: 24, right: 24, opacity: 0.3 }} width="40" height="40" viewBox="0 0 40 40" fill="none">
+            <svg className="rsvp-corner" style={{ position: 'absolute', bottom: 24, right: 24, opacity: 0.3 }} width="40" height="40" viewBox="0 0 40 40" fill="none">
               <path d="M38 2 L38 38 L2 38" stroke={GOLD} strokeWidth="1.5" fill="none" />
               <circle cx="38" cy="38" r="2.5" fill={GOLD} />
             </svg>
 
             {/* Vintage cinema ticket */}
             <div
-              className="ticket-vintage ticket-stub"
+              className="ticket-vintage ticket-stub rsvp-ticket"
               style={{
                 background: PAPER,
                 width: '100%',
                 maxWidth: 350,
                 position: 'relative',
                 borderRadius: 3,
-                padding: '26px 34px 24px',
                 boxShadow: '0 22px 70px rgba(0,0,0,0.5), 0 4px 16px rgba(0,0,0,0.22)',
               }}
             >
