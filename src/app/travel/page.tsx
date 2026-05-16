@@ -26,15 +26,18 @@ export default function TravelPage() {
 	const itinerary = `Wedding Weekend Itinerary
 ========================
 
+Thursday, June 10
+- Welcome Party (evening)
+
 Friday, June 11
-- Welcome Lunch (time TBD)
+- Free day — explore Tuscany
 
 Saturday, June 12
 - Wedding Ceremony & Reception
 	Villa Di Geggiano
 
 Sunday, June 13
-- Details coming soon`;
+- Farewell Brunch`;
 
 	const copyItinerary = () => {
 		navigator.clipboard.writeText(itinerary);
