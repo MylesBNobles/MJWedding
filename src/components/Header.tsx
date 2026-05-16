@@ -13,8 +13,7 @@ const navLinks = [
 	{ href: "/travel", label: "Travel" },
 	{ href: "/attire", label: "Attire" },
 	{ href: "/faq", label: "FAQ" },
-	{ href: "/updates", label: "Updates" },
-	{ href: "https://withjoy.com/myles-and-jeslin/registry", label: "Registry", external: true },
+{ href: "https://withjoy.com/myles-and-jeslin/registry", label: "Registry", external: true },
 ];
 
 export function Header() {
@@ -105,16 +104,30 @@ export function Header() {
 					</nav>
 
 					{/* Desktop CTAs */}
-					<div className="hidden md:flex items-center gap-3">
+					<div className="hidden md:flex items-center gap-2">
 						<Link href="/updates">
 							<Button
-								variant={isTransparent ? "ghost" : "primary"}
+								variant="ghost"
 								size="sm"
-								className={isTransparent ? "border-white text-white hover:bg-white/15" : ""}
+								className={useWhiteContent ? "text-white/80 hover:text-white hover:bg-white/10" : "text-[#8a7d6c] hover:text-[#3F3A36]"}
 							>
 								Get Updates
 							</Button>
 						</Link>
+						{!isRsvp && (
+							<Link
+								href="/rsvp"
+								target="_blank"
+								rel="noopener noreferrer"
+								className={`inline-flex items-center justify-center font-medium rounded-md border text-sm px-5 py-1.5 transition-all duration-150 ${
+									useWhiteContent
+										? "bg-transparent border-white/70 text-white hover:bg-white/15"
+										: "bg-[#C9A684] border-[#C9A684] text-white hover:bg-[#a8865e] hover:border-[#a8865e]"
+								}`}
+							>
+								RSVP
+							</Link>
+						)}
 					</div>
 
 					{/* Mobile Menu Button */}
@@ -187,8 +200,19 @@ export function Header() {
 							))}
 						</nav>
 						<div className="flex flex-col gap-2 mt-4 pt-4 border-t border-border">
+							{!isRsvp && (
+								<Link href="/rsvp" target="_blank" rel="noopener noreferrer" onClick={() => setIsMobileMenuOpen(false)}>
+									<Button
+										variant="primary"
+										fullWidth
+										className="bg-[#C9A684] border-[#C9A684] hover:bg-[#a8865e] hover:border-[#a8865e] text-white"
+									>
+										RSVP
+									</Button>
+								</Link>
+							)}
 							<Link href="/updates" onClick={() => setIsMobileMenuOpen(false)}>
-								<Button variant="primary" fullWidth>
+								<Button variant="secondary" fullWidth>
 									Get Updates
 								</Button>
 							</Link>

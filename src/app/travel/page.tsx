@@ -1,18 +1,142 @@
 "use client";
 
-import Link from "next/link";
-import {
-	Container,
-	SectionHeader,
-	Card,
-	Badge,
-	Button,
-	Toast,
-	useToast,
-} from "@/components";
-import { travelInfo } from "@/lib/mockData";
-import { getLastUpdated } from "@/lib/storage";
 import { useState } from "react";
+import Link from "next/link";
+import { ItalyMap } from "@/components/ItalyMap";
+import { FadeUp } from "@/components/FadeUp";
+import { Toast, useToast } from "@/components";
+import { travelInfo } from "@/lib/mockData";
+
+// ── Decorative components (matching save-the-date aesthetic) ─────────────────
+
+function BotanicalRule() {
+	return (
+		<div className="flex items-center justify-center my-14" aria-hidden>
+			<svg viewBox="0 0 320 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full max-w-sm">
+				<line x1="0" y1="16" x2="108" y2="16" stroke="#C9A684" strokeWidth="0.6" strokeOpacity="0.28" />
+				<line x1="212" y1="16" x2="320" y2="16" stroke="#C9A684" strokeWidth="0.6" strokeOpacity="0.28" />
+				<path d="M110,16 L133,16" stroke="#BFCBB2" strokeWidth="0.9" strokeOpacity="0.7" />
+				<ellipse cx="116" cy="12" rx="4.5" ry="2.5" fill="#BFCBB2" fillOpacity="0.65" transform="rotate(-25 116 12)" />
+				<ellipse cx="122" cy="20" rx="4.5" ry="2.5" fill="#BFCBB2" fillOpacity="0.65" transform="rotate(25 122 20)" />
+				<ellipse cx="128" cy="12" rx="4.5" ry="2.5" fill="#BFCBB2" fillOpacity="0.65" transform="rotate(-25 128 12)" />
+				<path d="M187,16 L210,16" stroke="#BFCBB2" strokeWidth="0.9" strokeOpacity="0.7" />
+				<ellipse cx="192" cy="12" rx="4.5" ry="2.5" fill="#BFCBB2" fillOpacity="0.65" transform="rotate(25 192 12)" />
+				<ellipse cx="198" cy="20" rx="4.5" ry="2.5" fill="#BFCBB2" fillOpacity="0.65" transform="rotate(-25 198 20)" />
+				<ellipse cx="204" cy="12" rx="4.5" ry="2.5" fill="#BFCBB2" fillOpacity="0.65" transform="rotate(25 204 12)" />
+			</svg>
+		</div>
+	);
+}
+
+function SectionLabel({ children }: { children: React.ReactNode }) {
+	return (
+		<p className="text-[0.62rem] uppercase tracking-[0.46em] text-[#8a7d6c] mb-3">
+			<span style={{ letterSpacing: 0, textTransform: "none", color: "#C9A684", marginRight: "8px", fontSize: "0.8rem" }}>✿</span>
+			{children}
+		</p>
+	);
+}
+
+function LetterHeading({ children }: { children: React.ReactNode }) {
+	return <h2 className="font-header text-2xl sm:text-3xl text-[#3F3A36] mb-6">{children}</h2>;
+}
+
+// ── Weekend timeline data ─────────────────────────────────────────────────────
+
+const weekendDays = [
+	{ date: "Thu · Jun 10", icon: "✦", title: "Welcome Party", note: "Evening celebration to kick off the weekend" },
+	{ date: "Fri · Jun 11", icon: "✈", title: "Explore Tuscany", note: "A free day to rest and wander" },
+	{ date: "Sat · Jun 12", icon: "♡", title: "Wedding Day", note: "Ceremony & Reception at Villa Di Geggiano" },
+	{ date: "Sun · Jun 13", icon: "☀", title: "Farewell Brunch", note: "A relaxed morning to say goodbye" },
+];
+
+// ── Airport step-by-step directions ──────────────────────────────────────────
+
+const airportDetails: Record<string, {
+	summary: string;
+	options: { title: string; steps: string[]; links?: { label: string; href: string }[] }[];
+}> = {
+	FLR: {
+		summary: "Florence is the closest and easiest airport for reaching the venue. Estimated travel time: ~1 hour 15 minutes.",
+		options: [
+			{
+				title: "Option 1: Train (Recommended)",
+				steps: [
+					"Take the T2 tram (Vespucci line) from Florence Airport to Firenze Santa Maria Novella Station (~20 min).",
+					"From Firenze SMN, take a regional train to Siena Station (~1 hour; trains roughly hourly).",
+					"From Siena station, take a taxi to your hotel or the venue (~15 min).",
+				],
+				links: [
+					{ label: "Tram info", href: "https://www.gestramvia.it/" },
+					{ label: "Trenitalia", href: "https://www.trenitalia.com/" },
+				],
+			},
+			{
+				title: "Option 2: Taxi / Private Transfer",
+				steps: [
+					"Direct taxi or private car from Florence Airport to Siena (~1 hour 15 min).",
+					"Estimated cost: €150–€180. Book in advance for the best rates.",
+				],
+				links: [{ label: "Florence taxi info", href: "https://www.4390.it/" }],
+			},
+		],
+	},
+	PSA: {
+		summary: "Pisa is a convenient alternative with more international flights. Estimated travel time: ~1 hour 45 minutes.",
+		options: [
+			{
+				title: "Option 1: Train (Recommended)",
+				steps: [
+					"Take the Pisamover shuttle from the airport to Pisa Centrale (~5 min).",
+					"Train from Pisa Centrale to Firenze Santa Maria Novella (~1 hour).",
+					"From Firenze SMN, take a regional train to Siena (~1 hour).",
+					"Taxi from Siena station to hotel or venue (~15 min).",
+				],
+				links: [
+					{ label: "Pisamover", href: "https://www.pisamover.com/" },
+					{ label: "Trenitalia", href: "https://www.trenitalia.com/" },
+				],
+			},
+			{
+				title: "Option 2: Taxi / Private Transfer",
+				steps: [
+					"Direct taxi or private car from Pisa Airport to Siena (~1 hour 45 min).",
+					"Estimated cost: €180–€220.",
+				],
+				links: [{ label: "Pisa taxi info", href: "https://www.cotapi.it/" }],
+			},
+		],
+	},
+	FCO: {
+		summary: "Rome Fiumicino is the furthest option but useful for long-haul flights. Estimated travel time: ~3 hours.",
+		options: [
+			{
+				title: "Option 1: Train (Recommended)",
+				steps: [
+					"Take the Leonardo Express from FCO to Roma Termini (~30 min).",
+					"High-speed train from Roma Termini to Firenze SMN (~1h 30min).",
+					"Regional train from Firenze SMN to Siena (~1 hour).",
+					"Taxi from Siena station to hotel or venue (~15 min).",
+				],
+				links: [
+					{ label: "Leonardo Express", href: "https://www.trenitalia.com/en/services/leonardo-express.html" },
+					{ label: "Trenitalia", href: "https://www.trenitalia.com/" },
+					{ label: "Italo", href: "https://www.italotreno.it/" },
+				],
+			},
+			{
+				title: "Option 2: Taxi / Private Transfer",
+				steps: [
+					"Direct private transfer from Rome FCO to Siena (~3 hours).",
+					"Estimated cost: €300–€400.",
+				],
+				links: [{ label: "Rome taxi info", href: "https://www.3570.it/" }],
+			},
+		],
+	},
+};
+
+// ── Page ─────────────────────────────────────────────────────────────────────
 
 export default function TravelPage() {
 	const { toast, showToast, hideToast } = useToast();
@@ -23,447 +147,314 @@ export default function TravelPage() {
 		showToast("Link copied");
 	};
 
-	const itinerary = `Wedding Weekend Itinerary
-========================
+	return (
+		<div className="bg-[#FAF7F2] min-h-screen">
 
-Thursday, June 10
-- Welcome Party (evening)
-
-Friday, June 11
-- Free day — explore Tuscany
-
-Saturday, June 12
-- Wedding Ceremony & Reception
-	Villa Di Geggiano
-
-Sunday, June 13
-- Farewell Brunch`;
-
-	const copyItinerary = () => {
-		navigator.clipboard.writeText(itinerary);
-		showToast("Itinerary copied");
-	};
-
-	const airportDetails: Record<
-		string,
-		{
-			summary: string;
-			options: Array<{
-				title: string;
-				steps: string[];
-				links?: { label: string; href: string }[];
-			}>;
-		}
-	> = {
-		FLR: {
-			summary:
-				"Florence is the closest and easiest airport for reaching the venue. Estimated travel time from the airport to the venue: ~1 hour 15 minutes.",
-			options: [
-				{
-					title: "Option 1: Train (Recommended)",
-					steps: [
-						"Take the T2 tram (Vespucci line) from Florence Airport to Firenze Santa Maria Novella Station (~20 minutes).",
-						"From Firenze SMN, take a regional train to Siena Station (~1 hour; trains roughly hourly).",
-						"From Siena station, take a taxi to your hotel or the venue (~15 minutes).",
-					],
-					links: [
-						{ label: "Tram info", href: "https://www.gestramvia.it/" },
-						{ label: "Trenitalia", href: "https://www.trenitalia.com/" },
-					],
-				},
-				{
-					title: "Option 2: Taxi / Private Transfer",
-					steps: [
-						"Direct taxi or private car from Florence Airport to Siena (~1 hour 15 minutes).",
-						"Estimated cost: €150–€180 (book in advance for the best rates).",
-					],
-					links: [
-						{ label: "Florence taxi info", href: "https://www.4390.it/" },
-					],
-				},
-			],
-		},
-		PSA: {
-			summary:
-				"Pisa is a convenient alternative with more international flights. Estimated travel time from the airport to the venue: ~1 hour 45 minutes.",
-			options: [
-				{
-					title: "Option 1: Train (Recommended)",
-					steps: [
-						"Take the Pisamover shuttle from the airport to Pisa Centrale (~5 minutes).",
-						"Take a train from Pisa Centrale to Firenze Santa Maria Novella (~1 hour).",
-						"From Firenze SMN, take a regional train to Siena (~1 hour).",
-						"Taxi from Siena station to hotel/venue (~15 minutes).",
-					],
-					links: [
-						{ label: "Pisamover", href: "https://www.pisamover.com/" },
-						{ label: "Trenitalia", href: "https://www.trenitalia.com/" },
-					],
-				},
-				{
-					title: "Option 2: Taxi / Private Transfer",
-					steps: [
-						"Direct taxi or private car from Pisa Airport to Siena (~1 hour 45 minutes).",
-						"Estimated cost: €180–€220.",
-					],
-					links: [{ label: "Pisa taxi info", href: "https://www.cotapi.it/" }],
-				},
-			],
-		},
-		FCO: {
-			summary:
-				"Rome Fiumicino is the furthest option but useful for long-haul flights. Estimated travel time from the airport to the venue: ~3 hours.",
-			options: [
-				{
-					title: "Option 1: Train (Recommended)",
-					steps: [
-						"Take the Leonardo Express from FCO to Roma Termini (~30 minutes).",
-						"Take a high-speed train from Roma Termini to Firenze SMN (~1h30).",
-						"From Firenze SMN take a regional train to Siena (~1 hour).",
-						"Taxi from Siena station to hotel/venue (~15 minutes).",
-					],
-					links: [
-						{
-							label: "Leonardo Express",
-							href: "https://www.trenitalia.com/en/services/leonardo-express.html",
-						},
-						{ label: "Trenitalia", href: "https://www.trenitalia.com/" },
-						{ label: "Italo", href: "https://www.italotreno.it/" },
-					],
-				},
-				{
-					title: "Option 2: Taxi / Private Transfer",
-					steps: [
-						"Direct private transfer from Rome FCO to Siena (~3 hours).",
-						"Estimated cost: €300–€400.",
-					],
-					links: [{ label: "Rome taxi info", href: "https://www.3570.it/" }],
-				},
-			],
-		},
-	};
-
-	function AirportCard({
-		airport,
-	}: {
-		airport: (typeof travelInfo.airports)[number];
-	}) {
-		const isOpen = expanded === airport.code;
-
-		return (
-			<Card
-				padding="sm"
-				className="cursor-pointer"
-				onClick={() => setExpanded(isOpen ? null : airport.code)}
-			>
-				<div className="flex items-center justify-between">
-					<div>
-						<span className="font-medium text-fg">{airport.name}</span>
-						<span className="text-muted ml-2">({airport.code})</span>
-					</div>
-					<div className="flex items-center gap-3">
-						<span className="text-sm text-muted">{airport.driveTime}</span>
-						<Badge className="gap-1">
-							<svg
-								className="h-3.5 w-3.5"
-								viewBox="0 0 20 20"
-								fill="currentColor"
-								aria-hidden
-							>
-								<path d="M18.5 10.5l-7.4 1.9-3.2 4.2c-.2.3-.6.4-.9.2l-1.4-.8c-.2-.1-.3-.4-.2-.6l1.6-3.6L3 10.5l-2.5.8c-.3.1-.6-.1-.6-.4V9.1c0-.2.1-.3.3-.4l2.8-1 3.5-4.7c.2-.2.5-.3.8-.2l1.6.5c.3.1.5.5.3.8L8 6.8l7.6 2.1c.3.1.5.4.4.8l-.3.8c-.1.2-.2.3-.4.3l-6.6.2 3.2 1.1 3.1-1.1c.3-.1.6 0 .7.2l.6.9c.2.2.1.6-.2.8l-2.5 1z" />
-							</svg>
-							To venue
-						</Badge>
-						{airport.recommended ? (
-							<Badge variant="accent">Recommended</Badge>
-						) : (
-							<span className="inline-flex h-[22px] w-[110px]" aria-hidden />
-						)}
-						<svg
-							className={`w-5 h-5 flex-shrink-0 text-muted transition-transform ${isOpen ? "rotate-180" : ""}`}
-							viewBox="0 0 20 20"
-							fill="none"
-							xmlns="http://www.w3.org/2000/svg"
-							aria-hidden
-						>
-							<path
-								d="M6 8l4 4 4-4"
-								stroke="currentColor"
-								strokeWidth={1.5}
-								strokeLinecap="round"
-								strokeLinejoin="round"
-							/>
-						</svg>
-					</div>
-				</div>
-
-				{isOpen && (
-					<div className="mt-4 text-sm text-muted">
-						<p className="mb-3 text-fg">
-							{airportDetails[airport.code as keyof typeof airportDetails]
-								?.summary || "Directions and options for this airport."}
+			{/* ── Hero ── */}
+			<div className="pt-24 pb-2">
+				<div className="max-w-[720px] mx-auto px-6 sm:px-10 text-center">
+					<FadeUp>
+						<SectionLabel>Travel · Planning</SectionLabel>
+						<h1 className="font-header text-3xl sm:text-4xl text-[#3F3A36] mb-4">
+							Getting to Tuscany
+						</h1>
+						<p className="text-sm sm:text-base text-[#5a5048] leading-relaxed mb-10 max-w-[500px] mx-auto">
+							Everything you need to plan your journey to Villa Di Geggiano — from flights and airports to hotels and the complimentary shuttle.
 						</p>
+					</FadeUp>
+					<FadeUp delay={120}>
+						<ItalyMap />
+					</FadeUp>
+				</div>
+			</div>
 
-						{(
-							airportDetails[airport.code as keyof typeof airportDetails]
-								?.options || []
-						).map((opt, idx) => (
-							<div key={idx} className="mb-3">
-								<h4 className="font-medium text-fg mb-1">{opt.title}</h4>
-								<ol className="list-decimal list-inside space-y-1 text-sm text-muted">
-									{opt.steps.map((step, sidx) => (
-										<li key={sidx}>{step}</li>
-									))}
-								</ol>
-								{opt.links && (
-									<div className="mt-2 flex flex-wrap gap-2">
-										{opt.links.map((lnk, lidx) => (
-											<a
-												key={lidx}
-												href={lnk.href}
-												target="_blank"
-												rel="noreferrer"
-												className="text-sm text-accent hover:underline"
+			<div className="max-w-[720px] mx-auto px-6 sm:px-10">
+
+				<BotanicalRule />
+
+				{/* ── When to Travel ── */}
+				<FadeUp>
+					<SectionLabel>When to Travel</SectionLabel>
+					<LetterHeading>Arrival & Departure</LetterHeading>
+					<p className="text-sm text-[#5a5048] leading-relaxed mb-7">
+						Since this is a destination celebration, we recommend giving yourself a day or two to settle in before the festivities begin. Flights and hotels typically open about a year in advance — the earlier you book, the better your options.
+					</p>
+					<div className="grid sm:grid-cols-2 gap-5">
+						{/* Arrival */}
+						<div className="bg-[#FBF7EE] border border-[#C9A684]/25 rounded-xl p-6">
+							<div className="flex items-center gap-2 mb-5">
+								<span className="text-base text-[#C9A684]">✈</span>
+								<p className="text-xs uppercase tracking-[0.36em] text-[#C9A684]">Arriving</p>
+							</div>
+							<div className="space-y-4">
+								<div className="border-l-2 border-[#BFCBB2] pl-4">
+									<p className="text-[0.62rem] uppercase tracking-[0.22em] text-[#8a7d6c] mb-1">Ideal</p>
+									<p className="text-sm font-medium text-[#3F3A36]">{travelInfo.arrivalWindow.ideal}</p>
+								</div>
+								<div className="border-l-2 border-[#C9A684]/40 pl-4">
+									<p className="text-[0.62rem] uppercase tracking-[0.22em] text-[#8a7d6c] mb-1">Latest</p>
+									<p className="text-sm text-[#3F3A36]">{travelInfo.arrivalWindow.latest}</p>
+									<p className="text-xs text-[#8a7d6c] italic mt-1">Welcome Party is Thursday evening</p>
+								</div>
+							</div>
+						</div>
+						{/* Departure */}
+						<div className="bg-[#FBF7EE] border border-[#C9A684]/25 rounded-xl p-6">
+							<div className="flex items-center gap-2 mb-5">
+								<span className="text-base text-[#C9A684]">☀</span>
+								<p className="text-xs uppercase tracking-[0.36em] text-[#C9A684]">Departing</p>
+							</div>
+							<div className="space-y-4">
+								<div className="border-l-2 border-[#BFCBB2] pl-4">
+									<p className="text-[0.62rem] uppercase tracking-[0.22em] text-[#8a7d6c] mb-1">Ideal</p>
+									<p className="text-sm font-medium text-[#3F3A36]">{travelInfo.departureWindow.ideal}</p>
+								</div>
+								<div className="border-l-2 border-[#C9A684]/40 pl-4">
+									<p className="text-[0.62rem] uppercase tracking-[0.22em] text-[#8a7d6c] mb-1">Earliest</p>
+									<p className="text-sm text-[#3F3A36]">{travelInfo.departureWindow.earliest}</p>
+									<p className="text-xs text-[#8a7d6c] italic mt-1">Farewell Brunch is Sunday morning</p>
+								</div>
+							</div>
+						</div>
+					</div>
+				</FadeUp>
+
+				<BotanicalRule />
+
+				{/* ── Airports ── */}
+				<FadeUp>
+					<SectionLabel>Getting Here</SectionLabel>
+					<LetterHeading>Airports</LetterHeading>
+					<p className="text-sm text-[#5a5048] leading-relaxed mb-7">
+						Florence and Pisa are your best bets for convenience. Rome can offer cheaper long-haul connections for some travelers.
+					</p>
+					<div className="space-y-3">
+						{travelInfo.airports.map((airport) => {
+							const isOpen = expanded === airport.code;
+							const detail = airportDetails[airport.code];
+							return (
+								<div
+									key={airport.code}
+									className="bg-[#FBF7EE] border border-[#C9A684]/20 rounded-xl overflow-hidden transition-shadow hover:shadow-sm"
+								>
+									<button
+										onClick={() => setExpanded(isOpen ? null : airport.code)}
+										className="w-full px-6 py-5 flex items-center justify-between gap-4 text-left"
+									>
+										<div className="flex items-center gap-4 min-w-0">
+											<span className="flex-shrink-0 text-[0.6rem] font-medium uppercase tracking-[0.2em] text-white bg-[#C9A684] px-2 py-1 rounded">
+												{airport.code}
+											</span>
+											<div className="min-w-0">
+												<p className="font-header text-[#3F3A36] text-base truncate">{airport.name}</p>
+												<p className="text-xs text-[#8a7d6c] mt-0.5 italic">{airport.driveTime} to venue</p>
+											</div>
+										</div>
+										<div className="flex items-center gap-3 flex-shrink-0">
+											{airport.recommended && (
+												<span className="text-[0.58rem] uppercase tracking-[0.28em] text-[#C9A684] hidden sm:block">
+													Recommended
+												</span>
+											)}
+											<svg
+												className={`w-5 h-5 text-[#C9A684] transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}
+												viewBox="0 0 20 20" fill="none" aria-hidden
 											>
-												{lnk.label}
-											</a>
-										))}
-									</div>
+												<path d="M6 8l4 4 4-4" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+											</svg>
+										</div>
+									</button>
+
+									{isOpen && detail && (
+										<div className="px-6 pb-6 border-t border-[#C9A684]/15">
+											<p className="text-sm text-[#5a5048] leading-relaxed mt-4 mb-5 italic">{detail.summary}</p>
+											<div className="space-y-5">
+												{detail.options.map((opt, idx) => (
+													<div key={idx}>
+														<p className="text-xs uppercase tracking-[0.28em] text-[#C9A684] mb-3">{opt.title}</p>
+														<ol className="space-y-2">
+															{opt.steps.map((step, sidx) => (
+																<li key={sidx} className="flex gap-3 text-sm text-[#5a5048] leading-relaxed">
+																	<span className="flex-shrink-0 w-5 h-5 rounded-full bg-[#C9A684]/15 text-[#C9A684] text-[0.62rem] flex items-center justify-center font-medium mt-0.5">
+																		{sidx + 1}
+																	</span>
+																	{step}
+																</li>
+															))}
+														</ol>
+														{opt.links && (
+															<div className="flex flex-wrap gap-3 mt-3 pl-8">
+																{opt.links.map((lnk, lidx) => (
+																	<a key={lidx} href={lnk.href} target="_blank" rel="noreferrer"
+																		className="text-xs text-[#C9A684] hover:text-[#a8865e] underline underline-offset-2 transition-colors">
+																		{lnk.label} →
+																	</a>
+																))}
+															</div>
+														)}
+													</div>
+												))}
+											</div>
+										</div>
+									)}
+								</div>
+							);
+						})}
+					</div>
+				</FadeUp>
+
+				<BotanicalRule />
+
+				{/* ── Weekend Timeline ── */}
+				<FadeUp>
+					<SectionLabel>The Wedding Weekend</SectionLabel>
+					<LetterHeading>June 10 – 13, 2027</LetterHeading>
+					<div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+						{weekendDays.map((day) => (
+							<div key={day.date} className="bg-[#FBF7EE] border border-[#C9A684]/20 rounded-xl p-4 text-center">
+								<p className="text-[0.55rem] uppercase tracking-[0.28em] text-[#8a7d6c] mb-2">{day.date}</p>
+								<div className="text-2xl text-[#C9A684] mb-2" aria-hidden>{day.icon}</div>
+								<p className="font-header text-[#3F3A36] text-sm mb-1">{day.title}</p>
+								<p className="text-[0.65rem] text-[#8a7d6c] leading-snug italic">{day.note}</p>
+							</div>
+						))}
+					</div>
+				</FadeUp>
+
+				<BotanicalRule />
+
+				{/* ── Where to Stay ── */}
+				<FadeUp>
+					<SectionLabel>Where to Stay</SectionLabel>
+					<LetterHeading>Accommodations</LetterHeading>
+					<p className="text-sm text-[#5a5048] leading-relaxed mb-7">
+						Stay wherever feels right for you — we just love Siena&rsquo;s historic center as a base. It puts you close to restaurants, sights, and the shuttle pickup, but anywhere that&rsquo;s convenient for your travel works perfectly. The hotels below are ones we love.
+					</p>
+					<div className="space-y-4 mb-6">
+						{travelInfo.hotelRecommendations.map((hotel) => (
+							<div key={hotel.id} className="bg-[#FBF7EE] border border-[#C9A684]/20 rounded-xl p-6">
+								<div className="flex items-start justify-between gap-3 mb-2">
+									<h3 className="font-header text-[#3F3A36] text-lg">{hotel.name}</h3>
+									<span className="flex-shrink-0 text-[0.58rem] font-medium uppercase tracking-[0.2em] text-[#C9A684] border border-[#C9A684]/40 px-2 py-0.5 rounded">
+										{hotel.priceLevel}
+									</span>
+								</div>
+								<p className="text-sm text-[#5a5048] leading-relaxed mb-4">{hotel.description}</p>
+								<div className="flex flex-wrap items-center gap-x-5 gap-y-1 text-xs text-[#8a7d6c] mb-4">
+									<span>{hotel.distanceToVenue} to venue</span>
+									<span>{hotel.walkToShuttle} to shuttle</span>
+								</div>
+								{hotel.bookingUrl && (
+									<a href={hotel.bookingUrl} target="_blank" rel="noopener noreferrer"
+										className="inline-block text-xs text-[#C9A684] hover:text-[#a8865e] transition-colors underline underline-offset-2">
+										View &amp; Book →
+									</a>
 								)}
 							</div>
 						))}
 					</div>
-				)}
-			</Card>
-		);
-	}
+				</FadeUp>
 
-	return (
-		<section className="pt-24 pb-16">
-			<Container size="md">
-				<div className="flex items-start justify-between gap-4 mb-8">
-					<SectionHeader
-						title="Travel"
-						subtitle="Everything you need to plan your trip"
-						className="mb-0"
-					/>
-					<Button variant="ghost" size="sm" onClick={copyLink}>
-						Copy link
-					</Button>
-				</div>
+				<BotanicalRule />
 
-				<div className="mb-10 p-4 sm:p-5 bg-accent/10 rounded-lg border border-accent/30">
-					<p className="text-sm sm:text-base text-muted">
-						Flights and many hotels typically release availability about a year in
-						advance. As we get closer to the wedding, we will share more detailed
-						travel guidance, plus recommended hotels and flight options. If you
-						are planning early, expect limited availability until the one-year
-						mark.
-					</p>
-				</div>
+				{/* ── Shuttle callout ── */}
+				<FadeUp>
+					<div
+						className="relative rounded-2xl overflow-hidden border border-[#E8C4B8]/50 px-8 py-10 mb-10"
+						style={{ background: "linear-gradient(135deg, #FDF0EC 0%, #FBF7EE 100%)" }}
+					>
+						{/* Corner florals */}
+						<svg className="absolute top-3 left-4 opacity-40" width="48" height="48" viewBox="0 0 48 48" fill="none" aria-hidden>
+							<circle cx="12" cy="8" r="5" fill="#F7D6C1" />
+							<circle cx="8" cy="14" r="4" fill="#D6C6E1" />
+							<circle cx="18" cy="14" r="4" fill="#BFCBB2" />
+							<circle cx="12" cy="20" r="4" fill="#F7D6C1" />
+							<circle cx="12" cy="14" r="3.5" fill="#C9A684" fillOpacity="0.6" />
+						</svg>
+						<svg className="absolute top-3 right-4 opacity-40" width="48" height="48" viewBox="0 0 48 48" fill="none" aria-hidden>
+							<circle cx="36" cy="8" r="5" fill="#F7D6C1" />
+							<circle cx="40" cy="14" r="4" fill="#D6C6E1" />
+							<circle cx="30" cy="14" r="4" fill="#BFCBB2" />
+							<circle cx="36" cy="20" r="4" fill="#F7D6C1" />
+							<circle cx="36" cy="14" r="3.5" fill="#C9A684" fillOpacity="0.6" />
+						</svg>
 
-				{/* Wedding Venue */}
-				<div className="mb-12">
-					<h3 className="text-xl font-semibold text-fg mb-4">Wedding Venue</h3>
-					<Card className="border-accent">
-						<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-							<div>
-								<h4 className="font-semibold text-fg">Villa Di Geggiano</h4>
-								<p className="text-sm text-muted mt-1">
-									Strada di Geggiano 1, 53010 Castelnuovo Berardenga, Siena, Italy
-								</p>
+						<div className="text-center relative z-10">
+							<SectionLabel>Complimentary Service</SectionLabel>
+							<h3 className="font-header text-2xl text-[#3F3A36] mb-3">Shuttle Service</h3>
+							<p className="text-sm text-[#5a5048] leading-relaxed mb-5 max-w-[460px] mx-auto">
+								{travelInfo.shuttleInfo.description}
+							</p>
+							<div className="inline-block bg-white/60 border border-[#C9A684]/20 rounded-lg px-5 py-3 text-left mb-5">
+								<p className="text-[0.62rem] uppercase tracking-[0.28em] text-[#C9A684] mb-1">Pickup Location</p>
+								<p className="text-sm font-medium text-[#3F3A36]">{travelInfo.shuttleInfo.pickupLocation}</p>
+								<p className="text-xs text-[#8a7d6c] mt-0.5">{travelInfo.shuttleInfo.pickupAddress}</p>
 							</div>
-							<a
-								href="https://maps.google.com/?q=Villa+Di+Geggiano+Siena+Italy"
-								target="_blank"
-								rel="noreferrer"
-							>
-								<Button variant="secondary">View on Map</Button>
-							</a>
-						</div>
-					</Card>
-				</div>
-
-				{/* Airports */}
-				<div className="mb-12">
-					<h3 className="text-xl font-semibold text-fg mb-4">Airports</h3>
-					<div className="grid gap-3">
-						{travelInfo.airports.map((airport) => (
-							<AirportCard key={airport.code} airport={airport} />
-						))}
-					</div>
-				</div>
-
-				{/* Travel Windows */}
-				<div className="mb-12 grid sm:grid-cols-2 gap-6">
-					<Card>
-						<h4 className="font-semibold text-fg mb-3">Arrival</h4>
-						<div className="space-y-2 text-sm">
-							<p className="text-muted">
-								<span className="font-medium text-fg">Ideal:</span>{" "}
-								{travelInfo.arrivalWindow.ideal}
-							</p>
-							<p className="text-muted">
-								<span className="font-medium text-fg">Latest:</span>{" "}
-								{travelInfo.arrivalWindow.latest}
-							</p>
-						</div>
-					</Card>
-					<Card>
-						<h4 className="font-semibold text-fg mb-3">Departure</h4>
-						<div className="space-y-2 text-sm">
-							<p className="text-muted">
-								<span className="font-medium text-fg">Ideal:</span>{" "}
-								{travelInfo.departureWindow.ideal}
-							</p>
-							<p className="text-muted">
-								<span className="font-medium text-fg">Earliest:</span>{" "}
-								{travelInfo.departureWindow.earliest}
-							</p>
-						</div>
-					</Card>
-				</div>
-
-				{/* Where to Stay */}
-				<div className="mb-12">
-					<h3 className="text-xl font-semibold text-fg mb-4">Where to Stay</h3>
-					<p className="text-muted mb-6">
-						You're welcome to stay wherever suits you best! That said, we recommend staying in Siena's city center to be close to restaurants, sights, and local charm. The hotels below are ones we love—and if you'd like to take advantage of our complimentary shuttle service, staying nearby the pickup point will make getting to and from events easy.
-					</p>
-					<div className="grid gap-4">
-						{travelInfo.hotelRecommendations.map((hotel) => (
-							<Card key={hotel.id} padding="sm">
-								<div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-									<div className="flex-1">
-										<div className="flex items-center gap-2 mb-2">
-											<span className="font-semibold text-fg">{hotel.name}</span>
-											<Badge>{hotel.priceLevel}</Badge>
-										</div>
-										<p className="text-sm text-muted mb-3">{hotel.description}</p>
-										<div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted">
-											<span className="flex items-center gap-1.5">
-												<svg className="w-4 h-4 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-													<path strokeLinecap="round" strokeLinejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" />
-												</svg>
-												{hotel.distanceToVenue} to venue
-											</span>
-											<span className="flex items-center gap-1.5">
-												<svg className="w-4 h-4 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-													<path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-												</svg>
-												{hotel.walkToShuttle} to shuttle
-											</span>
-										</div>
-									</div>
-									<a
-										href={hotel.bookingUrl}
-										target="_blank"
-										rel="noreferrer"
-										className="flex-shrink-0"
-									>
-										<Button variant="secondary" size="sm">
-											View on Expedia
-										</Button>
-									</a>
-								</div>
-							</Card>
-						))}
-					</div>
-				</div>
-
-				{/* Shuttle Pickup */}
-				<div className="mb-12">
-					<h3 className="text-xl font-semibold text-fg mb-4">Shuttle Pickup</h3>
-					<Card className="bg-accent/10 border-accent/30">
-						<div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-							<div className="flex items-start gap-3">
-								<div className="flex-shrink-0 mt-0.5">
-									<svg className="w-5 h-5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-										<path strokeLinecap="round" strokeLinejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" />
-									</svg>
-								</div>
-								<div>
-									<h4 className="font-semibold text-fg mb-1">{travelInfo.shuttleInfo.pickupLocation}</h4>
-									<p className="text-sm text-muted mb-2">{travelInfo.shuttleInfo.pickupAddress}</p>
-									<p className="text-sm text-muted">{travelInfo.shuttleInfo.description}</p>
-								</div>
+							<div className="block">
+								<a href={travelInfo.shuttleInfo.mapLink} target="_blank" rel="noopener noreferrer"
+									className="inline-block text-xs text-[#C9A684] hover:text-[#a8865e] transition-colors underline underline-offset-2">
+									View on Map →
+								</a>
 							</div>
-							<a
-								href={travelInfo.shuttleInfo.mapLink}
-								target="_blank"
-								rel="noreferrer"
-								className="flex-shrink-0"
-							>
-								<Button variant="secondary" size="sm">
-									View on Map
-								</Button>
-							</a>
 						</div>
-					</Card>
-				</div>
+					</div>
+				</FadeUp>
 
-				{/* Transportation */}
-				<div className="mb-12">
-					<h3 className="text-xl font-semibold text-fg mb-4">Getting Around</h3>
-					<div className="grid gap-3">
+				{/* ── Getting Around ── */}
+				<FadeUp>
+					<SectionLabel>Getting Around</SectionLabel>
+					<LetterHeading>Transportation Options</LetterHeading>
+					<div className="space-y-3 mb-4">
 						{travelInfo.transport.map((option) => (
-							<Card key={option.type} padding="sm">
-								<div className="flex items-start justify-between gap-4">
-									<div>
-										<span className="font-medium text-fg">{option.type}</span>
-										<p className="text-sm text-muted mt-1">
-											{option.description}
-										</p>
+							<div key={option.type} className="bg-[#FBF7EE] border border-[#C9A684]/20 rounded-xl px-6 py-4 flex items-start justify-between gap-4">
+								<div>
+									<div className="flex items-center gap-2 mb-1">
+										<p className="font-header text-[#3F3A36] text-base">{option.type}</p>
+										{option.recommended && (
+											<span className="text-[0.55rem] uppercase tracking-[0.24em] text-[#C9A684]">· Recommended</span>
+										)}
 									</div>
-									{option.recommended && (
-										<Badge variant="accent">Recommended</Badge>
-									)}
+									<p className="text-sm text-[#5a5048] leading-relaxed">{option.description}</p>
 								</div>
-							</Card>
+							</div>
 						))}
 					</div>
-				</div>
+				</FadeUp>
 
-				{/* Quick Itinerary */}
-				<div className="mb-12">
-					<div className="flex items-center justify-between mb-4">
-						<h3 className="text-xl font-semibold text-fg">Quick Itinerary</h3>
-						<Button variant="ghost" size="sm" onClick={copyItinerary}>
-							Copy
-						</Button>
+				<BotanicalRule />
+
+				{/* ── Tips ── */}
+				<FadeUp>
+					<SectionLabel>Good to Know</SectionLabel>
+					<LetterHeading>Tips for Visitors</LetterHeading>
+					<div className="space-y-3 mb-10">
+						{travelInfo.tips.map((tip, i) => (
+							<div key={i} className="flex gap-4 items-start">
+								<span className="flex-shrink-0 w-6 h-6 rounded-full bg-[#C9A684]/15 text-[#C9A684] text-xs flex items-center justify-center mt-0.5" aria-hidden>
+									✦
+								</span>
+								<p className="text-sm text-[#5a5048] leading-relaxed">{tip}</p>
+							</div>
+						))}
 					</div>
-					<Card className="bg-border/30">
-						<pre className="text-sm text-fg whitespace-pre-wrap font-mono">
-							{itinerary}
-						</pre>
-					</Card>
+				</FadeUp>
+
+				{/* ── Footer ── */}
+				<div className="border-t border-[#C9A684]/20 py-8 flex items-center justify-between gap-4">
+					<p className="text-xs text-[#8a7d6c] italic">
+						More details coming as we get closer to the date.
+					</p>
+					<button
+						onClick={copyLink}
+						className="text-xs text-[#C9A684] hover:text-[#a8865e] transition-colors underline underline-offset-2 flex-shrink-0"
+					>
+						Copy page link
+					</button>
 				</div>
 
-				{/* Tips */}
-				<div className="mb-12">
-					<h3 className="text-xl font-semibold text-fg mb-4">
-						Tips for Visitors
-					</h3>
-					<Card>
-						<ul className="space-y-3">
-							{travelInfo.tips.map((tip, index) => (
-								<li key={index} className="flex gap-3 text-sm">
-									<span className="text-accent flex-shrink-0">•</span>
-									<span className="text-muted">{tip}</span>
-								</li>
-							))}
-						</ul>
-					</Card>
-				</div>
+			</div>
 
-				<p className="text-sm text-muted">Last updated: {getLastUpdated()}</p>
-			</Container>
-
-			<Toast
-				message={toast.message}
-				isVisible={toast.isVisible}
-				onClose={hideToast}
-			/>
-		</section>
+			<Toast message={toast.message} isVisible={toast.isVisible} onClose={hideToast} />
+		</div>
 	);
 }
