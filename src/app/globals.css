@@ -151,3 +151,9 @@ h6 {
 .no-scrollbar::-webkit-scrollbar {
 	display: none;
 }
+
+@keyframes giftConfetti {
+	0%   { transform: translate(0, 0) rotate(0deg); opacity: 1; }
+	75%  { opacity: 1; }
+	100% { transform: translate(var(--gx), var(--gy)) rotate(var(--gr)); opacity: 0; }
+}

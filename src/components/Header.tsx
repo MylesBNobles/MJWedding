@@ -14,6 +14,7 @@ const navLinks = [
 	{ href: "/attire", label: "Attire" },
 	{ href: "/faq", label: "FAQ" },
 	{ href: "/updates", label: "Updates" },
+	{ href: "https://withjoy.com/myles-and-jeslin/registry", label: "Registry", external: true },
 ];
 
 export function Header() {
@@ -80,6 +81,7 @@ export function Header() {
 							<Link
 								key={link.href}
 								href={link.href}
+								{...(link.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
 								className={`
                   px-3 py-2 text-sm rounded-md transition-colors font-medium
                   ${
@@ -166,6 +168,7 @@ export function Header() {
 									key={link.href}
 									href={link.href}
 									onClick={() => setIsMobileMenuOpen(false)}
+									{...(link.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
 									className={`
                     px-3 py-2 text-sm rounded-md transition-colors font-medium
                     ${

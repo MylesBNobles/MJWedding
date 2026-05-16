@@ -10,6 +10,7 @@ import { AnimatedSignature } from "@/components/AnimatedSignature";
 import { MusicPlayer } from "@/components/MusicPlayer";
 import { ScrollLock } from "@/components/ScrollLock";
 import { FadeUp } from "@/components/FadeUp";
+import { GiftConfetti } from "@/components/GiftConfetti";
 import {
 	weddingDetails,
 	itineraryEvents,
@@ -173,6 +174,31 @@ function LetterHeading({ children }: { children: React.ReactNode }) {
 		<h2 className="font-header text-2xl sm:text-3xl text-[#3F3A36] mb-6">
 			{children}
 		</h2>
+	);
+}
+
+// Gift box SVG illustration
+function GiftGraphic() {
+	return (
+		<div className="mb-6">
+			<svg viewBox="0 0 100 90" width="72" height="65" fill="none" aria-hidden>
+				{/* Box body */}
+				<rect x="14" y="46" width="72" height="38" rx="4" fill="#FBF0E8" stroke="#C9A684" strokeWidth="1.4" />
+				{/* Vertical ribbon on body */}
+				<rect x="46" y="46" width="8" height="38" fill="#C9A684" fillOpacity="0.28" rx="1" />
+				{/* Lid */}
+				<rect x="10" y="34" width="80" height="16" rx="4" fill="#C9A684" fillOpacity="0.82" stroke="#C9A684" strokeWidth="1.4" />
+				{/* Horizontal ribbon on lid */}
+				<rect x="10" y="40" width="80" height="7" fill="#C9A684" fillOpacity="0.28" />
+				{/* Left bow loop */}
+				<path d="M50,34 C44,26 29,22 31,13 C33,5 46,14 50,31" fill="#F7D6C1" stroke="#C9A684" strokeWidth="1.1" strokeLinejoin="round" />
+				{/* Right bow loop */}
+				<path d="M50,34 C56,26 71,22 69,13 C67,5 54,14 50,31" fill="#F7D6C1" stroke="#C9A684" strokeWidth="1.1" strokeLinejoin="round" />
+				{/* Bow knot */}
+				<circle cx="50" cy="32" r="5.5" fill="#C9A684" />
+				<circle cx="50" cy="32" r="3" fill="#F7D6C1" />
+			</svg>
+		</div>
 	);
 }
 
@@ -692,6 +718,11 @@ export default function SaveTheDatePage() {
 							<FadeUp>
 								<div>
 									<SectionLabel>Gifts</SectionLabel>
+									<div className="flex justify-center">
+										<GiftConfetti>
+											<GiftGraphic />
+										</GiftConfetti>
+									</div>
 									<LetterHeading>
 										Your Presence Is the Greatest Gift
 									</LetterHeading>
@@ -701,60 +732,39 @@ export default function SaveTheDatePage() {
 										any obligation to bring or send a gift.
 									</p>
 									<p className="text-sm sm:text-base text-[#5a5048] leading-relaxed mb-8">
-										If you would like to honor us with a gift, we are most
-										grateful for contributions toward our honeymoon and life
-										together. We kindly prefer cash gifts, which can be sent
-										via:
+										If you would like to honor us with a gift, we have a registry
+										filled with experiences and adventures we&rsquo;re dreaming of.
 									</p>
 
-									<div className="grid sm:grid-cols-3 gap-4 mb-6">
-										{[
-											{
-												method: "Zelle",
-												detail: "hello@jeslinandmyles.com",
-												note: "Preferred",
-											},
-											{
-												method: "Venmo",
-												detail: "@JeslinAndMyles",
-												note: null,
-											},
-											{
-												method: "Check",
-												detail: "Payable to Myles Nobles",
-												note: "Mailing address on request",
-											},
-										].map(({ method, detail, note }) => (
-											<div
-												key={method}
-												className="bg-[#FAF7F2] border border-[#C9A684]/20 rounded-lg p-5 text-center"
-											>
-												<p className="text-xs uppercase tracking-[0.3em] text-[#C9A684] mb-2">
-													{method}
-												</p>
-												<p className="text-sm font-medium text-[#3F3A36]">
-													{detail}
-												</p>
-												{note && (
-													<p className="text-xs text-[#8a7d6c] mt-1">{note}</p>
-												)}
-											</div>
-										))}
-									</div>
+									{/* Registry card */}
+									<a
+										href="https://withjoy.com/myles-and-jeslin/registry"
+										target="_blank"
+										rel="noopener noreferrer"
+										className="group block bg-[#FBF0E8] border border-[#E8C4B8]/60 rounded-xl p-6 text-center mb-4 hover:border-[#C9A684]/60 hover:shadow-sm transition-all"
+									>
+										<div className="flex justify-center mb-3">
+											<svg viewBox="0 0 48 36" width="40" height="30" fill="none" aria-hidden>
+												<rect x="2" y="12" width="44" height="22" rx="3" fill="#F7D6C1" stroke="#C9A684" strokeWidth="1.2" />
+												<rect x="2" y="12" width="44" height="8" rx="3" fill="#C9A684" fillOpacity="0.7" stroke="#C9A684" strokeWidth="1.2" />
+												<rect x="22" y="12" width="4" height="22" fill="#C9A684" fillOpacity="0.3" />
+												<rect x="2" y="14" width="44" height="5" fill="#C9A684" fillOpacity="0.3" />
+												<path d="M24,12 C21,8 15,7 16,3 C17,0 22,4 24,10" fill="#F7D6C1" stroke="#C9A684" strokeWidth="0.9" />
+												<path d="M24,12 C27,8 33,7 32,3 C31,0 26,4 24,10" fill="#F7D6C1" stroke="#C9A684" strokeWidth="0.9" />
+												<circle cx="24" cy="11" r="2.5" fill="#C9A684" />
+											</svg>
+										</div>
+										<p className="text-xs uppercase tracking-[0.3em] text-[#C9A684] mb-1">
+											Our Registry
+										</p>
+										<p className="font-header text-[#3F3A36] text-base mb-1 group-hover:text-[#C9A684] transition-colors">
+											Explore Our Wish List
+										</p>
+										<p className="text-xs text-[#8a7d6c]">
+											withjoy.com · opens in a new tab →
+										</p>
+									</a>
 
-									<div className="bg-[#C9A684]/10 border border-[#C9A684]/25 rounded-lg p-5 text-center">
-										<p className="text-xs uppercase tracking-[0.3em] text-[#C9A684] mb-2">
-											Honeymoon Fund
-										</p>
-										<p className="text-sm text-[#5a5048] leading-relaxed">
-											We&rsquo;re planning our honeymoon and would be touched if
-											you&rsquo;d like to contribute to our adventures. Any
-											amount is deeply appreciated.
-										</p>
-										<p className="text-xs text-[#8a7d6c] mt-2">
-											Details coming with the formal invitation.
-										</p>
-									</div>
 								</div>
 							</FadeUp>
 
