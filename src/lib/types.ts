@@ -12,7 +12,7 @@ export type EventItem = {
   id: string;
   title: string;
   date: string; // ISO date
-  startTime: string; // "17:00"
+  startTime?: string; // "17:00"
   endTime?: string;
   venueName?: string;
   address?: string;

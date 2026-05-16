@@ -78,13 +78,19 @@ export const storySlides: StorySlide[] = [
 export const itineraryEvents: EventItem[] = [
 	{
 		id: "1",
-		title: "Welcome Lunch",
-		date: "2027-06-11",
-		startTime: "12:30",
-		endTime: "15:30",
+		title: "Welcome Party",
+		date: "2027-06-10",
+		startTime: "18:00",
 		dressCode: "Smart Casual",
 		notes:
-			"Join us for a relaxed afternoon lunch in the Tuscan countryside. A chance to catch up before the big day.",
+			"Join us for an evening to kick off the celebration — good food, great company, and a first taste of Tuscany together.",
+	},
+	{
+		id: "6",
+		title: "Explore Tuscany",
+		date: "2027-06-11",
+		notes:
+			"A free day to rest, wander, and soak in the beauty of Siena and the surrounding countryside before the big day.",
 	},
 	{
 		id: "2",
@@ -163,7 +169,7 @@ export const attireSections: AttireSection[] = [
 	},
 	{
 		id: "2",
-		title: "Smart Casual (Welcome Lunch & Brunch)",
+		title: "Smart Casual (Welcome Party & Brunch)",
 		description:
 			"We're still finalizing the details for the welcome lunch and farewell brunch. Check the Updates section for announcements as we get closer to the date.",
 		images: [],

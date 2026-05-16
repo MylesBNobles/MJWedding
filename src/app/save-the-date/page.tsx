@@ -43,8 +43,9 @@ const colorPalette = [
 ];
 
 const dayIcons: Record<string, string> = {
+	"2027-06-10": "✦",
 	"2027-06-11": "✈",
-	"2027-06-12": "✦",
+	"2027-06-12": "♡",
 	"2027-06-13": "☀",
 };
 
@@ -217,6 +218,7 @@ function FlowerSwatch({ name, hex }: { name: string; hex: string }) {
 }
 
 const days = [
+	{ date: "2027-06-10", label: "Thursday, June 10" },
 	{ date: "2027-06-11", label: "Friday, June 11" },
 	{ date: "2027-06-12", label: "Saturday, June 12" },
 	{ date: "2027-06-13", label: "Sunday, June 13" },
@@ -439,7 +441,7 @@ export default function SaveTheDatePage() {
 							<FadeUp>
 								<div>
 									<SectionLabel>The Wedding Weekend</SectionLabel>
-									<LetterHeading>June 11 – 13, 2027</LetterHeading>
+									<LetterHeading>June 10 – 13, 2027</LetterHeading>
 									<div className="space-y-10">
 										{days.map(({ date, label }) => {
 											const events = itineraryEvents.filter(
