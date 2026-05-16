@@ -3,6 +3,7 @@ import { FlipCountdown } from "@/components/FlipCountdown";
 import { FadeUp } from "@/components/FadeUp";
 import { RSVPButton } from "@/components/RSVPButton";
 import { FloatingBotanicals } from "@/components/FloatingBotanicals";
+import { HomeMusicPlayer } from "@/components/HomeMusicPlayer";
 import { weddingDetails } from "@/lib/mockData";
 
 // ── Decorative components ─────────────────────────────────────────────────────
@@ -192,6 +193,7 @@ export default function HomePage() {
 					</p>
 				</footer>
 			</div>
+			<HomeMusicPlayer />
 		</>
 	);
 }
