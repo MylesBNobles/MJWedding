@@ -42,8 +42,7 @@ export async function lookupByPhone(phone: string): Promise<HouseholdLookupResul
     .select('*')
     .eq('household_id', household.id)
     .eq('is_named', true)
-    .neq('invite_status', 'not_invited')
-    .order('guest_type');
+    .neq('invite_status', 'not_invited');
 
   const guests = (guestsData ?? []) as Guest[];
 
@@ -68,6 +67,12 @@ export async function lookupByPhone(phone: string): Promise<HouseholdLookupResul
         .filter(inv => inv.guest_id === g.id)
         .sort((a, b) => (a.event.event_date ?? '').localeCompare(b.event.event_date ?? '')),
     };
+  });
+
+  guestsWithInvitations.sort((a, b) => {
+    if (a.guest_type === 'plus_one' && b.guest_type !== 'plus_one') return 1;
+    if (a.guest_type !== 'plus_one' && b.guest_type === 'plus_one') return -1;
+    return 0;
   });
 
   return {

@@ -75,7 +75,7 @@ export function RSVPButton() {
         }
       `}</style>
       <div ref={containerRef} style={{ position: 'relative', display: 'inline-block' }} onMouseEnter={burst}>
-        <Link href="/rsvp" className="rsvp-btn">
+        <Link href="/rsvp" className="rsvp-btn" target="_blank" rel="noopener noreferrer">
           RSVP Now →
         </Link>
       </div>
