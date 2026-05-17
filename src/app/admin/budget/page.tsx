@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { getItems } from './actions';
 import { BudgetClient } from './BudgetClient';
 
