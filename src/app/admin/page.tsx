@@ -85,6 +85,9 @@ export default async function AdminPage() {
           />
           <div className="flex items-center gap-4">
             <AddHouseholdButton />
+            <Link href="/admin/budget" className="text-sm text-accent hover:underline font-medium">
+              Budget
+            </Link>
             <Link href="/admin/messages" className="text-sm text-accent hover:underline font-medium">
               Messages
             </Link>
