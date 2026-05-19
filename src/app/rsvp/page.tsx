@@ -102,6 +102,8 @@ export default function RsvpPage() {
   const [household, setHousehold] = useState<HouseholdLookupResult | null>(null);
   const [rsvpState, setRsvpState] = useState<RsvpState>({});
   const [plusOneState, setPlusOneState] = useState<PlusOneState>({});
+  const [smsOptIn, setSmsOptIn] = useState(false);
+  const [primaryGuestId, setPrimaryGuestId] = useState('');
 
   async function handleLookup() {
     setError('');
@@ -113,6 +115,7 @@ export default function RsvpPage() {
       return;
     }
     setHousehold(result);
+    setPrimaryGuestId(result.primaryGuestId);
     const initial: RsvpState = {};
     for (const guest of result.guests) {
       for (const inv of guest.invitations) {
@@ -153,7 +156,7 @@ export default function RsvpPage() {
         plusOneLastName: po?.bringing ? po.lastName : undefined,
       };
     });
-    const result = await submitRsvp(submissions);
+    const result = await submitRsvp(submissions, smsOptIn, primaryGuestId);
     setLoading(false);
     if (!result.success) {
       setError('Something went wrong. Please try again.');
@@ -844,6 +847,48 @@ export default function RsvpPage() {
                 )}
               </div>
             ))}
+
+            {/* SMS consent checkbox */}
+            <div style={{
+              background: 'white',
+              borderRadius: 4,
+              padding: '20px 24px',
+              border: `1px solid ${smsOptIn ? 'rgba(200,16,46,0.3)' : 'rgba(201,166,132,0.2)'}`,
+              boxShadow: '0 4px 24px rgba(0,0,0,0.07)',
+            }}>
+              <label style={{ display: 'flex', gap: 14, alignItems: 'flex-start', cursor: 'pointer' }}>
+                <div style={{ position: 'relative', flexShrink: 0, marginTop: 2 }}>
+                  <input
+                    type="checkbox"
+                    checked={smsOptIn}
+                    onChange={e => setSmsOptIn(e.target.checked)}
+                    style={{ position: 'absolute', opacity: 0, width: 20, height: 20, cursor: 'pointer' }}
+                  />
+                  <div style={{
+                    width: 20, height: 20, borderRadius: 3,
+                    border: `1.5px solid ${smsOptIn ? RED : 'rgba(0,0,0,0.25)'}`,
+                    background: smsOptIn ? RED : 'white',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    transition: 'all 0.15s ease',
+                  }}>
+                    {smsOptIn && (
+                      <svg width="11" height="9" viewBox="0 0 11 9" fill="none">
+                        <path d="M1 4L4 7.5L10 1" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    )}
+                  </div>
+                </div>
+                <p style={{
+                  fontFamily: 'Georgia, serif',
+                  fontSize: '0.72rem',
+                  color: '#5a5048',
+                  lineHeight: 1.65,
+                  margin: 0,
+                }}>
+                  I agree to receive wedding-related text messages from Jeslin &amp; Myles, including RSVP reminders, wedding updates, travel information, and event logistics. Message frequency may vary. Message and data rates may apply. Reply <strong>STOP</strong> to opt out or <strong>HELP</strong> for help.
+                </p>
+              </label>
+            </div>
 
             {error && (
               <p style={{ fontFamily: 'Georgia, serif', fontSize: '0.8rem', color: '#9B2335', fontStyle: 'italic' }}>{error}</p>

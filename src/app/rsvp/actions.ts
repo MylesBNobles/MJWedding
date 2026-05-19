@@ -11,6 +11,7 @@ export type GuestWithInvitations = Guest & {
 export type HouseholdLookupResult = {
   householdId: string;
   householdName: string;
+  primaryGuestId: string;
   guests: GuestWithInvitations[];
 };
 
@@ -78,6 +79,7 @@ export async function lookupByPhone(phone: string): Promise<HouseholdLookupResul
   return {
     householdId: household.id,
     householdName: household.household_name,
+    primaryGuestId: guest.id,
     guests: guestsWithInvitations,
   };
 }
@@ -91,7 +93,11 @@ export type RsvpSubmission = {
   plusOneLastName?: string;
 }[];
 
-export async function submitRsvp(submissions: RsvpSubmission): Promise<{ success: boolean; error?: string }> {
+export async function submitRsvp(
+  submissions: RsvpSubmission,
+  smsOptIn: boolean,
+  primaryGuestId: string,
+): Promise<{ success: boolean; error?: string }> {
   const supabase = createServerClient();
   const now = new Date().toISOString();
 
@@ -181,6 +187,14 @@ export async function submitRsvp(submissions: RsvpSubmission): Promise<{ success
       .from('guests')
       .update({ overall_rsvp_status: overall } as never)
       .eq('id', guestId);
+  }
+
+  // Record SMS opt-in against the guest who submitted the form
+  if (smsOptIn) {
+    await supabase
+      .from('guests')
+      .update({ sms_opt_in: true, sms_opted_in_at: now } as never)
+      .eq('id', primaryGuestId);
   }
 
   return { success: true };
