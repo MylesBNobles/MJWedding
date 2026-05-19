@@ -885,7 +885,9 @@ export default function RsvpPage() {
                   lineHeight: 1.65,
                   margin: 0,
                 }}>
-                  I agree to receive wedding-related text messages from Jeslin &amp; Myles, including RSVP reminders, wedding updates, travel information, and event logistics. Message frequency may vary. Message and data rates may apply. Reply <strong>STOP</strong> to opt out or <strong>HELP</strong> for help.
+                  I agree to receive wedding-related text messages from Jeslin &amp; Myles via an automated texting service, including RSVP reminders, wedding updates, travel information, and event logistics. Message frequency may vary. Message and data rates may apply. Reply <strong>STOP</strong> to opt out or <strong>HELP</strong> for help.
+                  <br /><br />
+                  No mobile information will be shared with third parties/affiliates for marketing/promotional purposes. All the above categories exclude text messaging originator opt-in data and consent; this information will not be shared with any third parties.
                 </p>
               </label>
             </div>
