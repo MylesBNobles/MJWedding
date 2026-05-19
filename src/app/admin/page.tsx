@@ -91,6 +91,9 @@ export default async function AdminPage() {
             <Link href="/admin/messages" className="text-sm text-accent hover:underline font-medium">
               Messages
             </Link>
+            <Link href="/admin/finance" className="text-sm font-medium px-3 py-1 rounded-md bg-slate-800 text-slate-200 hover:bg-slate-700 transition-colors">
+              Finance HQ
+            </Link>
             <form action="/api/admin/logout" method="POST">
               <button type="submit" className="text-sm text-muted hover:text-fg transition-colors">
                 Sign out
