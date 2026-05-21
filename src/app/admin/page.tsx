@@ -88,6 +88,9 @@ export default async function AdminPage() {
             <Link href="/admin/budget" className="text-sm text-accent hover:underline font-medium">
               Budget
             </Link>
+            <Link href="/admin/save-the-date" className="text-sm text-accent hover:underline font-medium">
+              Save the Date
+            </Link>
             <Link href="/admin/messages" className="text-sm text-accent hover:underline font-medium">
               Messages
             </Link>
