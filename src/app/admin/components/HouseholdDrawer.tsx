@@ -44,7 +44,7 @@ const GUEST_TYPE_OPTIONS = [
 ];
 
 function emptyMember(): NewGuestInput {
-  return { firstName: '', lastName: '', phone: '', email: '', guestType: 'adult' };
+  return { firstName: '', lastName: '', phone: '', email: '', guestType: 'adult', isNamed: true };
 }
 
 function statusVariant(status: string): 'success' | 'danger' | 'warning' | 'default' {
@@ -266,7 +266,7 @@ export function HouseholdDrawer({ householdId, onClose, onOpenGuest }: Props) {
                           onClick={() => onOpenGuest(member.id)}
                           className="text-sm font-medium text-fg hover:text-accent hover:underline transition-colors text-left"
                         >
-                          {member.first_name} {member.last_name ?? ''}
+                          {member.is_named ? `${member.first_name} ${member.last_name ?? ''}`.trim() : 'Unnamed Child'}
                           {data.primary_guest_id === member.id && (
                             <span className="ml-1.5 text-xs text-muted font-normal">(primary)</span>
                           )}
@@ -288,26 +288,39 @@ export function HouseholdDrawer({ householdId, onClose, onOpenGuest }: Props) {
                 {addingMember && (
                   <div className="rounded-lg border border-border bg-card p-4 space-y-3">
                     <p className="text-xs font-medium text-muted uppercase tracking-wide">New member</p>
-                    <div className="grid grid-cols-2 gap-3">
-                      <TextField
-                        label="First name"
-                        value={memberForm.firstName}
-                        onChange={e => setMemberForm(f => ({ ...f, firstName: e.target.value }))}
-                        placeholder="First"
-                      />
-                      <TextField
-                        label="Last name"
-                        value={memberForm.lastName}
-                        onChange={e => setMemberForm(f => ({ ...f, lastName: e.target.value }))}
-                        placeholder="Last"
-                      />
-                    </div>
                     <Select
                       label="Guest type"
                       value={memberForm.guestType}
-                      onChange={e => setMemberForm(f => ({ ...f, guestType: e.target.value as NewGuestInput['guestType'] }))}
+                      onChange={e => setMemberForm(f => ({ ...f, guestType: e.target.value as NewGuestInput['guestType'], isNamed: e.target.value === 'child' ? f.isNamed : true }))}
                       options={GUEST_TYPE_OPTIONS}
                     />
+                    {memberForm.guestType === 'child' && (
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={memberForm.isNamed === false}
+                          onChange={e => setMemberForm(f => ({ ...f, isNamed: !e.target.checked, firstName: '', lastName: '' }))}
+                          className="rounded border-border"
+                        />
+                        <span className="text-xs text-muted">Name unknown — add as unnamed child</span>
+                      </label>
+                    )}
+                    {memberForm.isNamed !== false && (
+                      <div className="grid grid-cols-2 gap-3">
+                        <TextField
+                          label="First name"
+                          value={memberForm.firstName}
+                          onChange={e => setMemberForm(f => ({ ...f, firstName: e.target.value }))}
+                          placeholder="First"
+                        />
+                        <TextField
+                          label="Last name"
+                          value={memberForm.lastName}
+                          onChange={e => setMemberForm(f => ({ ...f, lastName: e.target.value }))}
+                          placeholder="Last"
+                        />
+                      </div>
+                    )}
                     <TextField
                       label="Phone (optional)"
                       type="tel"
@@ -326,7 +339,7 @@ export function HouseholdDrawer({ householdId, onClose, onOpenGuest }: Props) {
                     <div className="flex gap-2 pt-1">
                       <button
                         onClick={handleAddMember}
-                        disabled={addLoading || !memberForm.firstName.trim()}
+                        disabled={addLoading || (memberForm.isNamed !== false && !memberForm.firstName.trim())}
                         className="px-3 py-1.5 text-xs font-medium bg-accent text-white rounded-md hover:bg-accent/90 disabled:opacity-50 transition-all"
                       >
                         {addLoading ? 'Adding…' : 'Add member'}

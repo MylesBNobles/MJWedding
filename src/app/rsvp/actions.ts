@@ -17,12 +17,12 @@ export type HouseholdLookupResult = {
 
 export async function lookupByPhone(phone: string): Promise<HouseholdLookupResult | null> {
   const supabase = createServerClient();
-  const cleaned = phone.replace(/\D/g, '');
+  const last10 = phone.replace(/\D/g, '').slice(-10);
 
   const { data: guestRow } = await supabase
     .from('guests')
     .select('id, household_id')
-    .eq('phone', cleaned)
+    .like('phone', `%${last10}`)
     .neq('guest_type', 'plus_one')
     .single();
 
@@ -42,7 +42,7 @@ export async function lookupByPhone(phone: string): Promise<HouseholdLookupResul
     .from('guests')
     .select('*')
     .eq('household_id', household.id)
-    .eq('is_named', true)
+    .or('is_named.eq.true,guest_type.eq.child')
     .neq('invite_status', 'not_invited');
 
   const guests = (guestsData ?? []) as Guest[];
@@ -91,6 +91,8 @@ export type RsvpSubmission = {
   dietaryRestrictions?: string;
   plusOneFirstName?: string;
   plusOneLastName?: string;
+  childFirstName?: string;
+  childLastName?: string;
 }[];
 
 export async function submitRsvp(
@@ -173,6 +175,18 @@ export async function submitRsvp(
           }
         }
       }
+    }
+
+    // Name an unnamed child if a name was provided
+    if (sub.childFirstName?.trim()) {
+      await supabase
+        .from('guests')
+        .update({
+          first_name: sub.childFirstName.trim(),
+          last_name: sub.childLastName?.trim() || null,
+          is_named: true,
+        } as never)
+        .eq('id', sub.guestId);
     }
   }
 

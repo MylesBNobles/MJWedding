@@ -102,6 +102,7 @@ export default function RsvpPage() {
   const [household, setHousehold] = useState<HouseholdLookupResult | null>(null);
   const [rsvpState, setRsvpState] = useState<RsvpState>({});
   const [plusOneState, setPlusOneState] = useState<PlusOneState>({});
+  const [childNameState, setChildNameState] = useState<{ [guestId: string]: { firstName: string; lastName: string } }>({});
   const [smsOptIn, setSmsOptIn] = useState(false);
   const [primaryGuestId, setPrimaryGuestId] = useState('');
 
@@ -134,6 +135,14 @@ export default function RsvpPage() {
       }
     }
     setPlusOneState(initialPlusOne);
+
+    const initialChildNames: { [guestId: string]: { firstName: string; lastName: string } } = {};
+    for (const guest of result.guests) {
+      if (!guest.is_named && guest.guest_type === 'child') {
+        initialChildNames[guest.id] = { firstName: '', lastName: '' };
+      }
+    }
+    setChildNameState(initialChildNames);
     setStep('confirm');
   }
 
@@ -147,6 +156,7 @@ export default function RsvpPage() {
     setLoading(true);
     const submissions: RsvpSubmission = Object.entries(rsvpState).map(([invitationId, s]) => {
       const po = plusOneState[s.guestId];
+      const cn = childNameState[s.guestId];
       return {
         invitationId,
         guestId: s.guestId,
@@ -154,6 +164,8 @@ export default function RsvpPage() {
         dietaryRestrictions: s.dietaryRestrictions,
         plusOneFirstName: po?.bringing ? po.firstName : undefined,
         plusOneLastName: po?.bringing ? po.lastName : undefined,
+        childFirstName: cn?.firstName || undefined,
+        childLastName: cn?.lastName || undefined,
       };
     });
     const result = await submitRsvp(submissions, smsOptIn, primaryGuestId);
@@ -799,6 +811,28 @@ export default function RsvpPage() {
                         </div>
                       );
                     })}
+                  </div>
+                )}
+
+                {/* Unnamed child — name entry */}
+                {childNameState[guest.id] !== undefined && (
+                  <div style={{ marginTop: 20, borderTop: '1px solid rgba(201,166,132,0.2)', paddingTop: 20 }}>
+                    <p style={{ fontFamily: 'Georgia, serif', fontWeight: 600, color: '#3F3A36', fontSize: '0.9rem', margin: '0 0 4px' }}>What&rsquo;s this child&rsquo;s name?</p>
+                    <p style={{ fontFamily: 'Georgia, serif', fontSize: '0.72rem', color: '#8a7d6c', fontStyle: 'italic', margin: '0 0 14px' }}>Optional — you can leave this blank.</p>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                      <TextField
+                        label="First name"
+                        value={childNameState[guest.id].firstName}
+                        onChange={e => setChildNameState(prev => ({ ...prev, [guest.id]: { ...prev[guest.id], firstName: e.target.value } }))}
+                        placeholder="First"
+                      />
+                      <TextField
+                        label="Last name (optional)"
+                        value={childNameState[guest.id].lastName}
+                        onChange={e => setChildNameState(prev => ({ ...prev, [guest.id]: { ...prev[guest.id], lastName: e.target.value } }))}
+                        placeholder="Last"
+                      />
+                    </div>
                   </div>
                 )}
 

@@ -43,3 +43,7 @@ coverage/
 .vercel
 node_modules/
 .DS_Store
+
+# Guest list data — sensitive, do not commit
+scripts/guest_list_zola.csv
+scripts/import-guests.mjs

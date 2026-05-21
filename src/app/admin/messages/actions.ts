@@ -4,9 +4,12 @@ import { createServerClient } from '@/lib/supabase';
 import type { Guest } from '@/lib/database.types';
 
 const IS_DEV = process.env.NODE_ENV === 'development';
-const A2P_APPROVED = false; // flip to true once Twilio A2P approval comes through
-// In dev we use Twilio test credentials (messages are validated but not delivered)
-const SENDING_ENABLED = IS_DEV || A2P_APPROVED;
+const API_KEY = process.env.SIMPLE_TEXTING_API_KEY!;
+const FROM_NUMBER = process.env.SIMPLE_TEXTING_FROM_NUMBER!;
+const DEV_TO_OVERRIDE = process.env.SIMPLE_TEXTING_DEV_TO_OVERRIDE;
+
+// SimpleTexting v2 REST API
+const ST_BASE = 'https://api-app2.simpletexting.com/v2';
 
 export type RecipientTarget =
   | { type: 'tag'; value: string }
@@ -29,6 +32,12 @@ function interpolate(template: string, guest: Guest): string {
     .replace(/\{\{full_name\}\}/g, `${guest.first_name} ${guest.last_name ?? ''}`.trim());
 }
 
+function formatPhone(raw: string): string {
+  const digits = raw.replace(/\D/g, '');
+  // Strip leading country code 1 if 11 digits, return 10-digit US number
+  return digits.length === 11 && digits.startsWith('1') ? digits.slice(1) : digits;
+}
+
 async function getTargetGuests(target: RecipientTarget): Promise<Guest[]> {
   const supabase = createServerClient();
   let query = supabase
@@ -45,7 +54,6 @@ async function getTargetGuests(target: RecipientTarget): Promise<Guest[]> {
   } else if (target.type === 'tag') {
     query = query.contains('tags', [target.value]);
   } else if (target.type === 'side') {
-    // join through household
     const { data: households } = await supabase
       .from('households')
       .select('id')
@@ -59,6 +67,32 @@ async function getTargetGuests(target: RecipientTarget): Promise<Guest[]> {
 
   const { data } = await query;
   return (data ?? []) as Guest[];
+}
+
+async function sendSms(to: string, text: string): Promise<{ id: string }> {
+  if (!API_KEY) throw new Error('SIMPLE_TEXTING_API_KEY is not set');
+  if (!FROM_NUMBER) throw new Error('SIMPLE_TEXTING_FROM_NUMBER is not set');
+
+  const res = await fetch(`${ST_BASE}/api/messages`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      contactPhone: to,
+      accountPhone: formatPhone(FROM_NUMBER),
+      text,
+    }),
+  });
+
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(`SimpleTexting error ${res.status}: ${err}`);
+  }
+
+  const data = await res.json() as { id?: string | number };
+  return { id: String(data.id ?? '') };
 }
 
 export async function previewMessage(
@@ -81,24 +115,12 @@ export async function sendMessages(
   target: RecipientTarget,
   body: string,
 ): Promise<{ sent: number; failed: number; error?: string }> {
-  if (!SENDING_ENABLED) {
-    return { sent: 0, failed: 0, error: 'A2P_PENDING' };
+  if (!API_KEY || !FROM_NUMBER) {
+    return { sent: 0, failed: 0, error: 'MISSING_CONFIG' };
   }
 
   const supabase = createServerClient();
   const guests = await getTargetGuests(target);
-  const twilio = (await import('twilio')).default;
-
-  const accountSid = IS_DEV
-    ? process.env.TWILIO_TEST_ACCOUNT_SID!
-    : process.env.TWILIO_ACCOUNT_SID!;
-  const authToken = IS_DEV
-    ? process.env.TWILIO_TEST_AUTH_TOKEN!
-    : process.env.TWILIO_AUTH_TOKEN!;
-  // Twilio test magic numbers: +15005550006 = valid sender, +15005550001 = invalid recipient (for testing failures)
-  const fromNumber = IS_DEV ? '+15005550006' : process.env.TWILIO_FROM_NUMBER!;
-
-  const client = twilio(accountSid, authToken);
 
   let sent = 0;
   let failed = 0;
@@ -106,16 +128,11 @@ export async function sendMessages(
   for (const guest of guests) {
     if (!guest.phone) continue;
     const message = interpolate(body, guest);
+    const rawTo = formatPhone(guest.phone);
+    const to = IS_DEV && DEV_TO_OVERRIDE ? formatPhone(DEV_TO_OVERRIDE) : rawTo;
+
     try {
-      const rawTo = guest.phone!.startsWith('+') ? guest.phone! : `+1${guest.phone}`;
-      const to = IS_DEV && process.env.TWILIO_DEV_TO_OVERRIDE
-        ? process.env.TWILIO_DEV_TO_OVERRIDE
-        : rawTo;
-      const msg = await client.messages.create({
-        body: message,
-        from: fromNumber,
-        to,
-      });
+      const { id } = await sendSms(to, message);
       await supabase.from('message_logs').insert({
         guest_id: guest.id,
         household_id: guest.household_id,
@@ -123,13 +140,12 @@ export async function sendMessages(
         recipient: rawTo,
         body: message,
         status: 'sent',
-        provider_message_id: msg.sid,
+        provider_message_id: id,
         sent_at: new Date().toISOString(),
       } as never);
       sent++;
     } catch (err: unknown) {
       const error = err as Error;
-      const rawTo = guest.phone!.startsWith('+') ? guest.phone! : `+1${guest.phone}`;
       await supabase.from('message_logs').insert({
         guest_id: guest.id,
         household_id: guest.household_id,

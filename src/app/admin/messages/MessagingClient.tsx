@@ -63,7 +63,8 @@ export function MessagingClient({ allTags, isDev, messageLogs, preselectedGuestI
   async function handleSend() {
     setLoading(true);
     const result = await sendMessages(buildTarget(), body);
-    if (result.error === 'A2P_PENDING') {
+    if (result.error === 'MISSING_CONFIG') {
+      alert('SimpleTexting is not configured. Set SIMPLE_TEXTING_API_KEY and SIMPLE_TEXTING_FROM_NUMBER in .env.local');
       setLoading(false);
       return;
     }
@@ -75,23 +76,13 @@ export function MessagingClient({ allTags, isDev, messageLogs, preselectedGuestI
   return (
     <div className="space-y-6">
       {/* Status banner */}
-      {isDev ? (
+      {isDev && (
         <div className="rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 flex gap-3 items-start">
           <span className="text-blue-600 text-lg leading-none mt-0.5">ℹ</span>
           <div>
-            <p className="text-sm font-medium text-blue-800">Dev mode — Twilio test credentials active</p>
+            <p className="text-sm font-medium text-blue-800">Dev mode — messages will go to SIMPLE_TEXTING_DEV_TO_OVERRIDE if set</p>
             <p className="text-sm text-blue-700 mt-0.5">
-              Messages are validated by Twilio but not actually delivered. Safe to test freely.
-            </p>
-          </div>
-        </div>
-      ) : (
-        <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 flex gap-3 items-start">
-          <span className="text-amber-600 text-lg leading-none mt-0.5">⚠</span>
-          <div>
-            <p className="text-sm font-medium text-amber-800">Twilio A2P approval pending</p>
-            <p className="text-sm text-amber-700 mt-0.5">
-              You can compose and preview messages now, but sending is disabled until your A2P 10DLC registration is approved.
+              Set <code>SIMPLE_TEXTING_DEV_TO_OVERRIDE</code> in .env.local to redirect all sends to your test number.
             </p>
           </div>
         </div>
@@ -224,9 +215,6 @@ export function MessagingClient({ allTags, isDev, messageLogs, preselectedGuestI
             <Button onClick={handleSend} disabled={loading || preview.length === 0}>
               {loading ? 'Sending...' : `Send to ${preview.length} guests`}
             </Button>
-            {!isDev && (
-              <span className="text-xs text-amber-600 font-medium">Sending disabled — A2P pending</span>
-            )}
           </div>
         </Card>
       )}

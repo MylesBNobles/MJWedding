@@ -9,6 +9,7 @@ export type NewGuestInput = {
   phone: string;
   email: string;
   guestType: 'primary' | 'partner' | 'child' | 'adult' | 'plus_one';
+  isNamed?: boolean;
 };
 
 export type NewHouseholdInput = {
@@ -110,6 +111,7 @@ export type HouseholdMember = {
   phone: string | null;
   email: string | null;
   invite_status: string;
+  is_named: boolean;
   plus_one_allowed: boolean;
   plus_one_guest_id: string | null;
 };
@@ -137,7 +139,7 @@ export async function getHouseholdDetail(id: string): Promise<HouseholdDetail | 
 
   const { data: members } = await supabase
     .from('guests')
-    .select('id, first_name, last_name, guest_type, overall_rsvp_status, phone, email, invite_status, plus_one_allowed, plus_one_guest_id')
+    .select('id, first_name, last_name, guest_type, overall_rsvp_status, phone, email, invite_status, is_named, plus_one_allowed, plus_one_guest_id')
     .eq('household_id', id)
     .order('guest_type');
 
@@ -175,20 +177,21 @@ export async function addGuestToHousehold(
   householdId: string,
   guest: NewGuestInput,
 ): Promise<{ success: boolean; error?: string }> {
-  if (!guest.firstName.trim()) return { success: false, error: 'First name is required.' };
+  const isNamed = guest.isNamed ?? true;
+  if (isNamed && !guest.firstName.trim()) return { success: false, error: 'First name is required.' };
   const supabase = createServerClient();
 
   const { data: newGuest, error } = await supabase
     .from('guests')
     .insert({
       household_id: householdId,
-      first_name: guest.firstName.trim(),
-      last_name: guest.lastName.trim() || null,
+      first_name: isNamed ? guest.firstName.trim() : 'Child',
+      last_name: isNamed ? (guest.lastName.trim() || null) : null,
       phone: guest.phone.replace(/\D/g, '') || null,
       email: guest.email.trim() || null,
       guest_type: guest.guestType,
-      invite_status: 'maybe',
-      is_named: true,
+      invite_status: 'definite',
+      is_named: isNamed,
       plus_one_allowed: false,
       overall_rsvp_status: 'pending',
     } as never)
@@ -198,6 +201,7 @@ export async function addGuestToHousehold(
   if (error || !newGuest) return { success: false, error: error?.message ?? 'Failed to add guest.' };
 
   const guestId = (newGuest as { id: string }).id;
+
   const { data: events } = await supabase.from('events').select('id');
   const eventIds = (events ?? []).map((e: { id: string }) => e.id);
 
