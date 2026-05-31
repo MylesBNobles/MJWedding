@@ -2,10 +2,10 @@
 
 import { useEffect } from 'react';
 
-// How long after clicking the envelope before scrolling unlocks.
-// Sequence: flap (3300ms) + bloom+polaroid (3750ms) + develop delay (200ms)
-// + develop (7000ms) ≈ 10950ms. Unlock just as developing completes.
-const ANIMATION_MS = 10800;
+// Time from first click until scroll unlocks.
+// Sequence: flap (3300ms) + polaroid offset (350ms) + develop delay (200ms)
+// + develop (3000ms) + small buffer (350ms) = 7200ms
+const ANIMATION_MS = 7200;
 
 const SEEN_KEY = 'std-animation-seen';
 
