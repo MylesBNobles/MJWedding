@@ -10,9 +10,12 @@ type Props = {
 };
 
 const GOLD = '#c9a96e';
-const GOLD_GLOW = 'rgba(201,169,110,0.4)';
+const GOLD_GLOW = 'rgba(201,169,110,0.35)';
 const GREEN = '#10b981';
-const GREEN_GLOW = 'rgba(16,185,129,0.4)';
+const GREEN_GLOW = 'rgba(16,185,129,0.35)';
+const TEXT = '#2d2926';
+const TEXT_MID = 'rgba(0,0,0,0.45)';
+const TEXT_MUTED = 'rgba(0,0,0,0.28)';
 
 const MESSAGE = `Myles & Jeslin have something special to share.
 
@@ -51,8 +54,8 @@ function CopyButton({ text }: { text: string }) {
       title="Copy number"
       className="w-6 h-6 rounded-full flex items-center justify-center text-xs shrink-0 transition-all duration-200 hover:scale-110 active:scale-95"
       style={copied
-        ? { background: 'rgba(16,185,129,0.2)', color: GREEN }
-        : { background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.35)' }
+        ? { background: 'rgba(16,185,129,0.15)', color: GREEN }
+        : { background: 'rgba(0,0,0,0.06)', color: 'rgba(0,0,0,0.35)' }
       }
     >
       {copied ? '✓' : '⎘'}
@@ -74,8 +77,8 @@ function MsgCopyButton({ size = 'sm' }: { size?: 'sm' | 'lg' }) {
         onClick={handleCopy}
         className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold text-sm transition-all duration-200 active:scale-95"
         style={copied
-          ? { background: 'rgba(16,185,129,0.18)', color: GREEN, border: `1px solid rgba(16,185,129,0.3)` }
-          : { background: 'rgba(201,169,110,0.12)', color: GOLD, border: `1px solid rgba(201,169,110,0.2)` }
+          ? { background: 'rgba(16,185,129,0.12)', color: GREEN, border: `1px solid rgba(16,185,129,0.25)` }
+          : { background: 'rgba(201,169,110,0.1)', color: GOLD, border: `1px solid rgba(201,169,110,0.25)` }
         }
       >
         {copied ? (
@@ -103,8 +106,8 @@ function MsgCopyButton({ size = 'sm' }: { size?: 'sm' | 'lg' }) {
       onClick={handleCopy}
       className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-medium transition-all duration-200 shrink-0 active:scale-95"
       style={copied
-        ? { background: 'rgba(16,185,129,0.15)', color: GREEN }
-        : { background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.4)' }
+        ? { background: 'rgba(16,185,129,0.12)', color: GREEN }
+        : { background: 'rgba(0,0,0,0.05)', color: 'rgba(0,0,0,0.4)' }
       }
       title="Copy message"
     >
@@ -208,19 +211,19 @@ export function SaveTheDateClient({ households }: Props) {
         <div
           className="relative overflow-hidden rounded-3xl mb-8 p-7"
           style={{
-            background: 'linear-gradient(135deg, rgba(201,169,110,0.1) 0%, rgba(255,255,255,0.02) 60%)',
-            border: `1px solid rgba(201,169,110,${isDone ? 0 : 0.18})`,
-            ...(isDone && { border: `1px solid rgba(16,185,129,0.25)`, background: 'linear-gradient(135deg, rgba(16,185,129,0.08) 0%, rgba(255,255,255,0.02) 60%)' }),
+            background: isDone
+              ? 'linear-gradient(135deg, rgba(16,185,129,0.08) 0%, #fff 60%)'
+              : 'linear-gradient(135deg, rgba(201,169,110,0.1) 0%, #fff 60%)',
+            border: isDone ? '1px solid rgba(16,185,129,0.2)' : `1px solid rgba(201,169,110,0.2)`,
+            boxShadow: '0 2px 16px rgba(0,0,0,0.06)',
           }}
         >
-          {/* Background ambient glow */}
           <div
             className="absolute -top-16 -left-16 w-64 h-64 rounded-full pointer-events-none blur-3xl"
-            style={{ background: isDone ? 'radial-gradient(circle, rgba(16,185,129,0.15) 0%, transparent 70%)' : 'radial-gradient(circle, rgba(201,169,110,0.12) 0%, transparent 70%)' }}
+            style={{ background: isDone ? 'radial-gradient(circle, rgba(16,185,129,0.12) 0%, transparent 70%)' : 'radial-gradient(circle, rgba(201,169,110,0.1) 0%, transparent 70%)' }}
           />
 
           <div className="relative flex items-start justify-between gap-6">
-            {/* Left: big percentage */}
             <div>
               <div className="flex items-end gap-3 mb-2">
                 <span className="text-5xl select-none">{getEmoji(pct)}</span>
@@ -231,37 +234,35 @@ export function SaveTheDateClient({ households }: Props) {
                   >
                     {pct}
                   </span>
-                  <span className="text-4xl font-black ml-1" style={{ color: isDone ? 'rgba(16,185,129,0.4)' : 'rgba(201,169,110,0.4)' }}>%</span>
+                  <span className="text-4xl font-black ml-1" style={{ color: isDone ? 'rgba(16,185,129,0.35)' : 'rgba(201,169,110,0.35)' }}>%</span>
                 </div>
               </div>
-              <p className="text-sm" style={{ color: 'rgba(255,255,255,0.4)' }}>
+              <p className="text-sm" style={{ color: TEXT_MID }}>
                 {getMessage(pct, totalWithPhone - totalSent)}
               </p>
             </div>
 
-            {/* Right: secondary stats */}
             <div className="shrink-0 flex flex-col gap-4 text-right pt-1">
               <div>
-                <p className="text-3xl font-bold text-white leading-none">
+                <p className="text-3xl font-bold leading-none" style={{ color: TEXT }}>
                   {totalSent}
-                  <span className="text-lg font-normal" style={{ color: 'rgba(255,255,255,0.25)' }}> / {totalWithPhone}</span>
+                  <span className="text-lg font-normal" style={{ color: TEXT_MUTED }}> / {totalWithPhone}</span>
                 </p>
-                <p className="text-xs mt-1" style={{ color: 'rgba(255,255,255,0.3)' }}>people reached</p>
+                <p className="text-xs mt-1" style={{ color: TEXT_MUTED }}>people reached</p>
               </div>
               <div>
-                <p className="text-xl font-semibold text-white leading-none">
+                <p className="text-xl font-semibold leading-none" style={{ color: TEXT }}>
                   {completedHouseholds}
-                  <span className="text-sm font-normal" style={{ color: 'rgba(255,255,255,0.25)' }}> / {totalHouseholds}</span>
+                  <span className="text-sm font-normal" style={{ color: TEXT_MUTED }}> / {totalHouseholds}</span>
                 </p>
-                <p className="text-xs mt-1" style={{ color: 'rgba(255,255,255,0.3)' }}>households done</p>
+                <p className="text-xs mt-1" style={{ color: TEXT_MUTED }}>households done</p>
               </div>
             </div>
           </div>
 
-          {/* Progress bar */}
           <div
             className="relative mt-7 h-2.5 rounded-full overflow-hidden"
-            style={{ background: 'rgba(255,255,255,0.06)' }}
+            style={{ background: 'rgba(0,0,0,0.07)' }}
           >
             <div
               className="h-full rounded-full transition-all duration-700 ease-out"
@@ -276,10 +277,10 @@ export function SaveTheDateClient({ households }: Props) {
           </div>
 
           <div className="flex justify-between mt-2">
-            <span className="text-xs" style={{ color: 'rgba(255,255,255,0.25)' }}>{totalSent} sent</span>
+            <span className="text-xs" style={{ color: TEXT_MUTED }}>{totalSent} sent</span>
             {isDone
               ? <span className="text-xs font-semibold" style={{ color: GREEN }}>Complete! 🎉</span>
-              : <span className="text-xs" style={{ color: 'rgba(255,255,255,0.25)' }}>{totalWithPhone - totalSent} remaining</span>
+              : <span className="text-xs" style={{ color: TEXT_MUTED }}>{totalWithPhone - totalSent} remaining</span>
             }
           </div>
         </div>
@@ -287,9 +288,9 @@ export function SaveTheDateClient({ households }: Props) {
         {/* ── Message template ── */}
         <div
           className="rounded-2xl mb-6 overflow-hidden"
-          style={{ background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.07)' }}
+          style={{ background: '#fff', border: '1px solid rgba(0,0,0,0.08)', boxShadow: '0 1px 8px rgba(0,0,0,0.04)' }}
         >
-          <div className="flex items-center justify-between px-5 py-3" style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+          <div className="flex items-center justify-between px-5 py-3" style={{ borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
             <span className="text-xs font-semibold tracking-widest uppercase" style={{ color: GOLD }}>
               Message Template
             </span>
@@ -297,19 +298,17 @@ export function SaveTheDateClient({ households }: Props) {
           </div>
 
           <div className="px-5 py-4 flex gap-4 items-start">
-            {/* iMessage bubble */}
             <div className="flex-1 min-w-0">
               <div
                 className="inline-block rounded-2xl rounded-tl-sm px-4 py-3 text-sm leading-relaxed whitespace-pre-line max-w-full"
-                style={{ background: 'rgba(255,255,255,0.07)', color: 'rgba(255,255,255,0.72)' }}
+                style={{ background: 'rgba(0,0,0,0.04)', color: 'rgba(0,0,0,0.7)' }}
               >
                 {MESSAGE}
               </div>
             </div>
 
-            {/* Workflow tip */}
             <div className="shrink-0 text-right hidden sm:block">
-              <p className="text-[11px] leading-relaxed" style={{ color: 'rgba(255,255,255,0.2)' }}>
+              <p className="text-[11px] leading-relaxed" style={{ color: TEXT_MUTED }}>
                 1. Copy phone →<br />
                 2. Open iMessage →<br />
                 3. Copy message →<br />
@@ -326,29 +325,29 @@ export function SaveTheDateClient({ households }: Props) {
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="Search name, household or number…"
-            className="flex-1 min-w-52 px-4 py-2.5 text-sm rounded-xl text-white placeholder:text-white/20 focus:outline-none transition-all"
+            className="flex-1 min-w-52 px-4 py-2.5 text-sm rounded-xl placeholder:text-black/25 focus:outline-none transition-all"
             style={{
-              background: 'rgba(255,255,255,0.05)',
-              border: '1px solid rgba(255,255,255,0.07)',
+              background: '#fff',
+              border: '1px solid rgba(0,0,0,0.1)',
+              color: TEXT,
             }}
-            onFocus={e => (e.currentTarget.style.borderColor = 'rgba(201,169,110,0.4)')}
-            onBlur={e => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.07)')}
+            onFocus={e => (e.currentTarget.style.borderColor = 'rgba(201,169,110,0.5)')}
+            onBlur={e => (e.currentTarget.style.borderColor = 'rgba(0,0,0,0.1)')}
           />
 
-          {/* Side filter */}
-          <div className="flex rounded-xl overflow-hidden text-sm" style={{ border: '1px solid rgba(255,255,255,0.07)' }}>
+          <div className="flex rounded-xl overflow-hidden text-sm" style={{ border: '1px solid rgba(0,0,0,0.1)' }}>
             {(['all', 'jeslin', 'myles'] as const).map(s => {
               const active = sideFilter === s;
-              const activeBg = s === 'jeslin' ? 'rgba(167,139,250,0.18)' : s === 'myles' ? 'rgba(96,165,250,0.18)' : 'rgba(201,169,110,0.15)';
-              const activeColor = s === 'jeslin' ? '#a78bfa' : s === 'myles' ? '#60a5fa' : GOLD;
+              const activeBg = s === 'jeslin' ? 'rgba(167,139,250,0.12)' : s === 'myles' ? 'rgba(96,165,250,0.12)' : 'rgba(201,169,110,0.12)';
+              const activeColor = s === 'jeslin' ? '#7c3aed' : s === 'myles' ? '#2563eb' : '#a07840';
               return (
                 <button
                   key={s}
                   onClick={() => setSideFilter(s)}
                   className="px-4 py-2.5 font-medium transition-all duration-200"
                   style={{
-                    background: active ? activeBg : 'rgba(255,255,255,0.03)',
-                    color: active ? activeColor : 'rgba(255,255,255,0.3)',
+                    background: active ? activeBg : '#fff',
+                    color: active ? activeColor : 'rgba(0,0,0,0.35)',
                   }}
                 >
                   {s === 'all' ? 'Everyone' : s === 'jeslin' ? "Jeslin's" : "Myles's"}
@@ -357,8 +356,7 @@ export function SaveTheDateClient({ households }: Props) {
             })}
           </div>
 
-          {/* Status filter */}
-          <div className="flex rounded-xl overflow-hidden text-sm" style={{ border: '1px solid rgba(255,255,255,0.07)' }}>
+          <div className="flex rounded-xl overflow-hidden text-sm" style={{ border: '1px solid rgba(0,0,0,0.1)' }}>
             {(['all', 'pending', 'sent'] as const).map(s => {
               const active = statusFilter === s;
               return (
@@ -367,8 +365,8 @@ export function SaveTheDateClient({ households }: Props) {
                   onClick={() => setStatusFilter(s)}
                   className="px-4 py-2.5 font-medium transition-all duration-200"
                   style={{
-                    background: active ? 'rgba(255,255,255,0.09)' : 'rgba(255,255,255,0.03)',
-                    color: active ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.3)',
+                    background: active ? 'rgba(0,0,0,0.06)' : '#fff',
+                    color: active ? TEXT : 'rgba(0,0,0,0.35)',
                   }}
                 >
                   {s === 'all' ? 'All' : s === 'pending' ? 'Pending' : 'Sent ✓'}
@@ -379,7 +377,7 @@ export function SaveTheDateClient({ households }: Props) {
         </div>
 
         {/* Count */}
-        <p className="text-xs mb-3 px-1" style={{ color: 'rgba(255,255,255,0.2)' }}>
+        <p className="text-xs mb-3 px-1" style={{ color: TEXT_MUTED }}>
           {filtered.length} household{filtered.length !== 1 ? 's' : ''}
           {(search || sideFilter !== 'all' || statusFilter !== 'all') ? ' matching filters' : ''}
         </p>
@@ -389,7 +387,7 @@ export function SaveTheDateClient({ households }: Props) {
           {filtered.length === 0 && (
             <div
               className="text-center py-16 text-sm rounded-2xl"
-              style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.25)' }}
+              style={{ background: '#fff', border: '1px solid rgba(0,0,0,0.07)', color: TEXT_MUTED }}
             >
               No households match your filters.
             </div>
@@ -405,23 +403,23 @@ export function SaveTheDateClient({ households }: Props) {
                 key={h.id}
                 className="rounded-2xl overflow-hidden transition-all duration-300"
                 style={{
-                  background: allSent ? 'rgba(16,185,129,0.05)' : 'rgba(255,255,255,0.025)',
-                  border: allSent ? '1px solid rgba(16,185,129,0.2)' : '1px solid rgba(255,255,255,0.06)',
-                  boxShadow: allSent ? `0 0 28px rgba(16,185,129,0.07)` : 'none',
+                  background: allSent ? 'rgba(16,185,129,0.04)' : '#fff',
+                  border: allSent ? '1px solid rgba(16,185,129,0.2)' : '1px solid rgba(0,0,0,0.07)',
+                  boxShadow: allSent ? `0 0 20px rgba(16,185,129,0.06)` : '0 1px 4px rgba(0,0,0,0.04)',
                 }}
               >
                 {/* Card header */}
                 <div
                   className="flex items-center justify-between px-5 py-3.5"
-                  style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}
+                  style={{ borderBottom: '1px solid rgba(0,0,0,0.05)' }}
                 >
                   <div className="flex items-center gap-2.5">
-                    <span className="font-semibold text-sm text-white">{h.household_name}</span>
+                    <span className="font-semibold text-sm" style={{ color: TEXT }}>{h.household_name}</span>
                     <span
                       className="text-[11px] px-2 py-0.5 rounded-full font-semibold"
                       style={h.side === 'jeslin'
-                        ? { background: 'rgba(167,139,250,0.12)', color: '#a78bfa' }
-                        : { background: 'rgba(96,165,250,0.12)', color: '#60a5fa' }
+                        ? { background: 'rgba(167,139,250,0.12)', color: '#7c3aed' }
+                        : { background: 'rgba(96,165,250,0.12)', color: '#2563eb' }
                       }
                     >
                       {h.side === 'jeslin' ? "Jeslin's" : "Myles's"}
@@ -429,7 +427,6 @@ export function SaveTheDateClient({ households }: Props) {
                   </div>
 
                   <div className="flex items-center gap-2.5">
-                    {/* Mini progress dots */}
                     {phoneGuests.length > 0 && (
                       <div className="flex items-center gap-1">
                         {phoneGuests.map(g => (
@@ -439,7 +436,7 @@ export function SaveTheDateClient({ households }: Props) {
                             style={{
                               background: (sentState[g.id] ?? g.save_the_date_sent)
                                 ? GREEN
-                                : 'rgba(255,255,255,0.12)',
+                                : 'rgba(0,0,0,0.12)',
                               boxShadow: (sentState[g.id] ?? g.save_the_date_sent)
                                 ? `0 0 4px ${GREEN}`
                                 : 'none',
@@ -461,7 +458,7 @@ export function SaveTheDateClient({ households }: Props) {
                       </span>
                     )}
                     {!allSent && phoneGuests.length === 0 && (
-                      <span className="text-xs italic" style={{ color: 'rgba(255,255,255,0.18)' }}>No numbers</span>
+                      <span className="text-xs italic" style={{ color: TEXT_MUTED }}>No numbers</span>
                     )}
                   </div>
                 </div>
@@ -481,18 +478,17 @@ export function SaveTheDateClient({ households }: Props) {
                         key={g.id}
                         className="flex items-center gap-3.5 px-5 py-3 transition-all duration-150"
                         style={{
-                          borderTop: idx === 0 ? 'none' : '1px solid rgba(255,255,255,0.03)',
-                          opacity: sent ? 0.3 : hasPhone ? 1 : 0.38,
+                          borderTop: idx === 0 ? 'none' : '1px solid rgba(0,0,0,0.04)',
+                          opacity: sent ? 0.35 : hasPhone ? 1 : 0.45,
                         }}
                       >
-                        {/* Circular toggle */}
                         {hasPhone ? (
                           <button
                             onClick={() => handleToggle(g.id, sent)}
                             className="w-6 h-6 rounded-full flex items-center justify-center shrink-0 transition-all duration-200 hover:scale-110 active:scale-90"
                             style={sent
                               ? { background: GREEN, border: `2px solid ${GREEN}`, boxShadow: `0 0 10px ${GREEN_GLOW}` }
-                              : { background: 'transparent', border: '2px solid rgba(255,255,255,0.15)' }
+                              : { background: 'transparent', border: '2px solid rgba(0,0,0,0.18)' }
                             }
                             title={sent ? 'Mark as not sent' : 'Mark as sent'}
                           >
@@ -505,43 +501,41 @@ export function SaveTheDateClient({ households }: Props) {
                         ) : (
                           <div
                             className="w-6 h-6 rounded-full shrink-0"
-                            style={{ border: '2px dashed rgba(255,255,255,0.08)' }}
+                            style={{ border: '2px dashed rgba(0,0,0,0.12)' }}
                           />
                         )}
 
-                        {/* Name */}
                         <span
                           className="text-sm flex-1 min-w-0 truncate"
                           style={{
-                            color: sent ? 'rgba(255,255,255,0.25)' : hasPhone ? 'rgba(255,255,255,0.82)' : 'rgba(255,255,255,0.3)',
+                            color: sent ? TEXT_MUTED : hasPhone ? TEXT : 'rgba(0,0,0,0.35)',
                             textDecoration: sent ? 'line-through' : 'none',
                             fontStyle: !g.is_named ? 'italic' : 'normal',
                           }}
                         >
                           {displayName}
                           {g.guest_type === 'plus_one' && (
-                            <span className="ml-1.5 text-xs not-italic" style={{ color: 'rgba(255,255,255,0.2)' }}>(+1)</span>
+                            <span className="ml-1.5 text-xs not-italic" style={{ color: TEXT_MUTED }}>(+1)</span>
                           )}
                         </span>
 
-                        {/* Phone / badges */}
                         {hasPhone ? (
                           <div className="flex items-center gap-1.5 shrink-0">
                             {intl && (
                               <span
                                 className="text-[10px] px-1.5 py-0.5 rounded-full font-semibold"
-                                style={{ background: 'rgba(251,191,36,0.12)', color: '#fbbf24' }}
+                                style={{ background: 'rgba(217,119,6,0.1)', color: '#b45309' }}
                               >
                                 🌍 Intl
                               </span>
                             )}
-                            <span className="text-xs font-mono" style={{ color: 'rgba(255,255,255,0.28)' }}>
+                            <span className="text-xs font-mono" style={{ color: 'rgba(0,0,0,0.38)' }}>
                               {formatPhone(g.phone!)}
                             </span>
                             <CopyButton text={g.phone!} />
                           </div>
                         ) : (
-                          <span className="text-xs italic shrink-0" style={{ color: 'rgba(255,255,255,0.13)' }}>
+                          <span className="text-xs italic shrink-0" style={{ color: 'rgba(0,0,0,0.2)' }}>
                             No number
                           </span>
                         )}

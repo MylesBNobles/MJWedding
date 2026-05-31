@@ -9,18 +9,18 @@ export default async function SaveTheDatePage() {
   const households = await getSaveTheDateData();
 
   return (
-    <div className="min-h-screen pt-28 pb-20" style={{ background: '#080a10' }}>
+    <div className="min-h-screen pt-28 pb-20" style={{ background: '#f7f5f1' }}>
       <Container>
         <div className="mb-10">
           <Link
             href="/admin"
             className="inline-flex items-center gap-1.5 text-xs mb-4 transition-colors hover:opacity-60"
-            style={{ color: 'rgba(255,255,255,0.3)' }}
+            style={{ color: 'rgba(0,0,0,0.35)' }}
           >
             ← Admin
           </Link>
-          <h1 className="text-4xl font-black tracking-tight text-white">Save the Date</h1>
-          <p className="text-sm mt-1.5" style={{ color: 'rgba(255,255,255,0.3)' }}>
+          <h1 className="text-4xl font-black tracking-tight" style={{ color: '#2d2926' }}>Save the Date</h1>
+          <p className="text-sm mt-1.5" style={{ color: 'rgba(0,0,0,0.4)' }}>
             Track who&apos;s been reached — check off as you go
           </p>
         </div>
