@@ -125,9 +125,9 @@ export const itineraryEvents: EventItem[] = [
 export const attireSections: AttireSection[] = [
 	{
 		id: "1",
-		title: "Indo-Western Black Tie",
+		title: "Indo-Western Formal",
 		description:
-			"The ceremony and reception call for Indo-Western Black Tie attire. Think elegant, refined, and celebration-ready—whether in a stunning lehenga or a classic tuxedo. The celebration will be outdoors, so plan for a warm Tuscan summer evening.",
+			"The ceremony and reception call for Indo-Western Formal attire — elegant, refined, and celebration-ready. Think a stunning lehenga or saree, a tailored sherwani, a formal gown, or a classic tuxedo. Tuxedos are a wonderful choice, and dark suits in navy, charcoal, or well-tailored neutrals like tan or taupe are equally welcome. The celebration will be outdoors, so plan for a warm Tuscan summer evening.",
 		images: ["/images/DressDo.png", "/images/DressDont.png"],
 		doList: [
 			"Elegant floor-length evening gowns",
@@ -138,7 +138,8 @@ export const attireSections: AttireSection[] = [
 			"Embellished clutches or formal handbags",
 			"Tailored sherwanis or formal kurta sets",
 			"Classic tuxedos",
-			"Dark, well-fitted suits",
+			"Dark suits — navy, charcoal, or black",
+			"Well-tailored neutral suits — tan, taupe, or light gray",
 			"Crisp dress shirts with formal styling",
 			"Polished formal shoes",
 		],
@@ -155,7 +156,7 @@ export const attireSections: AttireSection[] = [
 	},
 	{
 		id: "2",
-		title: "Smart Casual (Welcome Party & Brunch)",
+		title: "Welcome Party & Brunch",
 		description:
 			"We're still finalizing the details for the welcome party and farewell brunch. Check the Updates section for announcements as we get closer to the date.",
 		images: [],
@@ -203,7 +204,7 @@ export const faqItems: FAQItem[] = [
 	{
 		id: "9",
 		q: "Do you have a registry?",
-		a: "We're still putting together our registry and will share details soon. Keep an eye on the Updates section for an announcement!",
+		a: "Yes! We're registered on With Joy — browse our wishlist at https://withjoy.com/myles-and-jeslin/registry\n\nWe also gladly accept cash, checks, or Zelle. There will be a gift box at the wedding for cards and envelopes.",
 	},
 	{
 		id: "12",
@@ -359,5 +360,5 @@ export const weddingDetails = {
 	location: "Tuscany, Italy",
 	venue: "Villa Di Geggiano",
 	timezone: "Central European Time (CET)",
-	dressCode: "Indo-Western Black Tie",
+	dressCode: "Indo-Western Formal",
 };

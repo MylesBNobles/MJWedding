@@ -197,7 +197,7 @@ export default function ItineraryPage() {
 									</p>
 									<p className="text-center mb-6">
 										<Link href="/attire" className="text-xs text-[#8a7d6c] hover:text-[#C9A684] transition-colors">
-											Indo-Western Black Tie &nbsp;·&nbsp; <span className="underline underline-offset-2">Attire Guide →</span>
+											Indo-Western Formal &nbsp;·&nbsp; <span className="underline underline-offset-2">Attire Guide →</span>
 										</Link>
 									</p>
 									{day.events.map((event, idx) => (

@@ -767,6 +767,10 @@ export default function SaveTheDatePage() {
 										</p>
 									</a>
 
+									<p className="text-sm text-[#5a5048] leading-relaxed">
+										We also gladly accept cash, checks, or Zelle. There will be a gift box at the wedding for cards and envelopes.
+									</p>
+
 								</div>
 							</FadeUp>
 

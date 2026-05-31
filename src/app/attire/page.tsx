@@ -60,7 +60,7 @@ function ColorSwatch({ name, hex }: { name: string; hex: string }) {
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 export default function AttirePage() {
-	const blackTie = attireSections.find(s => s.id === "1")!;
+	const formal = attireSections.find(s => s.id === "1")!;
 	const smartCasual = attireSections.find(s => s.id === "2")!;
 
 	return (
@@ -118,18 +118,18 @@ export default function AttirePage() {
 
 				<BotanicalRule />
 
-				{/* ── Indo-Western Black Tie ── */}
+				{/* ── Indo-Western Formal ── */}
 				<FadeUp>
 					<SectionLabel>Wedding Ceremony &amp; Reception</SectionLabel>
-					<LetterHeading>{blackTie.title}</LetterHeading>
+					<LetterHeading>{formal.title}</LetterHeading>
 					<p className="text-sm sm:text-base text-[#5a5048] leading-relaxed mb-8">
-						{blackTie.description}
+						{formal.description}
 					</p>
 
 					{/* Reference images */}
-					{blackTie.images.length > 0 && (
+					{formal.images.length > 0 && (
 						<div className="grid grid-cols-2 gap-5 mb-10">
-							{blackTie.images.map((src, i) => (
+							{formal.images.map((src, i) => (
 								<div key={i} className="flex flex-col items-center gap-3">
 									<div
 										style={{
@@ -158,13 +158,13 @@ export default function AttirePage() {
 					)}
 
 					{/* Do / Avoid lists */}
-					{(blackTie.doList.length > 0 || blackTie.avoidList.length > 0) && (
+					{(formal.doList.length > 0 || formal.avoidList.length > 0) && (
 						<div className="grid sm:grid-cols-2 gap-5">
 							{/* Do */}
 							<div className="bg-[#FBF7EE] border border-[#C9A684]/20 rounded-xl p-6">
 								<p className="text-[0.62rem] uppercase tracking-[0.36em] text-[#C9A684] mb-4">✦ &nbsp; Wear</p>
 								<ul className="space-y-2.5">
-									{blackTie.doList.map((item, i) => (
+									{formal.doList.map((item, i) => (
 										<li key={i} className="flex gap-3 text-sm text-[#5a5048] leading-relaxed">
 											<span className="flex-shrink-0 text-[#BFCBB2] mt-0.5">✦</span>
 											{item}
@@ -177,7 +177,7 @@ export default function AttirePage() {
 							<div className="bg-[#FBF7EE] border border-[#C9A684]/20 rounded-xl p-6">
 								<p className="text-[0.62rem] uppercase tracking-[0.36em] text-[#8a7d6c] mb-4">—  &nbsp; Avoid</p>
 								<ul className="space-y-2.5">
-									{blackTie.avoidList.map((item, i) => (
+									{formal.avoidList.map((item, i) => (
 										<li key={i} className="flex gap-3 text-sm text-[#5a5048] leading-relaxed">
 											<span className="flex-shrink-0 text-[#C9A684]/50 mt-0.5">—</span>
 											{item}
@@ -194,7 +194,6 @@ export default function AttirePage() {
 				{/* ── Smart Casual ── */}
 				<FadeUp>
 					<SectionLabel>Welcome Party &amp; Farewell Brunch</SectionLabel>
-					<LetterHeading>Smart Casual</LetterHeading>
 					<div className="bg-[#FBF7EE] border border-[#C9A684]/20 rounded-xl p-6 sm:p-8">
 						<p className="text-sm text-[#5a5048] leading-relaxed italic max-w-[480px]">
 							{smartCasual.description}

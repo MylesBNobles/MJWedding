@@ -12,20 +12,34 @@ export default function FAQPage() {
     setOpenId(openId === id ? null : id);
   };
 
+  const registryUrl = 'https://withjoy.com/myles-and-jeslin/registry';
+
   const renderAnswer = (answer: string) => {
+    if (answer.includes(registryUrl)) {
+      const [before, after] = answer.split(registryUrl);
+      const afterParagraphs = after.split('\n').filter(s => s.trim());
+      return (
+        <>
+          {before}
+          <a href={registryUrl} target="_blank" rel="noopener noreferrer" className="text-accent underline underline-offset-4">
+            withjoy.com/myles-and-jeslin/registry
+          </a>
+          {afterParagraphs.map((p, i) => (
+            <span key={i} className="block mt-3">{p}</span>
+          ))}
+        </>
+      );
+    }
+
     if (!answer.includes(email)) {
       return answer;
     }
 
     const [before, after] = answer.split(email);
-
     return (
       <>
         {before}
-        <a
-          href={`mailto:${email}`}
-          className="text-accent underline underline-offset-4"
-        >
+        <a href={`mailto:${email}`} className="text-accent underline underline-offset-4">
           {email}
         </a>
         {after}
