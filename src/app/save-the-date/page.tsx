@@ -780,13 +780,19 @@ export default function SaveTheDatePage() {
 									<SectionLabel>Stay Connected</SectionLabel>
 									<LetterHeading>Visit Our Wedding Website</LetterHeading>
 									<p className="text-sm sm:text-base text-[#5a5048] leading-relaxed mb-8 max-w-[480px] mx-auto">
-										Our full wedding website has everything — travel details,
-										our story, the itinerary, attire guidance, and more.
-										We&rsquo;ll keep it updated as the date approaches.
+										You can visit our wedding website anytime at{' '}
+										<SmartLink href="https://jeslinandmyles.com" className="font-semibold text-[#4a3f35] underline underline-offset-2 hover:text-[#C9A684] transition-colors">jeslinandmyles.com</SmartLink>
+										{' '}— it has everything you need as the day approaches.
+										Click any section below to explore.
 									</p>
 
 									<div className="grid sm:grid-cols-3 gap-3 mb-10 text-left">
 										{[
+											{
+												href: "/",
+												label: "Home",
+												blurb: "The wedding at a glance.",
+											},
 											{
 												href: "/story",
 												label: "Our Story",
@@ -811,11 +817,6 @@ export default function SaveTheDatePage() {
 												href: "/faq",
 												label: "FAQ",
 												blurb: "Common questions answered.",
-											},
-											{
-												href: "/updates",
-												label: "Updates",
-												blurb: "Latest news from us.",
 											},
 										].map((link) => (
 											<SmartLink
