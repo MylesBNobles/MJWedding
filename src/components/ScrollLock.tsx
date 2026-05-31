@@ -7,8 +7,16 @@ import { useEffect } from 'react';
 // + develop (7000ms) ≈ 10950ms. Unlock just as developing completes.
 const ANIMATION_MS = 10800;
 
+const SEEN_KEY = 'std-animation-seen';
+
 export function ScrollLock() {
   useEffect(() => {
+    // Already seen the envelope animation — skip the lock entirely
+    if (sessionStorage.getItem(SEEN_KEY)) {
+      document.dispatchEvent(new CustomEvent('scroll-unlocked'));
+      return;
+    }
+
     let unlocked = false;
 
     function unlock() {
@@ -16,6 +24,7 @@ export function ScrollLock() {
       unlocked = true;
       document.body.style.overflow = '';
       document.body.style.touchAction = '';
+      sessionStorage.setItem(SEEN_KEY, '1');
       document.dispatchEvent(new CustomEvent('scroll-unlocked'));
     }
 
