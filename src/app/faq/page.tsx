@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { Container, SectionHeader, Card } from '@/components';
 import { faqItems } from '@/lib/mockData';
 
@@ -13,8 +14,22 @@ export default function FAQPage() {
   };
 
   const registryUrl = 'https://withjoy.com/myles-and-jeslin/registry';
+  const travelToken = '/travel page';
 
   const renderAnswer = (answer: string) => {
+    if (answer.includes(travelToken)) {
+      const [before, after] = answer.split(travelToken);
+      return (
+        <>
+          {before}
+          <Link href="/travel" className="text-accent underline underline-offset-4">
+            Travel &amp; Hotels page
+          </Link>
+          {after}
+        </>
+      );
+    }
+
     if (answer.includes(registryUrl)) {
       const [before, after] = answer.split(registryUrl);
       const afterParagraphs = after.split('\n').filter(s => s.trim());

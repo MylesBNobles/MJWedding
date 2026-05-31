@@ -179,7 +179,7 @@ export const faqItems: FAQItem[] = [
 	{
 		id: "11",
 		q: "Where should I stay?",
-		a: "We're working on lodging recommendations and will share them soon. Sign up for updates and we'll let you know as soon as we have more details!",
+		a: "Yes! We have hotel recommendations and travel tips on our /travel page.",
 	},
 	{
 		id: "3",
