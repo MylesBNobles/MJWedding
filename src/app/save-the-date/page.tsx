@@ -409,9 +409,14 @@ export default function SaveTheDatePage() {
 										the most magical weekend for everyone who travels to be with
 										us.
 									</p>
-									<RSVPButton />
+									<a
+										href="#rsvp"
+										className="inline-block bg-[#C9A684] text-white text-[0.75rem] uppercase tracking-[0.28em] py-3.5 px-8 rounded-full transition-all hover:bg-[#a8865e] hover:shadow-lg hover:-translate-y-px"
+									>
+										RSVP Below ↓
+									</a>
 									<p className="text-[0.65rem] text-[#8a7d6c] mt-4 italic">
-										Formal invitations to follow — RSVP early secures your spot.
+										Continue exploring below — RSVP at the bottom when you&rsquo;re ready.
 									</p>
 
 									{/* Tuscan rolling hills at card bottom */}
@@ -844,6 +849,24 @@ export default function SaveTheDatePage() {
 									>
 										hello@jeslinandmyles.com
 									</a>
+								</div>
+							</FadeUp>
+						</div>
+
+						{/* RSVP */}
+						<div id="rsvp">
+							<BotanicalRule />
+							<FadeUp>
+								<div className="text-center pb-12">
+									<SectionLabel>You&rsquo;re Invited</SectionLabel>
+									<LetterHeading>Will You Join Us?</LetterHeading>
+									<p className="text-sm sm:text-base text-[#5a5048] leading-relaxed mb-8 max-w-[400px] mx-auto">
+										As a destination celebration, we&rsquo;d love to know you&rsquo;re coming as early as possible — it helps us plan the most magical weekend for everyone.
+									</p>
+									<RSVPButton />
+									<p className="text-[0.65rem] text-[#8a7d6c] mt-4 italic">
+										Formal invitations to follow — RSVP early secures your spot.
+									</p>
 								</div>
 							</FadeUp>
 						</div>
