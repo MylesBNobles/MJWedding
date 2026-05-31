@@ -14,6 +14,12 @@ const GOLD_GLOW = 'rgba(201,169,110,0.4)';
 const GREEN = '#10b981';
 const GREEN_GLOW = 'rgba(16,185,129,0.4)';
 
+const MESSAGE = `Myles & Jeslin have something special to share.
+
+Open your Save the Date below ✨
+
+https://jeslinandmyles.com/save-the-date`;
+
 function isInternational(phone: string): boolean {
   const d = phone.replace(/\D/g, '');
   if (d.length === 10) return false;
@@ -50,6 +56,59 @@ function CopyButton({ text }: { text: string }) {
       }
     >
       {copied ? '✓' : '⎘'}
+    </button>
+  );
+}
+
+function MsgCopyButton({ size = 'sm' }: { size?: 'sm' | 'lg' }) {
+  const [copied, setCopied] = useState(false);
+  function handleCopy() {
+    navigator.clipboard.writeText(MESSAGE);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }
+
+  if (size === 'lg') {
+    return (
+      <button
+        onClick={handleCopy}
+        className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold text-sm transition-all duration-200 active:scale-95"
+        style={copied
+          ? { background: 'rgba(16,185,129,0.18)', color: GREEN, border: `1px solid rgba(16,185,129,0.3)` }
+          : { background: 'rgba(201,169,110,0.12)', color: GOLD, border: `1px solid rgba(201,169,110,0.2)` }
+        }
+      >
+        {copied ? (
+          <>
+            <svg width="14" height="11" viewBox="0 0 14 11" fill="none">
+              <path d="M1 5.5L5 9.5L13 1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            Copied!
+          </>
+        ) : (
+          <>
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <rect x="1" y="4" width="9" height="9" rx="1.5" stroke="currentColor" strokeWidth="1.5"/>
+              <path d="M4 4V2.5A1.5 1.5 0 015.5 1h6A1.5 1.5 0 0113 2.5v6A1.5 1.5 0 0111.5 10H10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+            </svg>
+            Copy message
+          </>
+        )}
+      </button>
+    );
+  }
+
+  return (
+    <button
+      onClick={handleCopy}
+      className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-medium transition-all duration-200 shrink-0 active:scale-95"
+      style={copied
+        ? { background: 'rgba(16,185,129,0.15)', color: GREEN }
+        : { background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.4)' }
+      }
+      title="Copy message"
+    >
+      {copied ? '✓ Copied' : '⎘ msg'}
     </button>
   );
 }
@@ -225,6 +284,41 @@ export function SaveTheDateClient({ households }: Props) {
           </div>
         </div>
 
+        {/* ── Message template ── */}
+        <div
+          className="rounded-2xl mb-6 overflow-hidden"
+          style={{ background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.07)' }}
+        >
+          <div className="flex items-center justify-between px-5 py-3" style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+            <span className="text-xs font-semibold tracking-widest uppercase" style={{ color: GOLD }}>
+              Message Template
+            </span>
+            <MsgCopyButton size="lg" />
+          </div>
+
+          <div className="px-5 py-4 flex gap-4 items-start">
+            {/* iMessage bubble */}
+            <div className="flex-1 min-w-0">
+              <div
+                className="inline-block rounded-2xl rounded-tl-sm px-4 py-3 text-sm leading-relaxed whitespace-pre-line max-w-full"
+                style={{ background: 'rgba(255,255,255,0.07)', color: 'rgba(255,255,255,0.72)' }}
+              >
+                {MESSAGE}
+              </div>
+            </div>
+
+            {/* Workflow tip */}
+            <div className="shrink-0 text-right hidden sm:block">
+              <p className="text-[11px] leading-relaxed" style={{ color: 'rgba(255,255,255,0.2)' }}>
+                1. Copy phone →<br />
+                2. Open iMessage →<br />
+                3. Copy message →<br />
+                4. Send → Check off ✓
+              </p>
+            </div>
+          </div>
+        </div>
+
         {/* ── Filters ── */}
         <div className="flex flex-wrap gap-2.5 mb-5">
           <input
@@ -334,7 +428,7 @@ export function SaveTheDateClient({ households }: Props) {
                     </span>
                   </div>
 
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2.5">
                     {/* Mini progress dots */}
                     {phoneGuests.length > 0 && (
                       <div className="flex items-center gap-1">
@@ -354,6 +448,8 @@ export function SaveTheDateClient({ households }: Props) {
                         ))}
                       </div>
                     )}
+
+                    {phoneGuests.length > 0 && <MsgCopyButton size="sm" />}
 
                     {allSent && (
                       <span className="flex items-center gap-1.5 text-xs font-semibold" style={{ color: GREEN }}>
