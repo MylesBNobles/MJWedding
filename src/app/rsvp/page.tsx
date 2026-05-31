@@ -105,6 +105,15 @@ export default function RsvpPage() {
   const [childNameState, setChildNameState] = useState<{ [guestId: string]: { firstName: string; lastName: string } }>({});
   const [smsOptIn, setSmsOptIn] = useState(false);
   const [primaryGuestId, setPrimaryGuestId] = useState('');
+  const [phoneFocused, setPhoneFocused] = useState(false);
+
+  function handlePhoneChange(raw: string) {
+    const digits = raw.replace(/\D/g, '').slice(0, 10);
+    if (digits.length === 0) { setPhone(''); return; }
+    if (digits.length <= 3) { setPhone(`(${digits}`); return; }
+    if (digits.length <= 6) { setPhone(`(${digits.slice(0, 3)}) ${digits.slice(3)}`); return; }
+    setPhone(`(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`);
+  }
 
   async function handleLookup() {
     setError('');
@@ -212,6 +221,9 @@ export default function RsvpPage() {
           }
           /* Hide footer on this step — fullscreen cinema layout */
           footer { display: none; }
+          .phone-input::placeholder { color: rgba(28,15,8,0.22); letter-spacing: 0.04em; font-family: Georgia, serif; }
+          @keyframes spotlightIn { from { opacity: 0; } to { opacity: 1; } }
+          .phone-spotlight { animation: spotlightIn 0.35s ease forwards; }
           html, body { background: ${RED_DARK} !important; }
           /* ── Responsive split layout ── */
           .rsvp-layout {
@@ -526,40 +538,60 @@ export default function RsvpPage() {
 
               {/* Bottom section — phone lookup */}
               <div style={{ position: 'relative', zIndex: 2, paddingTop: 20 }}>
+
+                {/* Spotlight glow on focus */}
+                {phoneFocused && (
+                  <div
+                    className="phone-spotlight"
+                    aria-hidden
+                    style={{
+                      position: 'absolute',
+                      inset: '-12px -20px',
+                      background: 'radial-gradient(ellipse at 50% 40%, rgba(200,16,46,0.09) 0%, transparent 72%)',
+                      borderRadius: 6,
+                      pointerEvents: 'none',
+                    }}
+                  />
+                )}
+
                 <p style={{
                   fontFamily: 'Georgia, serif',
-                  fontSize: '0.45rem',
-                  letterSpacing: '0.46em',
-                  textTransform: 'uppercase',
+                  fontSize: '0.72rem',
+                  letterSpacing: '0.08em',
                   color: INK,
-                  opacity: 0.42,
-                  marginBottom: 10,
+                  opacity: 0.78,
+                  marginBottom: 12,
+                  fontWeight: 600,
                 }}>
-                  Ticket Holder
+                  Enter your phone number to RSVP
                 </p>
 
-                <div style={{ marginBottom: 14 }}>
+                <div style={{ marginBottom: 14, position: 'relative' }}>
                   <input
+                    className="phone-input"
                     type="tel"
+                    inputMode="numeric"
                     value={phone}
-                    onChange={e => setPhone(e.target.value)}
+                    onChange={e => handlePhoneChange(e.target.value)}
                     onKeyDown={e => e.key === 'Enter' && handleLookup()}
-                    placeholder="Enter your phone number"
+                    placeholder="(   )    -    "
                     style={{
                       width: '100%',
                       background: 'transparent',
                       border: 'none',
-                      borderBottom: `1px solid rgba(28,15,8,0.2)`,
+                      borderBottom: `1.5px solid ${phoneFocused ? RED : 'rgba(28,15,8,0.2)'}`,
                       borderRadius: 0,
-                      padding: '7px 0',
+                      padding: '8px 0',
                       fontFamily: 'Georgia, serif',
-                      fontSize: '0.84rem',
+                      fontSize: '1.05rem',
+                      letterSpacing: '0.06em',
                       color: INK,
                       outline: 'none',
                       boxSizing: 'border-box',
+                      transition: 'border-color 0.2s ease',
                     }}
-                    onFocus={e => { e.target.style.borderBottomColor = RED; }}
-                    onBlur={e => { e.target.style.borderBottomColor = 'rgba(28,15,8,0.2)'; }}
+                    onFocus={() => setPhoneFocused(true)}
+                    onBlur={() => setPhoneFocused(false)}
                   />
                 </div>
 
@@ -595,18 +627,6 @@ export default function RsvpPage() {
                 >
                   {loading ? 'Searching…' : 'Claim Your Invitation'}
                 </button>
-
-                <p style={{
-                  fontFamily: 'Georgia, serif',
-                  fontSize: '0.44rem',
-                  color: INK,
-                  textAlign: 'center',
-                  marginTop: 10,
-                  letterSpacing: '0.1em',
-                  opacity: 0.37,
-                }}>
-                  Use the phone number on your invitation
-                </p>
               </div>
             </div>
           </div>

@@ -5,6 +5,7 @@ import { SaveTheDateEnvelope } from "@/components/SaveTheDateEnvelope";
 import { FlipCountdown } from "@/components/FlipCountdown";
 import { ItalyMap } from "@/components/ItalyMap";
 import { RSVPButton } from "@/components/RSVPButton";
+import { SmartLink } from "@/components/SmartLink";
 import { FloatingBotanicals } from "@/components/FloatingBotanicals";
 import { AnimatedSignature } from "@/components/AnimatedSignature";
 import { MusicPlayer } from "@/components/MusicPlayer";
@@ -622,14 +623,12 @@ export default function SaveTheDatePage() {
 													<span>{hotel.walkToShuttle} to shuttle</span>
 												</div>
 												{hotel.bookingUrl && (
-													<a
+													<SmartLink
 														href={hotel.bookingUrl}
-														target="_blank"
-														rel="noopener noreferrer"
 														className="inline-block mt-3 text-xs text-[#C9A684] hover:text-[#a8865e] transition-colors underline underline-offset-2"
 													>
 														View &amp; Book →
-													</a>
+													</SmartLink>
 												)}
 											</div>
 										))}
@@ -638,14 +637,12 @@ export default function SaveTheDatePage() {
 									<p className="mt-6 text-sm text-[#8a7d6c] italic">
 										Full lodging details and additional recommendations are
 										available on our{" "}
-										<Link
+										<SmartLink
 											href="/travel"
-											target="_blank"
-											rel="noopener noreferrer"
 											className="text-[#C9A684] hover:text-[#a8865e] transition-colors underline underline-offset-2"
 										>
 											Travel page
-										</Link>
+										</SmartLink>
 										.
 									</p>
 								</div>
@@ -706,14 +703,12 @@ export default function SaveTheDatePage() {
 									<p className="mt-8 text-sm text-[#8a7d6c] italic">
 										Full attire guidance including do&rsquo;s and don&rsquo;ts
 										is on our{" "}
-										<Link
+										<SmartLink
 											href="/attire"
-											target="_blank"
-											rel="noopener noreferrer"
 											className="text-[#C9A684] hover:text-[#a8865e] transition-colors underline underline-offset-2"
 										>
 											Attire page
-										</Link>
+										</SmartLink>
 										.
 									</p>
 								</div>
@@ -744,10 +739,8 @@ export default function SaveTheDatePage() {
 									</p>
 
 									{/* Registry card */}
-									<a
+									<SmartLink
 										href="https://withjoy.com/myles-and-jeslin/registry"
-										target="_blank"
-										rel="noopener noreferrer"
 										className="group block bg-[#FBF0E8] border border-[#E8C4B8]/60 rounded-xl p-6 text-center mb-4 hover:border-[#C9A684]/60 hover:shadow-sm transition-all"
 									>
 										<div className="flex justify-center mb-3">
@@ -768,9 +761,9 @@ export default function SaveTheDatePage() {
 											Explore Our Wish List
 										</p>
 										<p className="text-xs text-[#8a7d6c]">
-											withjoy.com · opens in a new tab →
+											withjoy.com →
 										</p>
-									</a>
+									</SmartLink>
 
 									<p className="text-sm text-[#5a5048] leading-relaxed">
 										We also gladly accept cash, checks, or Zelle. There will be a gift box at the wedding for cards and envelopes.
@@ -825,18 +818,16 @@ export default function SaveTheDatePage() {
 												blurb: "Latest news from us.",
 											},
 										].map((link) => (
-											<Link
+											<SmartLink
 												key={link.href}
 												href={link.href}
-												target="_blank"
-												rel="noopener noreferrer"
 												className="group bg-white border border-[#EDE6D8] rounded-lg p-4 transition-all hover:border-[#C9A684]/60 hover:shadow-sm"
 											>
 												<p className="font-header text-[#3F3A36] text-sm mb-0.5 group-hover:text-[#C9A684] transition-colors">
 													{link.label}
 												</p>
 												<p className="text-xs text-[#8a7d6c]">{link.blurb}</p>
-											</Link>
+											</SmartLink>
 										))}
 									</div>
 

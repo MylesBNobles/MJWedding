@@ -10,3 +10,4 @@ export { ItineraryItem } from './ItineraryItem';
 export { Toast, useToast } from './Toast';
 export { Checkbox } from './Checkbox';
 export { ComingSoon } from './ComingSoon';
+export { SmartLink } from './SmartLink';
