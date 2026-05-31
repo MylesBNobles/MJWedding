@@ -26,8 +26,9 @@ export function MusicPlayer() {
   // Entrance: appear when music is ready (music-start event), or immediately for reduced-motion users
   useEffect(() => {
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
-    if (mq.matches) {
-      const t = setTimeout(() => setEntered(true), 500);
+    // Return visit — animation already seen, show vinyl right away
+    if (mq.matches || sessionStorage.getItem('std-animation-seen')) {
+      const t = setTimeout(() => setEntered(true), 400);
       return () => clearTimeout(t);
     }
     function onReady() {
@@ -117,6 +118,13 @@ export function MusicPlayer() {
 
   // ── music-start event (fired from SaveTheDateEnvelope after polaroid) ──────
   useEffect(() => {
+    // Return visit — no envelope animation, set tap-to-play state for mobile
+    if (sessionStorage.getItem('std-animation-seen') && isMobileRef.current) {
+      musicReadyRef.current = true;
+      setMusicReady(true);
+      return;
+    }
+
     function onMusicStart() {
       const mobile = isMobileRef.current;
 
