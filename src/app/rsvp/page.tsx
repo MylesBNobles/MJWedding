@@ -574,7 +574,7 @@ export default function RsvpPage() {
                   marginBottom: 14,
                   marginTop: -6,
                 }}>
-                  International? Ignore the country code — enter the last 10 digits only.
+                  International? Ignore the country code — enter your local number only.
                 </p>
 
                 <div style={{ marginBottom: 14, position: 'relative' }}>

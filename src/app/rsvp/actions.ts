@@ -17,12 +17,12 @@ export type HouseholdLookupResult = {
 
 export async function lookupByPhone(phone: string): Promise<HouseholdLookupResult | null> {
   const supabase = createServerClient();
-  const last10 = phone.replace(/\D/g, '').slice(-10);
+  const digits = phone.replace(/\D/g, '');
 
   const { data: guestRow } = await supabase
     .from('guests')
     .select('id, household_id')
-    .like('phone', `%${last10}`)
+    .like('phone', `%${digits}`)
     .neq('guest_type', 'plus_one')
     .single();
 
