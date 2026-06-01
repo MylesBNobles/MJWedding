@@ -17,7 +17,7 @@ const TEXT = '#2d2926';
 const TEXT_MID = 'rgba(0,0,0,0.45)';
 const TEXT_MUTED = 'rgba(0,0,0,0.28)';
 
-const MESSAGE = `Myles & Jeslin have something special to share.
+const MESSAGE = `Jeslin & Myles have something special to share.
 
 Open your Save the Date below ✨
 
