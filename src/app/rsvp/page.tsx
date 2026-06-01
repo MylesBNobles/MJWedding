@@ -565,6 +565,17 @@ export default function RsvpPage() {
                 }}>
                   Enter your phone number to RSVP
                 </p>
+                <p style={{
+                  fontFamily: 'Georgia, serif',
+                  fontSize: '0.62rem',
+                  letterSpacing: '0.05em',
+                  color: INK,
+                  opacity: 0.42,
+                  marginBottom: 14,
+                  marginTop: -6,
+                }}>
+                  International? Ignore the country code — enter the last 10 digits only.
+                </p>
 
                 <div style={{ marginBottom: 14, position: 'relative' }}>
                   <input
