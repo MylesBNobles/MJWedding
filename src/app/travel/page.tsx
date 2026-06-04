@@ -177,7 +177,7 @@ export default function TravelPage() {
 					<SectionLabel>When to Travel</SectionLabel>
 					<LetterHeading>Arrival & Departure</LetterHeading>
 					<p className="text-sm text-[#5a5048] leading-relaxed mb-7">
-						Since this is a destination celebration, we recommend giving yourself a day or two to settle in before the festivities begin. Flights and hotels typically open about a year in advance — the earlier you book, the better your options.
+						Since this is a destination celebration, we recommend giving yourself a day or two to settle in before the festivities begin. Flights tend to open earlier than hotels, so feel free to start watching fares now — and see our accommodations note below for hotel timing.
 					</p>
 					<div className="grid sm:grid-cols-2 gap-5">
 						{/* Arrival */}
@@ -327,9 +327,21 @@ export default function TravelPage() {
 				<FadeUp>
 					<SectionLabel>Where to Stay</SectionLabel>
 					<LetterHeading>Accommodations</LetterHeading>
-					<p className="text-sm text-[#5a5048] leading-relaxed mb-7">
+					<p className="text-sm text-[#5a5048] leading-relaxed mb-6">
 						Stay wherever feels right for you — we just love Siena&rsquo;s historic center as a base. It puts you close to restaurants, sights, and the shuttle pickup, but anywhere that&rsquo;s convenient for your travel works perfectly. The hotels below are ones we love.
 					</p>
+
+					{/* Booking window callout */}
+					<div className="mb-7 rounded-xl border border-[#C9A684]/35 bg-[#FBF7EE] px-6 py-5 flex gap-4 items-start">
+						<span className="text-2xl mt-0.5 shrink-0">📅</span>
+						<div>
+							<p className="font-header text-[#3F3A36] text-base mb-1">A note on booking timing</p>
+							<p className="text-sm text-[#5a5048] leading-relaxed">
+								Most boutique hotels in Siena and the Tuscan countryside don&rsquo;t open reservations until <strong className="text-[#3F3A36]">after September 2026</strong> — typically 6–9 months before the wedding. No need to stress about rooms just yet. Check back in the fall and you&rsquo;ll have plenty of great options.
+							</p>
+						</div>
+					</div>
+
 					<div className="space-y-4 mb-6">
 						{travelInfo.hotelRecommendations.map((hotel) => (
 							<div key={hotel.id} className="bg-[#FBF7EE] border border-[#C9A684]/20 rounded-xl p-6">

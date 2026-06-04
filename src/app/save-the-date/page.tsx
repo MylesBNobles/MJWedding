@@ -595,11 +595,20 @@ export default function SaveTheDatePage() {
 									<SectionLabel>Where to Stay</SectionLabel>
 									<LetterHeading>Accommodations</LetterHeading>
 
-									<p className="text-sm text-[#5a5048] mb-6 leading-relaxed">
-										We recommend staying in Siena&rsquo;s historic center — it
-										puts you close to restaurants, sights, and the shuttle
-										pickup. The hotels below are ones we love.
+									<p className="text-sm text-[#5a5048] mb-5 leading-relaxed">
+										Stay wherever feels right for you — we just love Siena&rsquo;s historic center as a base. It puts you close to restaurants, sights, and the shuttle pickup, but anywhere that&rsquo;s convenient for your travel works perfectly. The hotels below are ones we love.
 									</p>
+
+									{/* Booking window callout */}
+									<div className="mb-6 rounded-xl border border-[#C9A684]/35 bg-[#FBF7EE] px-5 py-4 flex gap-3 items-start">
+										<span className="text-xl mt-0.5 shrink-0">📅</span>
+										<div>
+											<p className="font-header text-[#3F3A36] text-sm mb-0.5">A note on booking timing</p>
+											<p className="text-xs text-[#5a5048] leading-relaxed">
+												Most boutique hotels in the area don&rsquo;t open reservations until <strong className="text-[#3F3A36]">after September 2026</strong> — typically 6–9 months out. No rush just yet, check back in the fall.
+											</p>
+										</div>
+									</div>
 
 									<div className="space-y-4">
 										{travelInfo.hotelRecommendations.map((hotel) => (
